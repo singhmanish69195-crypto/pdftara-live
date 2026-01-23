@@ -9,15 +9,17 @@ node_modules
 .pnp
 .pnp.js
 
-# Build output (Global ignores)
+# Build output
 .next
 out
-
-# Note: Humne upar 'src' ko whitelist kar diya hai, 
-# toh ab 'src' ke andar wala 'build' ya 'dist' kabhi ignore nahi hoga.
-# Lekin root level par 'build' ko ignore rakhna safety ke liye sahi hai.
 build
 dist
+
+# ==========================================
+# SUPABASE & DATA: Purani JSON file ko ab ignore karein
+# ==========================================
+src/data/posts.json
+# Agar aapne koi local data folder banaya hai toh usey yahan add kar sakte hain
 
 # ==========================================
 # PUBLIC ASSETS: Inhe GitHub par bhejney ke liye 
@@ -40,21 +42,22 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Local env files (Inhe hamesha ignore rakhna chahiye)
+# ==========================================
+# SECURITY: IN FILES KO KABHI PUSH MAT KARNA (Zaroori)
+# ==========================================
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env*.local
 
 # Vercel
 .vercel
 
-# TypeScript
+# TypeScript & Editors
 *.tsbuildinfo
 next-env.d.ts
-
-# IDE / Editor
 .idea
 .vscode
 .agent
@@ -64,7 +67,6 @@ next-env.d.ts
 *~
 
 # OS generated files
-.DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100
@@ -76,7 +78,6 @@ ehthumbs.db
 *.temp
 .cache
 
-# Reference project (if not needed in repo)
+# Reference project
 bentopdf-main
-# Comparison/debug files
 comparisons.txt

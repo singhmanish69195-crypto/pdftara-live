@@ -1,101 +1,124 @@
-'use server'
+"use server"
 
-import fs from 'fs/promises';
-import path from 'path';
+import { supabase } from '../lib/supabase';
 import { revalidatePath } from 'next/cache';
 
-// Path define kiya (Correct Location)
-const filePath = path.join(process.cwd(), 'src/data/posts.json');
-const uploadDir = path.join(process.cwd(), 'public/uploads');
-
-// 1. SAVE POST ACTION (Create New)
+// 1. SAVE POST ACTION (Supabase Version)
 export async function savePostAction(formData: FormData) {
   try {
-    // File padhna
-    let posts = [];
-    try {
-      const fileData = await fs.readFile(filePath, 'utf8');
-      posts = JSON.parse(fileData);
-    } catch (err) {
-      // Agar file nahi mili to khali array rakho
-      posts = [];
-    }
-
     const title = formData.get('title') as string;
     const tags = formData.get('tags') as string;
     const content = formData.get('content') as string;
     const bannerFile = formData.get('banner') as File;
 
-    let bannerUrl = "https://placehold.co/600x400/e2e8f0/1e293b?text=Article"; // Default Professional Image
+    let bannerUrl = "https://placehold.co/600x400/e2e8f0/1e293b?text=Article"; // Default
 
-    // Image Upload Logic (Folder check karega, nahi hoga to banayega)
+    // --- IMAGE UPLOAD TO SUPABASE STORAGE ---
     if (bannerFile && bannerFile.size > 0) {
-      const buffer = Buffer.from(await bannerFile.arrayBuffer());
       const fileName = `${Date.now()}-${bannerFile.name.replaceAll(" ", "_")}`;
       
-      // Upload folder banao agar nahi hai
-      await fs.mkdir(uploadDir, { recursive: true });
-      
-      // Image save karo
-      await fs.writeFile(path.join(uploadDir, fileName), buffer);
-      bannerUrl = `/uploads/${fileName}`;
+      // Supabase Storage (banners bucket) mein upload karein
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('banners')
+        .upload(fileName, bannerFile);
+
+      if (uploadError) {
+        console.error("Image Upload Error:", uploadError.message);
+      } else {
+        // Public URL nikaalein
+        const { data: publicUrlData } = supabase.storage
+          .from('banners')
+          .getPublicUrl(fileName);
+        
+        bannerUrl = publicUrlData.publicUrl;
+      }
     }
 
-    // Naya Post Object
+    // Slug taiyaar karein
+    const slug = title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+    // Naya Post Object jo Supabase Table mein jayega
     const newPost = {
-      slug: title.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-'),
+      slug,
       title,
       tags: tags ? tags.split(',').map(t => t.trim()) : ["General"],
       image: bannerUrl,
       content,
       date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-      comments: []
+      comments: [] // JSON format mein save hoga
     };
 
-    posts.push(newPost);
-    await fs.writeFile(filePath, JSON.stringify(posts, null, 2));
+    // Supabase mein insert karein
+    const { error: dbError } = await supabase
+      .from('posts')
+      .insert([newPost]);
+
+    if (dbError) {
+      console.error("Database Insert Error:", dbError.message);
+      return { success: false, error: dbError.message };
+    }
     
+    console.log("✅ Article saved successfully in Supabase!");
+
     // Refresh pages
-    revalidatePath('/[locale]/blog');
-    revalidatePath('/[locale]/admin');
+    revalidatePath('/blog');
+    revalidatePath('/en/blog');
+    revalidatePath('/admin');
     
     return { success: true };
-  } catch (e) {
-    console.error("Save Error:", e);
+  } catch (e: any) {
+    console.error("Save Error:", e.message);
     return { success: false };
   }
 }
 
-// 2. DELETE POST ACTION (Delete Logic Fixed)
+// 2. DELETE POST ACTION (Supabase Version)
 export async function deletePostAction(slug: string) {
   try {
-    const fileData = await fs.readFile(filePath, 'utf8');
-    let posts = JSON.parse(fileData);
+    // A. Pehle post ka data nikaalein taaki image path mil sake
+    const { data: post, error: fetchError } = await supabase
+      .from('posts')
+      .select('image')
+      .eq('slug', slug)
+      .single();
 
-    // Image bhi delete karne ka try karein (Optional, par achha rehta hai)
-    const postToDelete = posts.find((p: any) => p.slug === slug);
-    if (postToDelete && postToDelete.image && postToDelete.image.startsWith('/uploads/')) {
-        try {
-            const imagePath = path.join(process.cwd(), 'public', postToDelete.image);
-            await fs.unlink(imagePath); // Delete image file
-        } catch (err) {
-            console.log("Image delete nahi hui, koi baat nahi.");
+    if (fetchError) throw fetchError;
+
+    // B. Supabase Storage se image delete karein (agar default nahi hai)
+    if (post && post.image && post.image.includes('banners/')) {
+        const fileName = post.image.split('/').pop(); // URL se filename nikaalein
+        if (fileName) {
+            await supabase.storage.from('banners').remove([fileName]);
+            console.log("🗑️ Image deleted from storage");
         }
     }
 
-    // List se post hatao
-    const newPosts = posts.filter((p: any) => p.slug !== slug);
+    // C. Table se row delete karein
+    const { error: deleteError } = await supabase
+      .from('posts')
+      .delete()
+      .eq('slug', slug);
+
+    if (deleteError) {
+      console.error("Delete Error:", deleteError.message);
+      return { success: false };
+    }
     
-    // Nayi list save karo
-    await fs.writeFile(filePath, JSON.stringify(newPosts, null, 2));
-    
-    // Cache clear karo taaki button turant kaam kare
-    revalidatePath('/[locale]/blog');
-    revalidatePath('/[locale]/admin');
+    console.log(`✅ Article deleted successfully: ${slug}`);
+
+    // Cache clear karein
+    revalidatePath('/blog');
+    revalidatePath('/en/blog');
+    revalidatePath('/admin');
     
     return { success: true };
-  } catch (e) {
-    console.error("Delete Error:", e);
+  } catch (e: any) {
+    console.error("Delete Error:", e.message);
     return { success: false };
   }
 }

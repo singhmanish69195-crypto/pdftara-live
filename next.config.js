@@ -4,8 +4,12 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable static export for deployment flexibility
-  
+  // ==========================================
+  // FIX: Body size limit for large articles (1MB to 50MB)
+  // ==========================================
+  serverActions: {
+    bodySizeLimit: '50mb',
+  },
 
   // Webpack configuration for WASM modules
   webpack: (config, { isServer, webpack }) => {
