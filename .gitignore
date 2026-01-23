@@ -9,6 +9,13 @@ out
 build
 dist
 
+# ==========================================
+# FIX: In folders ko GitHub par bhejne ke liye 
+# ==========================================
+!public/pdfjs-annotation-viewer/build/
+!public/pdfjs-viewer/build/
+!public/workers/
+
 # Testing
 coverage
 
