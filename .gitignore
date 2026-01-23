@@ -1,16 +1,26 @@
+# ==========================================
+# SUPER WHITELIST: SRC FOLDER KO KABHI MAT ROKNA
+# ==========================================
+!src/
+!src/**
+
 # Dependencies
 node_modules
 .pnp
 .pnp.js
 
-# Build output
+# Build output (Global ignores)
 .next
 out
+
+# Note: Humne upar 'src' ko whitelist kar diya hai, 
+# toh ab 'src' ke andar wala 'build' ya 'dist' kabhi ignore nahi hoga.
+# Lekin root level par 'build' ko ignore rakhna safety ke liye sahi hai.
 build
 dist
 
 # ==========================================
-# FIX: In folders ko GitHub par bhejne ke liye 
+# PUBLIC ASSETS: Inhe GitHub par bhejney ke liye 
 # ==========================================
 !public/pdfjs-annotation-viewer/build/
 !public/pdfjs-viewer/build/
@@ -30,7 +40,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Local env files
+# Local env files (Inhe hamesha ignore rakhna chahiye)
 .env
 .env.local
 .env.development.local
@@ -70,6 +80,3 @@ ehthumbs.db
 bentopdf-main
 # Comparison/debug files
 comparisons.txt
-
-.vercel
-.env*.local
