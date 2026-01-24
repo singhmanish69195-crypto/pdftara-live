@@ -7,10 +7,13 @@ const nextConfig = {
   // ==========================================
   // FIX: Body size limit for large articles (1MB to 50MB)
   // ==========================================
-  serverActions: {
-    bodySizeLimit: '50mb',
+  // Agar Next.js 13/14 hai to 'experimental' me hona chahiye
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '50mb', // Yahan humne limit badha di hai
+    },
   },
-
+  
   // Webpack configuration for WASM modules
   webpack: (config, { isServer, webpack }) => {
     // Handle qpdf-wasm and other modules that use Node.js built-ins

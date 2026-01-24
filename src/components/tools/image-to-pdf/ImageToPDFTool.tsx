@@ -2,12 +2,14 @@
 
 import React, { useState, useCallback, useRef } from 'react';
 import { useTranslations } from 'next-intl';
+// @ts-ignore - UTIF ke types nahi hote usually, isliye ignore kiya
+import UTIF from 'utif'; 
 import { FileUploader } from '../FileUploader';
 import { ProcessingProgress, ProcessingStatus } from '../ProcessingProgress';
 import { DownloadButton } from '../DownloadButton';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { imagesToPDF, imagesToPDFBatch, PAGE_SIZES, type PageSizeType, type ImageToPDFOptions, type BatchExportResult } from '@/lib/pdf/processors/image-to-pdf';
+import { imagesToPDF, imagesToPDFBatch, type PageSizeType, type ImageToPDFOptions, type BatchExportResult } from '@/lib/pdf/processors/image-to-pdf';
 import type { UploadedFile, ProcessOutput } from '@/types/pdf';
 
 /**
@@ -28,7 +30,7 @@ export interface ImageToPDFToolProps {
  * ImageToPDFTool Component
  * Requirements: 5.1, 5.2
  * 
- * Converts images to PDF with support for multiple formats.
+ * Converts images to PDF with support for multiple formats including TIFF fix.
  */
 export function ImageToPDFTool({ className = '', imageType }: ImageToPDFToolProps) {
   const t = useTranslations('common');
@@ -97,21 +99,87 @@ export function ImageToPDFTool({ className = '', imageType }: ImageToPDFToolProp
     ];
   }, [imageType]);
 
+  /**
+   * FIX: Helper function to convert TIFF to PNG using UTIF
+   * This makes TIFFs work on Mobile Browsers
+   */
+  const convertTiffToPng = async (file: File): Promise<File> => {
+    try {
+      // Check if it is really a TIFF
+      if (file.type !== 'image/tiff' && !file.name.toLowerCase().endsWith('.tif') && !file.name.toLowerCase().endsWith('.tiff')) {
+        return file;
+      }
+
+      console.log('Converting TIFF to PNG for compatibility:', file.name);
+      const arrayBuffer = await file.arrayBuffer();
+      const ifds = UTIF.decode(arrayBuffer);
+      
+      if (!ifds || ifds.length === 0) return file;
+
+      // Decode first page of TIFF
+      UTIF.decodeImage(arrayBuffer, ifds[0]);
+      const rgba = UTIF.toRGBA8(ifds[0]);
+      const { width, height } = ifds[0];
+
+      // Draw to canvas
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return file;
+
+      const imageData = new ImageData(new Uint8ClampedArray(rgba), width, height);
+      ctx.putImageData(imageData, 0, 0);
+
+      // Convert canvas to PNG File
+      return new Promise((resolve) => {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const newFile = new File([blob], file.name.replace(/\.tiff?$/i, '.png'), { type: 'image/png' });
+            resolve(newFile);
+          } else {
+            resolve(file); // Fallback to original
+          }
+        }, 'image/png');
+      });
+    } catch (err) {
+      console.error('TIFF Conversion Failed:', err);
+      return file; // Return original if fails
+    }
+  };
 
   /**
    * Handle files selected from uploader
+   * Modified to handle Async TIFF conversion
    */
-  const handleFilesSelected = useCallback((newFiles: File[]) => {
-    const uploadedFiles: UploadedFile[] = newFiles.map(file => ({
-      id: generateId(),
-      file,
-      status: 'pending' as const,
-      preview: URL.createObjectURL(file),
-    }));
+  const handleFilesSelected = useCallback(async (newFiles: File[]) => {
+    // Show temporary loading state if needed here, but usually fast enough
+    
+    const processedFilesPromises = newFiles.map(async (file) => {
+      // Try to fix TIFF files automatically
+      let finalFile = file;
+      const isTiff = file.type === 'image/tiff' || file.name.toLowerCase().endsWith('.tif') || file.name.toLowerCase().endsWith('.tiff');
+      
+      if (isTiff) {
+        finalFile = await convertTiffToPng(file);
+      }
 
-    setFiles(prev => [...prev, ...uploadedFiles]);
-    setError(null);
-    setResult(null);
+      return {
+        id: generateId(),
+        file: finalFile,
+        status: 'pending' as const,
+        preview: URL.createObjectURL(finalFile),
+      };
+    });
+
+    try {
+      const uploadedFiles = await Promise.all(processedFilesPromises);
+      setFiles(prev => [...prev, ...uploadedFiles]);
+      setError(null);
+      setResult(null);
+    } catch (e) {
+      setError('Error processing images. Please try again.');
+    }
   }, []);
 
   /**
