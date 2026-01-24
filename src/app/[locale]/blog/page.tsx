@@ -1,12 +1,13 @@
 import Link from "next/link";
-import posts from "@/data/posts.json";
-import { Header } from "@/components/layout/Header"; // Header import add kiya (zaroori hai)
+// 1. JSON import hatakar Supabase import kiya
+import { supabase } from "@/lib/supabase"; 
+import { Header } from "@/components/layout/Header"; 
 import { Footer } from "@/components/layout/Footer"; 
 import { type Locale } from '@/lib/i18n/config';
 
 // Helper function: Reading time calculate karne ke liye
 function getReadingTime(content: string) {
-  if (!content) return "1 min read"; // Safety check
+  if (!content) return "1 min read"; 
   const wordsPerMinute = 200;
   const words = content.replace(/<[^>]*>/g, '').split(/\s+/).length;
   const minutes = Math.ceil(words / wordsPerMinute);
@@ -18,12 +19,18 @@ export default async function BlogHome({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const currentLocale = locale as Locale;
   
-  // --- FIX: TypeScript Error Solution ---
-  // Yahan humne code ko bola: "Bhai posts ko any[] maan le, check mat kar"
-  const safePosts = (posts || []) as any[];
-  
-  // Posts ko naye se purane order mein karna
-  const allPosts = safePosts.slice().reverse();
+  // --- 2. SUPABASE SE DATA FETCH KARNA ---
+  // Humne 'id' ya 'created_at' ke hisaab se descending order (nayasabse pehle) set kiya hai
+  const { data: posts, error } = await supabase
+    .from('posts')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error("Supabase Fetch Error:", error.message);
+  }
+
+  const allPosts = posts || [];
   
   // Pehla post "Featured" hoga, baaki "Grid" mein aayenge
   const featuredPost = allPosts[0];
@@ -32,7 +39,6 @@ export default async function BlogHome({ params }: { params: Promise<{ locale: s
   return (
     <div className="min-h-screen flex flex-col bg-[#fafafa]">
       
-      {/* HEADER ADD KIYA - Page structure sahi rahega */}
       <Header locale={currentLocale} />
 
       <main className="flex-1 py-16 md:py-24 px-6 font-sans selection:bg-blue-100">
@@ -41,7 +47,6 @@ export default async function BlogHome({ params }: { params: Promise<{ locale: s
           {/* --- HERO SECTION --- */}
           <header className="max-w-5xl mx-auto mb-24 text-center">
             
-            {/* Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-black uppercase tracking-widest mb-6">
                <span className="relative flex h-2 w-2">
                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
@@ -50,7 +55,6 @@ export default async function BlogHome({ params }: { params: Promise<{ locale: s
                Knowledge Hub
             </div>
 
-            {/* Main Title */}
             <h1 className="text-5xl md:text-8xl font-[1000] text-[#0f172a] leading-[0.95] tracking-tighter mb-8">
               Master Your <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
@@ -58,13 +62,12 @@ export default async function BlogHome({ params }: { params: Promise<{ locale: s
               </span>
             </h1>
 
-            {/* Description */}
             <p className="text-slate-500 text-xl font-medium max-w-2xl mx-auto leading-relaxed">
               Expert tutorials, industry insights, and tips to make you 10x more productive with documents.
             </p>
           </header>
 
-          {/* --- FEATURED POST (Hero Section) --- */}
+          {/* --- FEATURED POST --- */}
           {featuredPost && (
             <div className="mb-24">
                <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-4">
@@ -72,7 +75,6 @@ export default async function BlogHome({ params }: { params: Promise<{ locale: s
                </h3>
                <Link href={`/${locale}/blog/${featuredPost.slug}`} className="group block">
                   <article className="grid grid-cols-1 lg:grid-cols-2 gap-0 bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-2">
-                    {/* Featured Image */}
                     <div className="relative h-[400px] lg:h-auto overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10"></div>
                       <img 
@@ -87,7 +89,6 @@ export default async function BlogHome({ params }: { params: Promise<{ locale: s
                       </div>
                     </div>
 
-                    {/* Featured Content */}
                     <div className="p-10 lg:p-16 flex flex-col justify-center">
                       <div className="flex items-center gap-3 text-xs font-bold text-slate-400 uppercase tracking-wider mb-6">
                         <span className="text-blue-600">{featuredPost.date}</span>
@@ -116,14 +117,12 @@ export default async function BlogHome({ params }: { params: Promise<{ locale: s
             </div>
           )}
 
-          {/* --- STANDARD GRID (Baaki Articles) --- */}
+          {/* --- STANDARD GRID --- */}
           {gridPosts.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
               {gridPosts.map((post: any) => (
                 <Link href={`/${locale}/blog/${post.slug}`} key={post.slug} className="group flex flex-col h-full">
                   <article className="flex flex-col h-full">
-                    
-                    {/* Image Card */}
                     <div className="relative aspect-video w-full rounded-[2rem] overflow-hidden border border-slate-100 shadow-sm mb-8 group-hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-500">
                       <div className="absolute inset-0 bg-slate-900/5 z-10 group-hover:bg-transparent transition-colors"></div>
                       <img 
@@ -138,7 +137,6 @@ export default async function BlogHome({ params }: { params: Promise<{ locale: s
                       </div>
                     </div>
 
-                    {/* Content */}
                     <div className="flex flex-col flex-1 px-2">
                       <div className="flex items-center gap-3 mb-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                         <span>{post.date}</span>
@@ -165,7 +163,7 @@ export default async function BlogHome({ params }: { params: Promise<{ locale: s
             </div>
           )}
 
-          {/* --- EMPTY STATE (Jab posts delete ho gaye hon) --- */}
+          {/* --- EMPTY STATE --- */}
           {allPosts.length === 0 && (
             <div className="text-center py-40 border-4 border-dashed border-slate-100 rounded-[4rem]">
               <p className="text-slate-300 font-black text-4xl italic uppercase">No Posts Yet</p>
@@ -176,7 +174,6 @@ export default async function BlogHome({ params }: { params: Promise<{ locale: s
         </div>
       </main>
 
-      {/* --- FOOTER --- */}
       <Footer locale={currentLocale} />
     </div>
   );

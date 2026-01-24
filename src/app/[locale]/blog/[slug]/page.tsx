@@ -1,4 +1,5 @@
-import posts from "@/data/posts.json";
+// JSON import hata diya aur Supabase import kiya
+import { supabase } from "../../../../lib/supabase";
 import { notFound } from "next/navigation";
 import { addCommentAction } from "@/actions/addComment";
 import type { Metadata } from "next";
@@ -16,7 +17,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const slug = decodeURIComponent(resolvedParams.slug);
   
-  const post = posts.find((p: any) => p.slug === slug);
+  // Supabase se metadata fetch karna
+  const { data: post } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('slug', slug)
+    .single();
 
   // SAFETY CHECK
   if (!post) {
@@ -26,7 +32,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  // TypeScript fix: (post as any) use kiya
   const p = post as any;
   const content = p.content || ""; 
   const description = content.replace(/<[^>]*>/g, '').substring(0, 160) + "...";
@@ -68,7 +73,13 @@ export default async function ArticleView(props: { params: Promise<{ slug: strin
   const resolvedParams = await props.params;
   const slug = decodeURIComponent(resolvedParams.slug);
   
-  const post = posts.find((p: any) => p.slug === slug);
+  // Supabase se article fetch karna
+  const { data: post } = await supabase
+    .from('posts')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+
   const currentLocale = resolvedParams.locale as Locale;
 
   if (!post) {
@@ -76,7 +87,6 @@ export default async function ArticleView(props: { params: Promise<{ slug: strin
     return notFound();
   }
 
-  // TypeScript fix: (post as any)
   const p = post as any;
   const shareUrl = `https://PDFTara.com/${resolvedParams.locale}/blog/${slug}`;
   const safeContent = p.content || "";
@@ -130,7 +140,15 @@ export default async function ArticleView(props: { params: Promise<{ slug: strin
             </h1>
             <div className="text-slate-400 font-bold text-xs uppercase tracking-[0.2em] flex items-center gap-3">
                <span className="w-12 h-[1px] bg-slate-200"></span>
-               Published on {p.date}
+               {/* YAHAN DATE AUR TIME DONO DIKHEGA AB */}
+               Published on {new Date(p.date).toLocaleString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true
+               })}
             </div>
           </header>
 
@@ -184,7 +202,15 @@ export default async function ArticleView(props: { params: Promise<{ slug: strin
                    <div key={i} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:border-blue-200 transition-colors">
                      <div className="flex justify-between items-center mb-4">
                         <span className="font-black text-blue-600 text-sm italic">@Guest_User</span>
-                        <span className="text-[10px] text-slate-300 font-bold uppercase">{c.date}</span>
+                        <span className="text-[10px] text-slate-300 font-bold uppercase">
+                          {c.date ? new Date(c.date).toLocaleString('en-US', {
+                             year: 'numeric',
+                             month: 'short',
+                             day: 'numeric',
+                             hour: '2-digit',
+                             minute: '2-digit'
+                          }) : 'Just now'}
+                        </span>
                      </div>
                      <p className="text-lg text-slate-700 leading-relaxed font-medium">"{c.text}"</p>
                    </div>
