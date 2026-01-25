@@ -35,13 +35,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const p = post as any;
   const content = p.content || ""; 
   const description = content.replace(/<[^>]*>/g, '').substring(0, 160) + "...";
-  const imageUrl = p.image || "https://PDFTara.com/og-default.jpg";
+  const imageUrl = p.image || "https://www.pdftara.com/og-default.jpg";
 
   return {
     title: p.title,
     description: description,
     alternates: {
-      canonical: `https://PDFTara.com/${resolvedParams.locale}/blog/${slug}`,
+      canonical: `https://www.pdftara.com/${resolvedParams.locale}/blog/${slug}`,
     },
     openGraph: {
       title: p.title,
@@ -88,7 +88,7 @@ export default async function ArticleView(props: { params: Promise<{ slug: strin
   }
 
   const p = post as any;
-  const shareUrl = `https://PDFTara.com/${resolvedParams.locale}/blog/${slug}`;
+  const shareUrl = `https://www.pdftara.com/${resolvedParams.locale}/blog/${slug}`;
   const safeContent = p.content || "";
 
   // Schema Markup
@@ -96,7 +96,7 @@ export default async function ArticleView(props: { params: Promise<{ slug: strin
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: p.title,
-    image: p.image || "https://PDFTara.com/logo.png",
+    image: p.image || "https://www.pdftara.com/logo.png",
     datePublished: p.date,
     author: {
       '@type': 'Organization',

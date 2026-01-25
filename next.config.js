@@ -9,7 +9,7 @@ const nextConfig = {
     return [
       {
         source: '/:path*',
-        has: [{ type: 'host', value: 'pdftara.com' }],
+        has: [{ type: 'host', value: 'https://www.pdftara.com' }],
         destination: 'https://www.pdftara.com/:path*',
         permanent: true,
       },

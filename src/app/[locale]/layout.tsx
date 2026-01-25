@@ -44,7 +44,7 @@ export async function generateMetadata({
 
   return {
     ...metadata,
-    metadataBase: new URL('https://pdftara.com'),
+    metadataBase: new URL('https://www.pdftara.com'),
     
     title: {
       default: titleText,
@@ -90,12 +90,12 @@ export async function generateMetadata({
       ...metadata.openGraph,
       title: titleText,
       description: descText,
-      url: `https://pdftara.com/${validLocale}`,
+      url: `https://www.pdftara.com/${validLocale}`,
       siteName: 'PDFTara - Secure & Free',
       type: 'website',
       images: [
          {
-           url: 'https://pdftara.com/og-image-home.jpg', // Apni achi image ka path zarur check karna
+           url: 'https://www.pdftara.com/og-image-home.jpg', // Apni achi image ka path zarur check karna
            width: 1200,
            height: 630,
            alt: 'PDFTara - Free PDF Tools 2026',
@@ -156,7 +156,7 @@ export default async function LocaleLayout({
     },
     'description': 'Process PDF files locally in your browser. No server uploads. 100% Private and Free.',
     'featureList': 'Merge, Split, Compress, Convert, Edit PDF',
-    'screenshot': 'https://pdftara.com/screenshot.jpg' // Optional: Agar screenshot hai to link daal dena
+    'screenshot': 'https://www.pdftara.com/screenshot.jpg' // Optional: Agar screenshot hai to link daal dena
   };
 
   return (
