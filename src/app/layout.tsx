@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import '@/app/globals.css';
 
-// 1. Metadata Base (Zaroori hai images aur canonical ke liye)
+// 1. Metadata Base
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.pdftara.com'),
   
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   creator: 'PDFTara',
   publisher: 'PDFTara',
 
-  // Canonical aur Language Alternates (Search Console Error Fix)
+  // Canonical aur Language Alternates
   alternates: {
     canonical: '/',
     languages: {
@@ -70,13 +70,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+// YAHAN FIX KIYA HAI: Params ab Promise hai
+export default async function RootLayout({
   children,
-  params: { locale } // Locale dynamic hona chahiye
+  params
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>; // <-- Type fix: Promise add kiya
 }) {
+  
+  // Params ko await karke locale nikala
+  const { locale } = await params;
+
   return (
     <html lang={locale || 'en'} suppressHydrationWarning>
       <head>
