@@ -1,6 +1,6 @@
 /**
  * Sitemap Generation
- * Generates sitemap.xml for all pages across all locales shamil karte hue articles
+ * Generates sitemap.xml with alternate language links for SEO optimization
  */
 
 import { MetadataRoute } from 'next';
@@ -22,101 +22,105 @@ const PRIORITY = {
   home: 1.0,
   tools: 0.9,
   toolPage: 0.8,
-  blogPost: 0.9, // Articles ko high priority di hai ranking ke liye
+  blogPost: 0.9,
   blogHome: 0.7,
   static: 0.5,
-} as const;
-
-/**
- * Change frequency
- */
-const CHANGE_FREQUENCY = {
-  home: 'daily',
-  tools: 'weekly',
-  toolPage: 'weekly',
-  blogPost: 'daily', 
-  static: 'monthly',
 } as const;
 
 /**
  * Static pages across all locales
  */
 const STATIC_PAGES = [
-  { path: '', priority: PRIORITY.home, changeFrequency: CHANGE_FREQUENCY.home },
-  { path: '/tools', priority: PRIORITY.tools, changeFrequency: CHANGE_FREQUENCY.tools },
-  { path: '/blog', priority: PRIORITY.blogHome, changeFrequency: CHANGE_FREQUENCY.home },
-  { path: '/about', priority: PRIORITY.static, changeFrequency: CHANGE_FREQUENCY.static },
-  { path: '/faq', priority: PRIORITY.static, changeFrequency: CHANGE_FREQUENCY.static },
-  { path: '/contact', priority: PRIORITY.static, changeFrequency: CHANGE_FREQUENCY.static },
-  { path: '/privacy', priority: PRIORITY.static, changeFrequency: CHANGE_FREQUENCY.static },
-  { path: '/terms', priority: PRIORITY.static, changeFrequency: CHANGE_FREQUENCY.static },
-  { path: '/disclaimer', priority: PRIORITY.static, changeFrequency: CHANGE_FREQUENCY.static },
+  { path: '', priority: PRIORITY.home, changeFreq: 'daily' },
+  { path: '/tools', priority: PRIORITY.tools, changeFreq: 'weekly' },
+  { path: '/blog', priority: PRIORITY.blogHome, changeFreq: 'daily' },
+  { path: '/about', priority: PRIORITY.static, changeFreq: 'monthly' },
+  { path: '/faq', priority: PRIORITY.static, changeFreq: 'monthly' },
+  { path: '/contact', priority: PRIORITY.static, changeFreq: 'monthly' },
+  { path: '/privacy', priority: PRIORITY.static, changeFreq: 'monthly' },
+  { path: '/terms', priority: PRIORITY.static, changeFreq: 'monthly' },
+  { path: '/disclaimer', priority: PRIORITY.static, changeFreq: 'monthly' },
 ];
 
 /**
- * YAHAN APNE BLOG ARTICLES KE NAAM (SLUGS) DALO
- * Jaise: how-to-merge-pdf-files-offline
+ * BLOG ARTICLES SLUGS
  */
 const BLOG_POSTS = [
   'how-to-merge-pdf-files-offline',
   'best-free-pdf-tools-2026',
   'secure-way-to-edit-pdf-online',
-  // Naye blog ka naam yahan add karte rehna...
 ];
 
 /**
- * Generate sitemap entries for a specific locale
+ * Helper to build URL with trailing slash to avoid 301 redirects
  */
-function generateLocaleEntries(locale: Locale, lastModified: Date): MetadataRoute.Sitemap {
-  const entries: MetadataRoute.Sitemap = [];
-  
-  // 1. Add static pages (Jaise: /en/blog)
-  for (const page of STATIC_PAGES) {
-    entries.push({
-      url: `${BASE_URL}/${locale}${page.path}`,
-      lastModified,
-      changeFrequency: page.changeFrequency as any,
-      priority: page.priority,
-    });
-  }
-  
-  // 2. Add individual tool pages (Jaise: /en/tools/merge-pdf)
-  const tools = getAllTools();
-  for (const tool of tools) {
-    entries.push({
-      url: `${BASE_URL}/${locale}/tools/${tool.slug}`,
-      lastModified,
-      changeFrequency: 'weekly',
-      priority: PRIORITY.toolPage,
-    });
-  }
-
-  // 3. Add Individual Blog Articles (Jaise: /en/blog/how-to-merge-pdf)
-  for (const postSlug of BLOG_POSTS) {
-    entries.push({
-      url: `${BASE_URL}/${locale}/blog/${postSlug}`,
-      lastModified,
-      changeFrequency: 'daily',
-      priority: PRIORITY.blogPost,
-    });
-  }
-  
-  return entries;
-}
+const buildUrl = (locale: string, path: string) => {
+  const fullPath = path ? `${path}/` : '/';
+  return `${BASE_URL}/${locale}${fullPath}`;
+};
 
 /**
- * Generate the complete sitemap
+ * Generate the complete sitemap with alternates
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
   const allEntries: MetadataRoute.Sitemap = [];
-  
-  // Har ek language ke liye links generate honge
-  for (const locale of locales) {
-    const localeEntries = generateLocaleEntries(locale as Locale, lastModified);
-    allEntries.push(...localeEntries);
+
+  // 1. ADD STATIC PAGES
+  for (const page of STATIC_PAGES) {
+    for (const locale of locales) {
+      allEntries.push({
+        url: buildUrl(locale, page.path),
+        lastModified,
+        changeFrequency: page.changeFreq as any,
+        priority: page.priority,
+        // Alternate links bata rahe hain Google ko (Hreflang fix)
+        alternates: {
+          languages: Object.fromEntries(
+            locales.map((l) => [l, buildUrl(l, page.path)])
+          ),
+        },
+      });
+    }
   }
-  
+
+  // 2. ADD TOOL PAGES
+  const tools = getAllTools();
+  for (const tool of tools) {
+    for (const locale of locales) {
+      const toolField = `/tools/${tool.slug}`;
+      allEntries.push({
+        url: buildUrl(locale, toolField),
+        lastModified,
+        changeFrequency: 'weekly',
+        priority: PRIORITY.toolPage,
+        alternates: {
+          languages: Object.fromEntries(
+            locales.map((l) => [l, buildUrl(l, toolField)])
+          ),
+        },
+      });
+    }
+  }
+
+  // 3. ADD BLOG POSTS
+  for (const postSlug of BLOG_POSTS) {
+    for (const locale of locales) {
+      const blogField = `/blog/${postSlug}`;
+      allEntries.push({
+        url: buildUrl(locale, blogField),
+        lastModified,
+        changeFrequency: 'daily',
+        priority: PRIORITY.blogPost,
+        alternates: {
+          languages: Object.fromEntries(
+            locales.map((l) => [l, buildUrl(l, blogField)])
+          ),
+        },
+      });
+    }
+  }
+
   return allEntries;
 }
 

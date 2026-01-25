@@ -144,12 +144,7 @@ function ToolHeader({ tool, content }: ToolHeaderProps) {
   const IconComponent = getToolIcon(tool.icon);
 
   return (
-    <header className="text-center" data-testid="tool-page-header" itemScope itemType="https://schema.org/SoftwareApplication">
-      <meta itemProp="applicationCategory" content="UtilitiesApplication" />
-      <meta itemProp="operatingSystem" content="Web Browser" />
-      <meta itemProp="offers" itemScope itemType="https://schema.org/Offer" content="" />
-      <meta itemProp="price" content="0" />
-      <meta itemProp="priceCurrency" content="USD" />
+    <header className="text-center" data-testid="tool-page-header">
       <div
         className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[hsl(var(--color-primary)/0.1)] to-[hsl(var(--color-accent)/0.1)] mb-4 shadow-inner"
         aria-hidden="true"
@@ -159,14 +154,12 @@ function ToolHeader({ tool, content }: ToolHeaderProps) {
       <h1
         className="text-3xl font-bold text-[hsl(var(--color-foreground))] mb-2"
         data-testid="tool-page-title"
-        itemProp="name"
       >
         {content.title || toolName}
       </h1>
       <p
         className="text-lg text-[hsl(var(--color-muted-foreground))] max-w-2xl mx-auto leading-relaxed"
         data-testid="tool-page-subtitle"
-        itemProp="description"
       >
         {content.metaDescription}
       </p>
@@ -223,13 +216,10 @@ function HowToUseSection({ steps }: HowToUseSectionProps) {
       className="mt-10"
       data-testid="tool-page-how-to-use"
       aria-labelledby="how-to-use-heading"
-      itemScope
-      itemType="https://schema.org/HowTo"
     >
       <h2
         id="how-to-use-heading"
         className="text-2xl font-bold text-[hsl(var(--color-foreground))] mb-6"
-        itemProp="name"
       >
         {t('tools.howToUse')}
       </h2>
@@ -240,11 +230,7 @@ function HowToUseSection({ steps }: HowToUseSectionProps) {
             className="flex flex-col h-full"
             data-testid={`how-to-step-${step.step}`}
             id={`step-${step.step}`}
-            itemScope
-            itemProp="step"
-            itemType="https://schema.org/HowToStep"
           >
-            <meta itemProp="position" content={String(step.step)} />
             <Card className="flex-1 h-full glass-card border-[hsl(var(--color-border))/0.6] hover:border-[hsl(var(--color-primary)/0.3)] transition-colors">
               <div
                 className="w-10 h-10 rounded-xl bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] flex items-center justify-center font-bold text-lg mb-4"
@@ -252,10 +238,10 @@ function HowToUseSection({ steps }: HowToUseSectionProps) {
               >
                 {step.step}
               </div>
-              <h3 className="text-lg font-semibold text-[hsl(var(--color-foreground))] mb-2" itemProp="name">
+              <h3 className="text-lg font-semibold text-[hsl(var(--color-foreground))] mb-2">
                 {step.title}
               </h3>
-              <p className="text-sm text-[hsl(var(--color-muted-foreground))]" itemProp="text">
+              <p className="text-sm text-[hsl(var(--color-muted-foreground))]">
                 {step.description}
               </p>
             </Card>
@@ -305,7 +291,6 @@ function UseCasesSection({ useCases }: UseCasesSectionProps) {
                 className="flex-shrink-0 w-12 h-12 rounded-xl bg-[hsl(var(--color-secondary)/0.5)] flex items-center justify-center"
                 aria-hidden="true"
               >
-                {/* We can map icons here too if needed, for now using a generic check */}
                 <div className="w-6 h-6 text-[hsl(var(--color-secondary-foreground))] flex items-center justify-center">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                 </div>
@@ -342,8 +327,6 @@ function FAQSection({ faq }: FAQSectionProps) {
       className="mt-10"
       data-testid="tool-page-faq"
       aria-labelledby="faq-heading"
-      itemScope
-      itemType="https://schema.org/FAQPage"
     >
       <h2
         id="faq-heading"
@@ -358,15 +341,12 @@ function FAQSection({ faq }: FAQSectionProps) {
             variant="outlined"
             className="glass-card"
             data-testid={`faq-item-${index}`}
-            itemScope
-            itemProp="mainEntity"
-            itemType="https://schema.org/Question"
           >
-            <h3 className="font-semibold text-[hsl(var(--color-foreground))]" itemProp="name">
+            <h3 className="font-semibold text-[hsl(var(--color-foreground))]">
               {item.question}
             </h3>
-            <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
-              <p className="mt-2 text-sm text-[hsl(var(--color-muted-foreground))]" itemProp="text">
+            <div>
+              <p className="mt-2 text-sm text-[hsl(var(--color-muted-foreground))]">
                 {item.answer}
               </p>
             </div>

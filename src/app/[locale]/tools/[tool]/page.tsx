@@ -95,12 +95,8 @@ interface ToolPageParams {
   }>;
 }
 
-/**
- * Generate static params for all tool pages
- */
 export async function generateStaticParams() {
   const tools = getAllTools();
-
   return SUPPORTED_LOCALES.flatMap(locale =>
     tools.map(tool => ({
       locale,
@@ -109,28 +105,15 @@ export async function generateStaticParams() {
   );
 }
 
-/**
- * Generate metadata for tool pages
- */
 export async function generateMetadata({ params }: ToolPageParams): Promise<Metadata> {
   const { locale: localeParam, tool: toolSlug } = await params;
   const locale = localeParam as Locale;
   const tool = getToolById(toolSlug);
   const t = await getTranslations({ locale, namespace: 'errors' });
 
-  if (!tool) {
-    return {
-      title: t('toolNotFound'),
-    };
-  }
-
+  if (!tool) return { title: t('toolNotFound') };
   const content = getToolContent(locale, tool.id);
-
-  if (!content) {
-    return {
-      title: tool.id,
-    };
-  }
+  if (!content) return { title: tool.id };
 
   return generateToolMetadata({
     tool,
@@ -140,41 +123,37 @@ export async function generateMetadata({ params }: ToolPageParams): Promise<Meta
   });
 }
 
-/**
- * Tool Page Component
- * Renders the appropriate tool interface based on the tool slug
- */
 export default async function ToolPageRoute({ params }: ToolPageParams) {
   const { locale: localeParam, tool: toolSlug } = await params;
   const locale = localeParam as Locale;
 
-  // Enable static rendering for this locale - MUST be called before getTranslations
   setRequestLocale(locale);
-
   const t = await getTranslations();
-
-  // Get tool data
   const tool = getToolById(toolSlug);
 
-  if (!tool) {
-    notFound();
-  }
-
-  // Get tool content for the locale (falls back to English)
+  if (!tool) notFound();
   const content = getToolContent(locale, tool.id);
+  if (!content) notFound();
 
-  if (!content) {
-    notFound();
-  }
+  // 1. GENERATE ALL SCHEMAS
+  const toolSchema = generateSoftwareApplicationSchema(tool, content, locale);
+  
+  // FIX: Force missing fields for SoftwareApplication error
+  const fixedToolSchema = {
+    ...toolSchema,
+    "operatingSystem": "Windows, macOS, Android, iOS, Web",
+    "applicationCategory": "UtilitiesApplication",
+    "offers": toolSchema.offers || {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  };
 
-  // Generate structured data
-  const toolStructuredData = generateSoftwareApplicationSchema(tool, content, locale);
-  const faqStructuredData = content.faq && content.faq.length > 0
-    ? generateFAQPageSchema(content.faq)
-    : null;
-  const howToStructuredData = generateHowToSchema(tool, content, locale);
-  const webPageStructuredData = generateWebPageSchema(tool, content, locale);
-  const breadcrumbStructuredData = generateBreadcrumbSchema(
+  const faqSchema = content.faq && content.faq.length > 0 ? generateFAQPageSchema(content.faq) : null;
+  const howToSchema = generateHowToSchema(tool, content, locale);
+  const webPageSchema = generateWebPageSchema(tool, content, locale);
+  const breadcrumbSchema = generateBreadcrumbSchema(
     [
       { name: 'Home', path: '' },
       { name: 'Tools', path: '/tools' },
@@ -183,7 +162,11 @@ export default async function ToolPageRoute({ params }: ToolPageParams) {
     locale
   );
 
-  // Prepare localized content for related tools
+  // 2. CONSOLIDATE INTO ONE ARRAY (CHOR PAKAD LIYA)
+  const allSchemas: object[] = [fixedToolSchema, webPageSchema, breadcrumbSchema];
+  if (faqSchema) allSchemas.push(faqSchema);
+  if (howToSchema) allSchemas.push(howToSchema);
+
   const localizedRelatedTools = tool.relatedTools.reduce((acc, relatedId) => {
     const relatedContent = getToolContent(locale, relatedId);
     if (relatedContent) {
@@ -195,198 +178,101 @@ export default async function ToolPageRoute({ params }: ToolPageParams) {
     return acc;
   }, {} as Record<string, { title: string; description: string }>);
 
-  // Render the appropriate tool interface
   const renderToolInterface = () => {
     switch (tool.id) {
-      case 'merge-pdf':
-        return <MergePDFTool />;
-      case 'split-pdf':
-        return <SplitPDFTool />;
-      case 'delete-pages':
-        return <DeletePagesTool />;
-      case 'rotate-pdf':
-        return <RotatePDFTool />;
-      case 'rotate-custom':
-        return <RotateCustomTool />;
-      case 'add-blank-page':
-        return <AddBlankPageTool />;
-      case 'reverse-pages':
-        return <ReversePagesTool />;
-      case 'n-up-pdf':
-        return <NUpPDFTool />;
-      case 'grid-combine':
-        return <GridCombineTool />;
-      case 'alternate-merge':
-        return <AlternateMergeTool />;
-      case 'divide-pages':
-        return <DividePagesTool />;
-      case 'combine-single-page':
-        return <CombineSinglePageTool />;
-      case 'posterize-pdf':
-        return <PosterizePDFTool />;
-      case 'pdf-multi-tool':
-        return <PDFMultiTool />;
-      case 'add-attachments':
-        return <AddAttachmentsTool />;
-      case 'extract-attachments':
-        return <ExtractAttachmentsTool />;
-      case 'extract-images':
-        return <ExtractImagesTool />;
-      case 'edit-attachments':
-        return <EditAttachmentsTool />;
-      case 'view-metadata':
-        return <ViewMetadataTool />;
-      case 'edit-metadata':
-        return <EditMetadataTool />;
-      case 'pdf-to-zip':
-        return <PDFsToZipTool />;
-      case 'compare-pdfs':
-        return <ComparePDFsTool />;
-      case 'edit-pdf':
-        return <EditPDFTool />;
-      // Convert to PDF tools
-      case 'image-to-pdf':
-        return <ImageToPDFTool />;
-      case 'jpg-to-pdf':
-        return <ImageToPDFTool imageType="jpg" />;
-      case 'png-to-pdf':
-        return <ImageToPDFTool imageType="png" />;
-      case 'webp-to-pdf':
-        return <ImageToPDFTool imageType="webp" />;
-      case 'bmp-to-pdf':
-        return <ImageToPDFTool imageType="bmp" />;
-      case 'tiff-to-pdf':
-        return <ImageToPDFTool imageType="tiff" />;
-      case 'svg-to-pdf':
-        return <ImageToPDFTool imageType="svg" />;
-      case 'heic-to-pdf':
-        return <ImageToPDFTool imageType="heic" />;
-      case 'psd-to-pdf':
-        return <PSDToPDFTool />;
-      case 'txt-to-pdf':
-        return <TextToPDFTool />;
-      case 'json-to-pdf':
-        return <JSONToPDFTool />;
-      // Optimize & Repair tools
-      case 'compress-pdf':
-        return <CompressPDFTool />;
-      case 'sign-pdf':
-        return <SignPDFTool />;
-      case 'crop-pdf':
-        return <CropPDFTool />;
-      case 'fix-page-size':
-        return <FixPageSizeTool />;
-      case 'organize-pdf':
-        return <OrganizePDFTool />;
-      case 'extract-pages':
-        return <ExtractPagesTool />;
-      case 'bookmark':
-        return <BookmarkTool />;
-      case 'page-numbers':
-        return <PageNumbersTool />;
-      case 'add-watermark':
-        return <WatermarkTool />;
-      case 'header-footer':
-        return <HeaderFooterTool />;
-      case 'invert-colors':
-        return <InvertColorsTool />;
-      case 'background-color':
-        return <BackgroundColorTool />;
-      case 'text-color':
-        return <TextColorTool />;
-      case 'table-of-contents':
-        return <TableOfContentsTool />;
-      case 'add-stamps':
-        return <StampsTool />;
-      case 'remove-annotations':
-        return <RemoveAnnotationsTool />;
-      case 'form-filler':
-        return <FormFillerTool />;
-      case 'form-creator':
-        return <FormCreatorTool />;
-      case 'remove-blank-pages':
-        return <RemoveBlankPagesTool />;
-      case 'pdf-to-jpg':
-        return <PDFToImageTool outputFormat="jpg" />;
-      case 'pdf-to-png':
-        return <PDFToImageTool outputFormat="png" />;
-      case 'pdf-to-webp':
-        return <PDFToImageTool outputFormat="webp" />;
-      case 'pdf-to-bmp':
-        return <PDFToImageTool outputFormat="bmp" />;
-      case 'pdf-to-tiff':
-        return <PDFToImageTool outputFormat="tiff" />;
-      case 'pdf-to-svg':
-        return <PDFToSVGTool />;
-      case 'pdf-to-greyscale':
-        return <PDFToGreyscaleTool />;
-      case 'pdf-to-json':
-        return <PDFToJSONTool />;
-      case 'pdf-to-docx':
-        return <PDFToDocxTool />;
-      case 'pdf-to-pptx':
-        return <PDFToPptxTool />;
-      case 'pdf-to-excel':
-        return <PDFToExcelTool />;
-      case 'ocr-pdf':
-        return <OCRPDFTool />;
-      case 'linearize-pdf':
-        return <LinearizePDFTool />;
-      case 'page-dimensions':
-        return <PageDimensionsTool />;
-      case 'remove-restrictions':
-        return <RemoveRestrictionsTool />;
-      case 'repair-pdf':
-        return <RepairPDFTool />;
-      case 'encrypt-pdf':
-        return <EncryptPDFTool />;
-      case 'decrypt-pdf':
-        return <DecryptPDFTool />;
-      case 'sanitize-pdf':
-        return <SanitizePDFTool />;
-      case 'flatten-pdf':
-        return <FlattenPDFTool />;
-      case 'remove-metadata':
-        return <RemoveMetadataTool />;
-      case 'change-permissions':
-        return <ChangePermissionsTool />;
-      // Office to PDF conversion tools
-      case 'word-to-pdf':
-        return <WordToPDFTool />;
-      case 'excel-to-pdf':
-        return <ExcelToPDFTool />;
-      case 'pptx-to-pdf':
-        return <PPTXToPDFTool />;
-      case 'xps-to-pdf':
-        return <XPSToPDFTool />;
-      case 'rtf-to-pdf':
-        return <RTFToPDFTool />;
-      case 'epub-to-pdf':
-        return <EPUBToPDFTool />;
-      case 'mobi-to-pdf':
-        return <MOBIToPDFTool />;
-      case 'fb2-to-pdf':
-        return <FB2ToPDFTool />;
-      // Add more tool cases here as they are implemented
+      case 'merge-pdf': return <MergePDFTool />;
+      case 'split-pdf': return <SplitPDFTool />;
+      case 'delete-pages': return <DeletePagesTool />;
+      case 'rotate-pdf': return <RotatePDFTool />;
+      case 'rotate-custom': return <RotateCustomTool />;
+      case 'add-blank-page': return <AddBlankPageTool />;
+      case 'reverse-pages': return <ReversePagesTool />;
+      case 'n-up-pdf': return <NUpPDFTool />;
+      case 'grid-combine': return <GridCombineTool />;
+      case 'alternate-merge': return <AlternateMergeTool />;
+      case 'divide-pages': return <DividePagesTool />;
+      case 'combine-single-page': return <CombineSinglePageTool />;
+      case 'posterize-pdf': return <PosterizePDFTool />;
+      case 'pdf-multi-tool': return <PDFMultiTool />;
+      case 'add-attachments': return <AddAttachmentsTool />;
+      case 'extract-attachments': return <ExtractAttachmentsTool />;
+      case 'extract-images': return <ExtractImagesTool />;
+      case 'edit-attachments': return <EditAttachmentsTool />;
+      case 'view-metadata': return <ViewMetadataTool />;
+      case 'edit-metadata': return <EditMetadataTool />;
+      case 'pdf-to-zip': return <PDFsToZipTool />;
+      case 'compare-pdfs': return <ComparePDFsTool />;
+      case 'edit-pdf': return <EditPDFTool />;
+      case 'image-to-pdf': return <ImageToPDFTool />;
+      case 'jpg-to-pdf': return <ImageToPDFTool imageType="jpg" />;
+      case 'png-to-pdf': return <ImageToPDFTool imageType="png" />;
+      case 'webp-to-pdf': return <ImageToPDFTool imageType="webp" />;
+      case 'bmp-to-pdf': return <ImageToPDFTool imageType="bmp" />;
+      case 'tiff-to-pdf': return <ImageToPDFTool imageType="tiff" />;
+      case 'svg-to-pdf': return <ImageToPDFTool imageType="svg" />;
+      case 'heic-to-pdf': return <ImageToPDFTool imageType="heic" />;
+      case 'psd-to-pdf': return <PSDToPDFTool />;
+      case 'txt-to-pdf': return <TextToPDFTool />;
+      case 'json-to-pdf': return <JSONToPDFTool />;
+      case 'compress-pdf': return <CompressPDFTool />;
+      case 'sign-pdf': return <SignPDFTool />;
+      case 'crop-pdf': return <CropPDFTool />;
+      case 'fix-page-size': return <FixPageSizeTool />;
+      case 'organize-pdf': return <OrganizePDFTool />;
+      case 'extract-pages': return <ExtractPagesTool />;
+      case 'bookmark': return <BookmarkTool />;
+      case 'page-numbers': return <PageNumbersTool />;
+      case 'add-watermark': return <WatermarkTool />;
+      case 'header-footer': return <HeaderFooterTool />;
+      case 'invert-colors': return <InvertColorsTool />;
+      case 'background-color': return <BackgroundColorTool />;
+      case 'text-color': return <TextColorTool />;
+      case 'table-of-contents': return <TableOfContentsTool />;
+      case 'add-stamps': return <StampsTool />;
+      case 'remove-annotations': return <RemoveAnnotationsTool />;
+      case 'form-filler': return <FormFillerTool />;
+      case 'form-creator': return <FormCreatorTool />;
+      case 'remove-blank-pages': return <RemoveBlankPagesTool />;
+      case 'pdf-to-jpg': return <PDFToImageTool outputFormat="jpg" />;
+      case 'pdf-to-png': return <PDFToImageTool outputFormat="png" />;
+      case 'pdf-to-webp': return <PDFToImageTool outputFormat="webp" />;
+      case 'pdf-to-bmp': return <PDFToImageTool outputFormat="bmp" />;
+      case 'pdf-to-tiff': return <PDFToImageTool outputFormat="tiff" />;
+      case 'pdf-to-svg': return <PDFToSVGTool />;
+      case 'pdf-to-greyscale': return <PDFToGreyscaleTool />;
+      case 'pdf-to-json': return <PDFToJSONTool />;
+      case 'pdf-to-docx': return <PDFToDocxTool />;
+      case 'pdf-to-pptx': return <PDFToPptxTool />;
+      case 'pdf-to-excel': return <PDFToExcelTool />;
+      case 'ocr-pdf': return <OCRPDFTool />;
+      case 'linearize-pdf': return <LinearizePDFTool />;
+      case 'page-dimensions': return <PageDimensionsTool />;
+      case 'remove-restrictions': return <RemoveRestrictionsTool />;
+      case 'repair-pdf': return <RepairPDFTool />;
+      case 'encrypt-pdf': return <EncryptPDFTool />;
+      case 'decrypt-pdf': return <DecryptPDFTool />;
+      case 'sanitize-pdf': return <SanitizePDFTool />;
+      case 'flatten-pdf': return <FlattenPDFTool />;
+      case 'remove-metadata': return <RemoveMetadataTool />;
+      case 'change-permissions': return <ChangePermissionsTool />;
+      case 'word-to-pdf': return <WordToPDFTool />;
+      case 'excel-to-pdf': return <ExcelToPDFTool />;
+      case 'pptx-to-pdf': return <PPTXToPDFTool />;
+      case 'xps-to-pdf': return <XPSToPDFTool />;
+      case 'rtf-to-pdf': return <RTFToPDFTool />;
+      case 'epub-to-pdf': return <EPUBToPDFTool />;
+      case 'mobi-to-pdf': return <MOBIToPDFTool />;
+      case 'fb2-to-pdf': return <FB2ToPDFTool />;
       default:
-        return (
-          <div className="p-8 text-center text-[hsl(var(--color-muted-foreground))]">
-            <p>{t('tools.comingSoon')}</p>
-          </div>
-        );
+        return <div className="p-8 text-center text-muted-foreground"><p>{t('tools.comingSoon')}</p></div>;
     }
   };
 
   return (
     <>
-      {/* Structured Data */}
-      <JsonLd data={toolStructuredData} />
-      <JsonLd data={webPageStructuredData} />
-      <JsonLd data={breadcrumbStructuredData} />
-      {faqStructuredData && <JsonLd data={faqStructuredData} />}
-      {howToStructuredData && <JsonLd data={howToStructuredData} />}
+      {/* 3. ONLY ONE JsonLd CALL WITH ALL DATA (ERROR FIX) */}
+      <JsonLd data={allSchemas} />
 
-      {/* Tool Page */}
       <ToolPage
         tool={tool}
         content={content}

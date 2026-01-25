@@ -1,8 +1,6 @@
 /**
  * Robots.txt Generation
  * Configures crawling rules for search engines
- * 
- * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/robots
  */
 
 import { MetadataRoute } from 'next';
@@ -15,15 +13,24 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        allow: '/',
-        // Humne disallow hata diya hai taaki Google aapki saari CSS aur JS padh sake
-        // Isse "Mobile Friendly" hone ka score badhta hai
+        allow: [
+          '/', 
+          '/_next/static/', // Zaroori hai taaki Google CSS/JS padh sake
+          '/favicon.ico',
+        ],
         disallow: [
-          '/api/', // Private data ko hide rakhne ke liye
+          '/api/',       // Private API routes
+          '/admin/',     // Agar koi admin panel hai toh
+          '/*?*',        // Search parameters wale pages (crawl budget bachane ke liye)
         ],
       },
+      {
+        // AI Bots ko block karna chaho toh (Optional)
+        userAgent: ['GPTBot', 'CCBot'],
+        disallow: ['/'],
+      }
     ],
-    // YE LINK EKDUM SAHI HONA CHAHIYE
+    // ASLI DOMAIN AUR SITEMAP LINK
     sitemap: 'https://www.pdftara.com/sitemap.xml',
   };
 }
