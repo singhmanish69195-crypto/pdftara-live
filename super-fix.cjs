@@ -35,17 +35,17 @@ allFiles.forEach(filePath => {
     let original = content;
 
     // 1. Agar sirf 'www.pdftara.com' likha hai (Single Quote)
-    content = content.replace(/'www\.pdftara\.com'/g, "'https://www.pdftara.com'");
+    content = content.replace(/'www\.pdftara\.com'/g, "'https://www.pdftara.com/'");
     
     // 2. Agar sirf "www.pdftara.com" likha hai (Double Quote)
-    content = content.replace(/"www\.pdftara\.com"/g, '"https://www.pdftara.com"');
+    content = content.replace(/"www\.pdftara\.com"/g, '"https://www.pdftara.com/"');
 
     // 3. Agar backtick www.pdftara.com hai
-    content = content.replace(/www\.pdftara\.com/g, 'https://www.pdftara.com');
+    content = content.replace(/www\.pdftara\.com/g, 'https://www.pdftara.com/');
 
     // 4. Double check: Agar 'http://' hai to 'https://' karo
-    content = content.replace(/http:\/\/www\.pdftara\.com/g, 'https://www.pdftara.com');
-    content = content.replace(/http:\/\/pdftara\.com/g, 'https://www.pdftara.com');
+    content = content.replace(/http:\/\/www\.pdftara\.com/g, 'https://www.pdftara.com/');
+    content = content.replace(/http:\/\/pdftara\.com/g, 'https://www.pdftara.com/');
 
     // 5. Case Sensitive Fix (PDFTara -> pdftara)
     content = content.replace(/PDFTara\.com/g, 'pdftara.com');

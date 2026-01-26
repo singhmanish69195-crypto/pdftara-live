@@ -44,7 +44,7 @@ export async function generateMetadata({
 
   return {
     ...metadata,
-    metadataBase: new URL('https://www.pdftara.com'),
+    metadataBase: new URL('https://www.pdftara.com/'),
     
     title: {
       default: titleText,

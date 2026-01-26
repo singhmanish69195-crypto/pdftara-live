@@ -1,34 +1,36 @@
 import type { Metadata } from 'next';
 import '@/app/globals.css';
 
-// 1. Metadata Base
+// 1. Metadata Configuration - Fixed for SEO and Branding
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.pdftara.com'),
+  metadataBase: new URL('https://www.pdftara.com/'),
   
   title: {
-    default: 'PDFTara - Free Online PDF Tools | Merge, Split & Compress PDF',
-    template: '%s | PDFTara - Secure & Free'
+    default: 'PDFTara.com - Free Online PDF Tools | Merge, Split & Compress',
+    template: '%s | PDFTara.com - Secure & Free'
   },
   
-  description: 'The best free online PDF tools to merge, split, compress, and convert PDFs. 100% private & secure - files are processed locally in your browser and never uploaded to servers.',
+  description: 'PDFTara.com offers the best free online PDF tools to merge, split, compress, and convert PDFs. 100% private & secure browser-based processing.',
   
   keywords: [
-    'PDF tools', 'free pdf editor', 'merge pdf online', 'split pdf', 'compress pdf', 
-    'convert pdf to word', 'jpg to pdf', 'secure pdf tools', 'offline pdf editor'
+    'PDF tools', 'PDFTara.com', 'merge pdf online', 'split pdf', 'compress pdf', 
+    'convert pdf to word', 'secure pdf tools', 'no upload pdf editor'
   ],
 
-  authors: [{ name: 'PDFTara Team', url: 'https://www.pdftara.com' }],
-  creator: 'PDFTara',
-  publisher: 'PDFTara',
+  authors: [{ name: 'PDFTara Team', url: 'https://www.pdftara.com/' }],
+  creator: 'PDFTara.com',
+  publisher: 'PDFTara.com',
 
-  // Canonical aur Language Alternates
+  // Canonical aur Alternates Fix: Forced trailing slashes to prevent redirects
   alternates: {
-    canonical: '/',
+    canonical: 'https://www.pdftara.com/',
     languages: {
-      'en-US': '/en',
-      'zh-CN': '/zh',
-      'es-ES': '/es',
-      'hi-IN': '/hi',
+      'en-US': '/en/',
+      'zh-TW': '/zh-TW/',
+      'es-ES': '/es/',
+      'hi-IN': '/hi-IN/',
+      'ko-KR': '/ko/',
+      'ja-JP': '/ja/',
     },
   },
 
@@ -46,21 +48,21 @@ export const metadata: Metadata = {
 
   openGraph: {
     type: 'website',
-    url: 'https://www.pdftara.com',
-    siteName: 'PDFTara',
-    title: 'PDFTara - 100% Free & Private PDF Tools',
-    description: 'Process PDFs directly in your browser. No uploads, no waiting, completely secure.',
+    url: 'https://www.pdftara.com/',
+    siteName: 'PDFTara.com',
+    title: 'PDFTara.com - 100% Free & Private PDF Tools',
+    description: 'Process PDFs directly in your browser. No uploads, completely secure.',
     images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
   },
 
   twitter: {
     card: 'summary_large_image',
-    title: 'PDFTara - Free & Secure PDF Tools',
+    title: 'PDFTara.com - Free & Secure PDF Tools',
     description: 'Merge, Split, and Convert PDFs instantly in your browser.',
   },
 
   verification: {
-    // IMPORTANT: Yahan apna asli GSC code daalna
+    // IMPORTANT: Yahan apna asli GSC code daalna mat bhulna
     google: 'GSC_KA_ASLI_CODE_YAHAN_DALO', 
   },
 
@@ -70,19 +72,20 @@ export const metadata: Metadata = {
   },
 };
 
-// YAHAN MAIN CHANGE KIYA HAI
-// `params: Promise<any>` kar diya taaki TypeScript strict checking na kare
+/**
+ * Root Layout Component
+ * Handles locale detection and global styles
+ */
 export default async function RootLayout({
   children,
   params
 }: {
   children: React.ReactNode;
-  params: Promise<any>; // <--- Ye 'any' tumhara error khatam kar dega
+  params: Promise<{ locale?: string }>;
 }) {
   
-  // Params ko await karo
+  // Dynamic params ko await karna Next.js 15+ ke liye zaroori hai
   const resolvedParams = await params;
-  // Locale nikalo, agar nahi mila to 'en' default le lo
   const locale = resolvedParams?.locale || 'en';
 
   return (
@@ -90,6 +93,7 @@ export default async function RootLayout({
       <head>
         <meta name="color-scheme" content="light dark" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        {/* Scrollbar gutter prevents layout shift on load */}
         <style dangerouslySetInnerHTML={{ __html: 'html{scrollbar-gutter:stable}' }} />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">

@@ -22,17 +22,17 @@ files.forEach(file => {
         content = content.replace(/PDFTara\.com/g, 'pdftara.com');
         
         // 2. Fix Double WWW (www.www -> www)
-        content = content.replace(/www\.www\.pdftara\.com/g, 'https://www.pdftara.com');
+        content = content.replace(/www\.www\.pdftara\.com/g, 'https://www.pdftara.com/');
         
         // 3. Fix Missing WWW (https://pdftara -> https://www.pdftara)
-        content = content.replace(/https:\/\/pdftara\.com/g, 'https://www.pdftara.com');
+        content = content.replace(/https:\/\/pdftara\.com/g, 'https://www.pdftara.com/');
 
         // 4. Fix http -> https
         content = content.replace(/http:\/\/www\.pdftara/g, 'https://www.pdftara');
 
-        // 5. Fix strings missing https (e.g. 'https://www.pdftara.com' -> 'https://www.pdftara.com')
-        content = content.replace(/'www\.pdftara\.com/g, "'https://www.pdftara.com");
-        content = content.replace(/"www\.pdftara\.com/g, '"https://www.pdftara.com');
+        // 5. Fix strings missing https (e.g. 'https://www.pdftara.com/' -> 'https://www.pdftara.com/')
+        content = content.replace(/'www\.pdftara\.com/g, "'https://www.pdftara.com/");
+        content = content.replace(/"www\.pdftara\.com/g, '"https://www.pdftara.com/');
 
         if (content !== original) {
             fs.writeFileSync(filePath, content, 'utf8');
