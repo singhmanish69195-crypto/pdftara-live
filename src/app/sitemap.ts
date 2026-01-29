@@ -1,10 +1,11 @@
 /**
- * Sitemap Generation with Supabase Integration - VERSION 3.1
+ * Sitemap Generation with Supabase Integration - VERSION 3.2
  * Purpose: Generates a dynamic sitemap.xml with multi-language support.
  * 
  * FIX LOG: 
- * 1. Removed 'status' filter because the column does not exist in the database.
- * 2. Optimized Supabase fetch to ensure blog posts appear in sitemap.xml.
+ * 1. Added trailing slash to BASE_URL as per user preference.
+ * 2. Enhanced buildUrl to strip extra slashes and prevent double-slash (//) errors.
+ * 3. Optimized Supabase fetch for blog posts indexing.
  */
 
 import { MetadataRoute } from 'next';
@@ -27,8 +28,9 @@ export const revalidate = 3600;
 
 /**
  * BASE PRODUCTION URL
+ * Added trailing slash as requested.
  */
-const BASE_URL = 'https://www.pdftara.com';
+const BASE_URL = 'https://www.pdftara.com/';
 
 /**
  * SEO PRIORITY CONFIGURATION
@@ -58,12 +60,18 @@ const STATIC_PAGES = [
 ];
 
 /**
- * CRITICAL HELPER: buildUrl
+ * CRITICAL HELPER: buildUrl (ANTI-DOUBLE SLASH ENGINE)
+ * Ensures final URL is clean: Domain + Locale + Path + Trailing Slash
  */
 const buildUrl = (locale: string, path: string) => {
+  // Base URL se aakhri slash hatao taaki hum khud sahi se jodd sakein
+  const cleanBase = BASE_URL.replace(/\/+$/, ''); 
+  // Path se leading/trailing slashes saaf karein
   const cleanPath = path.replace(/^\/+|\/+$/g, '');
+  // Agar path hai toh slash lagayein, nahi toh khali rakhein
   const segment = cleanPath ? `${cleanPath}/` : '';
-  return `${BASE_URL}/${locale}/${segment}`;
+  
+  return `${cleanBase}/${locale}/${segment}`;
 };
 
 /**
@@ -116,12 +124,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   /**
-   * PHASE 3: BLOG POSTS (FIXED FETCH)
-   * Removed 'status' filter because column is missing in DB.
+   * PHASE 3: BLOG POSTS (DYNAMO FETCH)
    */
   const { data: posts, error } = await supabase
     .from('posts') 
-    .select('slug'); // Sirf slug fetch kar rahe hain kyunki Dashboard mein wahi dikh raha hai.
+    .select('slug');
 
   if (posts && !error) {
     for (const post of posts) {
@@ -130,7 +137,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         const finalBlogUrl = buildUrl(locale, blogField);
         allEntries.push({
           url: finalBlogUrl,
-          lastModified, // Default modified date
+          lastModified,
           changeFrequency: 'daily',
           priority: PRIORITY.blogPost,
           alternates: {
@@ -146,6 +153,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return allEntries;
 }
 
+/**
+ * STATS HELPER
+ */
 export function getSitemapUrlCount(): number {
   const toolsCount = getAllTools().length;
   const baseCount = STATIC_PAGES.length + toolsCount;
@@ -154,6 +164,6 @@ export function getSitemapUrlCount(): number {
 
 /**
  * -------------------------------------------------------------------------
- * END OF SITEMAP FILE
+ * END OF SITEMAP FILE - VERSION 3.2 (STABLE)
  * -------------------------------------------------------------------------
  */
