@@ -105,23 +105,53 @@ export async function generateStaticParams() {
   );
 }
 
+// --- SEO JUGAD START: Dynamic Title & Description Engine ---
 export async function generateMetadata({ params }: ToolPageParams): Promise<Metadata> {
   const { locale: localeParam, tool: toolSlug } = await params;
   const locale = localeParam as Locale;
   const tool = getToolById(toolSlug);
-  const t = await getTranslations({ locale, namespace: 'errors' });
+  const content = getToolContent(locale, tool?.id || '');
 
-  if (!tool) return { title: t('toolNotFound') };
-  const content = getToolContent(locale, tool.id);
-  if (!content) return { title: tool.id };
+  if (!tool || !content) return { title: 'PDF Tool | PDFTara' };
 
-  return generateToolMetadata({
+  // Har Language ke liye Clickable "Power Phrases"
+  const seoMap: Record<string, { suffix: string; desc: string }> = {
+    en: { suffix: 'Free Online (2026) - No Signup', desc: 'Use our [TOOL] online for free. 100% Secure, fast, and no registration required. Your files stay private.' },
+    ja: { suffix: '無料オンライン (2026) - 登録不要', desc: '[TOOL]をオンラインで無料で利用。100%安全、高速、登録不要。ファイルは非公開のままです。' },
+    ko: { suffix: '무료 온라인 (2026) - 가입 없음', desc: '[TOOL]을 온라인에서 무료로 사용하세요. 100% 보안, 신속, 가입 불필요. 파일은 비공개로 유지됩니다.' },
+    es: { suffix: 'Gratis en línea (2026) - Sin registro', desc: 'Usa nuestro [TOOL] en línea gratis. 100% seguro, rápido y sin registro. Tus archivos son privados.' },
+    fr: { suffix: 'Gratuit en ligne (2026) - Sans inscription', desc: 'Utilisez notre [TOOL] en ligne gratuitement. 100% sécurisé, rapide et sans inscription.' },
+    de: { suffix: 'Kostenlos Online (2026) - Ohne Anmeldung', desc: 'Nutzen Sie unser [TOOL] online kostenlos. 100% sicher, schnell und ohne Anmeldung.' },
+    zh: { suffix: '免费在线 (2026) - 无需注册', desc: '免费在线使用我们的[TOOL]。100%安全、快速、无需注册。您的文件保持私密。' },
+    pt: { suffix: 'Grátis Online (2026) - Sem Registro', desc: 'Use nosso [TOOL] online gratuitamente. 100% seguro, rápido e sem registro.' },
+  };
+
+  const currentSeo = seoMap[locale] || seoMap['en'];
+  const finalTitle = `${content.title} ${currentSeo.suffix} | PDFTara`;
+  const finalDesc = currentSeo.desc.replace('[TOOL]', content.title);
+
+  const baseMetadata = await generateToolMetadata({
     tool,
     content,
     locale,
     path: `/tools/${toolSlug}`,
   });
+
+  return {
+    ...baseMetadata,
+    title: finalTitle,
+    description: finalDesc,
+    // Hreflang Tags: Sabse zaroori ranking ke liye
+    alternates: {
+      canonical: `https://www.pdftara.com/${locale}/tools/${toolSlug}`,
+      languages: SUPPORTED_LOCALES.reduce((acc, l) => {
+        acc[l] = `https://www.pdftara.com/${l}/tools/${toolSlug}`;
+        return acc;
+      }, {} as Record<string, string>),
+    },
+  };
 }
+// --- SEO JUGAD END ---
 
 export default async function ToolPageRoute({ params }: ToolPageParams) {
   const { locale: localeParam, tool: toolSlug } = await params;
@@ -135,15 +165,13 @@ export default async function ToolPageRoute({ params }: ToolPageParams) {
   const content = getToolContent(locale, tool.id);
   if (!content) notFound();
 
-  // 1. GENERATE ALL SCHEMAS
+  // 1. GENERATE ALL SCHEMAS (Fixed for Google Search Console errors)
   const toolSchema = generateSoftwareApplicationSchema(tool, content, locale);
-  
-  // FIX: Force missing fields for SoftwareApplication error
   const fixedToolSchema = {
     ...toolSchema,
-    "operatingSystem": "Windows, macOS, Android, iOS, Web",
+    "operatingSystem": "Windows, macOS, Linux, Android, iOS",
     "applicationCategory": "UtilitiesApplication",
-    "offers": toolSchema.offers || {
+    "offers": {
       "@type": "Offer",
       "price": "0",
       "priceCurrency": "USD"
@@ -162,7 +190,6 @@ export default async function ToolPageRoute({ params }: ToolPageParams) {
     locale
   );
 
-  // 2. CONSOLIDATE INTO ONE ARRAY (CHOR PAKAD LIYA)
   const allSchemas: object[] = [fixedToolSchema, webPageSchema, breadcrumbSchema];
   if (faqSchema) allSchemas.push(faqSchema);
   if (howToSchema) allSchemas.push(howToSchema);
@@ -270,9 +297,7 @@ export default async function ToolPageRoute({ params }: ToolPageParams) {
 
   return (
     <>
-      {/* 3. ONLY ONE JsonLd CALL WITH ALL DATA (ERROR FIX) */}
       <JsonLd data={allSchemas} />
-
       <ToolPage
         tool={tool}
         content={content}

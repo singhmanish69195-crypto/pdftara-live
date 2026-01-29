@@ -12,10 +12,6 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
-/**
- * Viewport configuration for performance
- * Requirements: 8.1 - Lighthouse performance score 90+
- */
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -32,40 +28,41 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  // Validate locale
   const validLocale = locales.includes(locale as Locale) ? (locale as Locale) : 'en';
-
-  // Generate metadata using the SEO module
   const metadata = await generateHomeMetadata(validLocale);
 
-  // --- 🏆 ULTIMATE SEO MAGNET (RANK #1 FORMULA) ---
-  const titleText = "Free PDF Editor & Tools (2026) - No Watermark, No Signup | PDFTara";
-  const descText = "⭐⭐⭐⭐⭐ The #1 Free PDF Toolkit. Merge, Split, Compress & Edit PDFs entirely in your browser. 100% Private (No Uploads), No Watermark, No Sign-up. Instant Download.";
+  // --- 🌍 MULTI-LANGUAGE SEO ENGINE (9 Languages) ---
+  const seoData: Record<string, { title: string; desc: string }> = {
+    en: { title: "Free PDF Editor & Tools (2026) - No Watermark, No Signup", desc: "The #1 Free PDF Toolkit. Merge, Split, Compress & Edit PDFs entirely in your browser. 100% Private, No Watermark, No Sign-up." },
+    hi: { title: "फ्री PDF एडिटर और टूल्स (2026) - बिना वॉटरमार्क, कोई साइनअप नहीं", desc: "नंबर 1 फ्री पीडीएफ टूलकिट। ब्राउज़र में पीडीएफ मर्ज, स्प्लिट, कंप्रेस और एडिट करें। 100% सुरक्षित और मुफ्त।" },
+    ja: { title: "無料PDFエディター＆ツール (2026) - ウォーターマークなし、登録不要", desc: "ナンバーワンの無料PDFツールキット。ブラウザでPDFの結合、分割、圧縮、編集。100%プライベート。" },
+    ko: { title: "무료 PDF 편집기 및 도구 (2026) - 워터마크 없음, 가입 없음", desc: "최고의 무료 PDF 도구 모음. 브라우저에서 바로 PDF 병합, 분할, 압축 및 편집. 100% 안전." },
+    es: { title: "Editor de PDF gratuito y herramientas (2026) - Sin marca de agua", desc: "El kit de herramientas PDF gratuito n.º 1. Combine, divida, comprima y edite archivos PDF. 100% privado." },
+    fr: { title: "Éditeur PDF gratuit et outils (2026) - Sans filigrane", desc: "La boîte d'outils PDF gratuite n°1. Fusionnez, divisez, compressez et modifiez des PDF. 100 % privé." },
+    de: { title: "Kostenloser PDF-Editor & Tools (2026) - Ohne Wasserzeichen", desc: "Das PDF-Toolkit Nr. 1. PDFs im Browser zusammenführen, teilen, komprimieren und bearbeiten. 100 % privat." },
+    zh: { title: "免费 PDF 编辑器和工具 (2026) - 无水印，无需注册", desc: "排名第一的免费 PDF 工具包。在浏览器中合并、拆分、压缩和编辑 PDF。100% 私密。" },
+    pt: { title: "Editor de PDF Gratuito e Ferramentas (2026) - Sem Marca d'Água", desc: "O kit de ferramentas PDF gratuito nº 1. Mescle, divida, comprima e edite PDFs no navegador. 100% privado." }
+  };
+
+  const currentSeo = seoData[validLocale] || seoData['en'];
 
   return {
     ...metadata,
     metadataBase: new URL('https://www.pdftara.com/'),
-    
     title: {
-      default: titleText,
-      // 'Template' ensure karega ki tumhare tools page bhi rank karein
-      // Example: "Merge PDF | PDFTara - Free, No Watermark"
-      template: `%s | PDFTara - Free, No Watermark, No Signup`, 
+      default: `${currentSeo.title} | PDFTara`,
+      template: `%s | PDFTara - Free PDF Tools (2026)`, 
     },
-    description: descText,
+    description: currentSeo.desc,
     
-    keywords: [
-      "Free PDF Editor", 
-      "No Watermark PDF Tool", 
-      "No Signup PDF Converter", 
-      "Merge PDF Free", 
-      "Compress PDF Online", 
-      "Private PDF Editor", 
-      "PDFTara", 
-      "2026 PDF Tools",
-      "Edit PDF in Browser",
-      "Secure PDF Tools"
-    ],
+    // HREFLANG TAGS: Google ko batane ke liye ki site multi-language hai
+    alternates: {
+      canonical: `https://www.pdftara.com/${validLocale}`,
+      languages: locales.reduce((acc, l) => {
+        acc[l] = `https://www.pdftara.com/${l}`;
+        return acc;
+      }, {} as Record<string, string>),
+    },
 
     robots: {
       index: true,
@@ -73,40 +70,18 @@ export async function generateMetadata({
       googleBot: {
         index: true,
         follow: true,
-        'max-video-preview': -1,
         'max-image-preview': 'large',
         'max-snippet': -1,
       },
     },
 
-    alternates: {
-      canonical: `/${validLocale}`,
-      languages: {
-        'en': '/en',
-      }
-    },
-
     openGraph: {
       ...metadata.openGraph,
-      title: titleText,
-      description: descText,
+      title: currentSeo.title,
+      description: currentSeo.desc,
       url: `https://www.pdftara.com/${validLocale}`,
-      siteName: 'PDFTara - Secure & Free',
-      type: 'website',
-      images: [
-         {
-           url: 'https://www.pdftara.com/og-image-home.jpg', // Apni achi image ka path zarur check karna
-           width: 1200,
-           height: 630,
-           alt: 'PDFTara - Free PDF Tools 2026',
-         }
-      ]
-    },
-    twitter: {
-      ...metadata.twitter,
-      card: 'summary_large_image',
-      title: titleText,
-      description: descText,
+      siteName: 'PDFTara',
+      images: [{ url: '/og-image-home.jpg', width: 1200, height: 630 }]
     }
   };
 }
@@ -119,59 +94,43 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  if (!locales.includes(locale as Locale)) notFound();
 
-  // Validate locale
-  if (!locales.includes(locale as Locale)) {
-    notFound();
-  }
-
-  // Enable static rendering
   setRequestLocale(locale);
-
-  // Get messages for the locale
   const messages = await getMessages();
-
-  // Get direction for the locale
   const direction = localeConfig[locale as Locale]?.direction || 'ltr';
 
-  // --- ⭐⭐⭐⭐⭐ SCHEMA MARKUP FOR 5 STAR RATING ---
-  // Ye code Google ko batata hai ki ye ek Software hai aur iski rating 4.9/5 hai
+  // --- ⭐⭐⭐⭐⭐ 5-STAR RATING SCHEMA ---
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    'name': 'PDFTara PDF Tools',
-    'applicationCategory': 'BusinessApplication',
-    'operatingSystem': 'Web',
-    'offers': {
-      '@type': 'Offer',
-      'price': '0',
-      'priceCurrency': 'USD'
-    },
+    'name': 'PDFTara Free PDF Tools',
+    'applicationCategory': 'MultimediaApplication',
+    'operatingSystem': 'Web, Windows, macOS, Android, iOS',
+    'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
     'aggregateRating': {
       '@type': 'AggregateRating',
       'ratingValue': '4.9',
       'ratingCount': '18540',
       'bestRating': '5',
       'worstRating': '1'
-    },
-    'description': 'Process PDF files locally in your browser. No server uploads. 100% Private and Free.',
-    'featureList': 'Merge, Split, Compress, Convert, Edit PDF',
-    'screenshot': 'https://www.pdftara.com/screenshot.jpg' // Optional: Agar screenshot hai to link daal dena
+    }
   };
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <div lang={locale} dir={direction} className={`${fontVariables} min-h-screen bg-background text-foreground antialiased font-sans`}>
-        <SkipLink targetId="main-content">Skip to main content</SkipLink>
-        
-        {/* Schema Script Injection */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        
-        {children}
-      </div>
+      <html lang={locale} dir={direction} className={fontVariables}>
+        <head>
+           <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          />
+        </head>
+        <body className="min-h-screen bg-background text-foreground antialiased font-sans">
+          <SkipLink targetId="main-content">Skip to main content</SkipLink>
+          <main id="main-content">{children}</main>
+        </body>
+      </html>
     </NextIntlClientProvider>
   );
 }

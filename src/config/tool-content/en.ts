@@ -14,7 +14,7 @@ export const toolContentEn: Record<string, ToolContent> = {
   // ==================== POPULAR TOOLS ====================
   'pdf-multi-tool': {
     title: 'PDF Multi Tool',
-    metaDescription: 'All-in-one PDF editor: merge, split, organize, delete, rotate, and extract pages in one powerful tool.',
+    metaDescription: 'The best Free All-in-one PDF editor in 2026. Merge, split and edit PDFs instantly in your browser. No files are uploaded, 100% private',
     keywords: ['pdf multi tool', 'pdf editor', 'merge pdf', 'split pdf', 'organize pdf', 'all in one pdf'],
     description: `
       <p>The PDF Multi Tool is your comprehensive solution for all PDF page management tasks. This powerful all-in-one tool combines multiple PDF operations into a single, intuitive interface, saving you time and effort.</p>
