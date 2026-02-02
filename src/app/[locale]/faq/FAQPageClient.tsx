@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { ChevronDown, ChevronUp, Search, ArrowRight, HelpCircle } from 'lucide-react';
+import { ChevronDown, Search, ArrowRight, HelpCircle } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
@@ -28,18 +28,16 @@ export default function FAQPageClient({ locale }: FAQPageClientProps) {
 
   // Hardcoded FAQs for Stability & AdSense
   const faqs: FAQItem[] = [
-    // General
     {
       category: 'general',
-      question: 'IsPDFTara really free to use?',
-      answer: 'Yes,PDFTara is completely free to use. You can merge, split, compress, and convert as many files as you want without any hidden charges or subscriptions.',
+      question: 'Is PDFTara really free to use?',
+      answer: 'Yes, PDFTara is completely free to use. You can merge, split, compress, and convert as many files as you want without any hidden charges or subscriptions.',
     },
     {
       category: 'general',
       question: 'Do I need to create an account?',
       answer: 'No, you do not need to register or create an account. Our tools are open for everyone to use instantly.',
     },
-    // Privacy & Security
     {
       category: 'privacy',
       question: 'Are my files uploaded to your server?',
@@ -50,7 +48,6 @@ export default function FAQPageClient({ locale }: FAQPageClientProps) {
       question: 'How long do you keep my files?',
       answer: 'Since we never upload your files, we do not store them. Once you close the browser tab, the processed data is automatically cleared from your browser memory.',
     },
-    // Technical
     {
       category: 'technical',
       question: 'What file formats do you support?',
@@ -64,15 +61,28 @@ export default function FAQPageClient({ locale }: FAQPageClientProps) {
     {
       category: 'technical',
       question: 'Does it work on Mobile and Tablet?',
-      answer: 'Yes,PDFTara is fully responsive and works on all modern devices including iPhones, Android phones, iPads, and Tablets.',
+      answer: 'Yes, PDFTara is fully responsive and works on all modern devices including iPhones, Android phones, iPads, and Tablets.',
     },
-    // Troubleshooting
     {
       category: 'troubleshooting',
       question: 'Why did my conversion fail?',
       answer: 'Ensure your file is not password protected and is a valid PDF. Also, check if you have enough free RAM on your device for large files.',
     },
   ];
+
+  // --- 🏆 FAQ SCHEMA FOR GOOGLE RICH SNIPPETS ---
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
 
   const categories = [
     { key: 'all', label: 'All Questions' },
@@ -82,7 +92,6 @@ export default function FAQPageClient({ locale }: FAQPageClientProps) {
     { key: 'troubleshooting', label: 'Troubleshooting' },
   ];
 
-  // Filter Logic
   const filteredFaqs = faqs.filter(faq => {
     const matchesSearch = searchQuery === '' ||
       faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -103,10 +112,16 @@ export default function FAQPageClient({ locale }: FAQPageClientProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* FAQ Schema Script Injection */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      
       <Header locale={locale} />
 
-      <main className="flex-1">
-        {/* Hero Section */}
+      {/* ID="main-content" fix taaki SEO aur Skip Link sahi chalein */}
+      <main id="main-content" className="flex-1">
         <section className="bg-gradient-to-b from-blue-50 to-white pt-24 pb-16">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
@@ -120,7 +135,6 @@ export default function FAQPageClient({ locale }: FAQPageClientProps) {
                 Find answers to common questions about {t('brand')} features, security, and usage.
               </p>
 
-              {/* Search Bar */}
               <div className="relative max-w-xl mx-auto shadow-xl shadow-blue-100/50 rounded-2xl">
                 <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                 <input
@@ -135,12 +149,9 @@ export default function FAQPageClient({ locale }: FAQPageClientProps) {
           </div>
         </section>
 
-        {/* FAQ Section */}
         <section className="py-16 bg-[#fafafa]">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
-              
-              {/* Filter Buttons */}
               <div className="flex flex-wrap gap-2 mb-10 justify-center">
                 {categories.map((cat) => (
                   <button
@@ -157,7 +168,6 @@ export default function FAQPageClient({ locale }: FAQPageClientProps) {
                 ))}
               </div>
 
-              {/* FAQ List */}
               {filteredFaqs.length > 0 ? (
                 <div className="space-y-4">
                   {filteredFaqs.map((faq, index) => (
@@ -200,12 +210,10 @@ export default function FAQPageClient({ locale }: FAQPageClientProps) {
                   </button>
                 </div>
               )}
-
             </div>
           </div>
         </section>
 
-        {/* Contact CTA */}
         <section className="py-20 bg-white border-t border-slate-100">
           <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto text-center">
@@ -215,7 +223,8 @@ export default function FAQPageClient({ locale }: FAQPageClientProps) {
               <p className="text-slate-500 mb-8 text-lg">
                 Can't find the answer you're looking for? Please chat to our friendly team.
               </p>
-              <Link href={`/${locale}/contact`}>
+              {/* FIX: Slash (/) add kiya Redirect Error hatane ke liye */}
+              <Link href={`/${locale}/contact/`}>
                 <Button variant="primary" size="lg" className="rounded-full px-8">
                   Get in Touch
                   <ArrowRight className="ml-2 h-4 w-4" />

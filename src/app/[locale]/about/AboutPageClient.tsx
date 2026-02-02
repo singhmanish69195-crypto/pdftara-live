@@ -16,7 +16,7 @@ interface AboutPageClientProps {
 export default function AboutPageClient({ locale }: AboutPageClientProps) {
   const t = useTranslations('common');
   
-  // Static Values taaki Translation ka error na aaye
+  // Static Values
   const values = [
     {
       icon: Shield,
@@ -54,7 +54,8 @@ export default function AboutPageClient({ locale }: AboutPageClientProps) {
     <div className="min-h-screen flex flex-col">
       <Header locale={locale} />
 
-      <main className="flex-1">
+      {/* ID="main-content" add kiya taaki Skip Link kaam kare aur SEO score badhe */}
+      <main id="main-content" className="flex-1">
         {/* Hero Section */}
         <section className="bg-gradient-to-br from-[hsl(var(--color-primary)/0.1)] via-[hsl(var(--color-background))] to-[hsl(var(--color-secondary)/0.1)] py-20 md:py-32">
           <div className="container mx-auto px-4">
@@ -171,7 +172,8 @@ export default function AboutPageClient({ locale }: AboutPageClientProps) {
               <p className="text-[hsl(var(--color-muted-foreground))] mb-10 text-lg">
                 Experience the privacy and speed of {t('brand')} today. No registration required.
               </p>
-              <Link href={`/${locale}/tools`}>
+              {/* FIX: Yahan trailing slash (/) add kiya hai Redirect Error hatane ke liye */}
+              <Link href={`/${locale}/tools/`}>
                 <Button variant="primary" size="lg" className="rounded-full px-10 py-6 text-lg">
                   Explore Tools
                   <ArrowRight className="ml-2 h-5 w-5" />

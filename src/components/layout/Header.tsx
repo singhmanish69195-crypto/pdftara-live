@@ -60,8 +60,8 @@ export const Header: React.FC<HeaderProps> = ({ locale, showSearch = true }) => 
   // Handle search query changes
   useEffect(() => {
     if (searchQuery.trim()) {
-      const results = searchTools(searchQuery, localizedTools); // Pass localized content
-      setSearchResults(results.slice(0, 8)); // Limit to 8 results
+      const results = searchTools(searchQuery, localizedTools);
+      setSearchResults(results.slice(0, 8));
       setSelectedIndex(-1);
     } else {
       setSearchResults([]);
@@ -141,7 +141,6 @@ export const Header: React.FC<HeaderProps> = ({ locale, showSearch = true }) => 
     setIsMobileMenuOpen((prev) => !prev);
   }, []);
 
-  // Get tool icon based on category
   const getToolIcon = (category: string) => {
     const icons: Record<string, string> = {
       'edit-annotate': '✏️',
@@ -164,70 +163,55 @@ export const Header: React.FC<HeaderProps> = ({ locale, showSearch = true }) => 
   return (
     <header
       className={`fixed top-0 z-50 w-full transition-all duration-300 ${scrolled || isMobileMenuOpen
-        ? 'bg-[hsl(var(--color-background))] backdrop-blur-md border-b border-[hsl(var(--color-border))/0.5] shadow-sm'
+        ? 'bg-white/90 dark:bg-gray-950/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm'
         : 'bg-transparent border-transparent'
         }`}
       role="banner"
     >
       <div className="container mx-auto px-4">
-        <div className="flex h-20 items-center justify-between">
-          {/* Logo and Brand */}
-          <div className="flex items-center gap-2">
+        <div className="flex h-20 items-center justify-between gap-4">
+          {/* Logo - Hidden when search is open on mobile */}
+          <div className={`flex items-center gap-2 transition-opacity ${isSearchOpen ? 'hidden sm:flex' : 'flex'}`}>
             <Link
               href={`/${locale}`}
-              className="group flex items-center gap-2.5 text-xl font-bold text-[hsl(var(--color-foreground))] hover:opacity-90 transition-opacity"
-              aria-label={`${t('brand')} - ${t('navigation.home')}`}
-              title="100% Free & Private PDF Tools - No File Uploads Needed"
+              className="group flex items-center gap-2.5 text-xl font-bold transition-opacity"
+              aria-label={t('brand')}
             >
-              <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[hsl(var(--color-primary))] to-[hsl(var(--color-accent))] shadow-lg shadow-primary/25 transition-transform group-hover:scale-105">
-                <svg
-                  className="h-5 w-5 text-white"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
+              <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/20 transition-transform group-hover:scale-105">
+                <svg className="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
                   <polyline points="14 2 14 8 20 8" />
                 </svg>
               </div>
-              
-              <span className="text-xl tracking-tight font-bold" data-testid="brand-name">
-                <span className="text-black dark:text-white">PDF</span>
-                <span className="text-[#3b82f6]">Tara</span>
+              <span className="text-xl tracking-tight font-bold">
+                <span className="text-gray-900 dark:text-white">PDF</span>
+                <span className="text-blue-600">Tara</span>
               </span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <nav
-            className={`hidden lg:flex items-center gap-1 rounded-full border border-[hsl(var(--color-border))/0.4] bg-[hsl(var(--color-background))/0.5] p-1.5 backdrop-blur-sm shadow-sm transition-all duration-300 ${isSearchOpen ? 'opacity-0 translate-y-[-10px] pointer-events-none' : 'opacity-100 translate-y-0'
-              }`}
-            role="navigation"
-            aria-label="Main navigation"
-          >
+          <nav className={`hidden lg:flex items-center gap-1 rounded-full border border-gray-200 dark:border-gray-800 bg-white/50 p-1.5 backdrop-blur-sm shadow-sm transition-all ${isSearchOpen ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'}`}>
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="px-4 py-1.5 text-sm font-medium text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-foreground))] hover:bg-[hsl(var(--color-muted))/0.5] rounded-full transition-all"
+                className="px-4 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-all"
               >
                 {item.label}
               </Link>
             ))}
           </nav>
 
-          {/* Right side actions */}
-          <div className="flex items-center gap-3">
-            {/* Search */}
+          {/* Right Actions */}
+          <div className={`flex items-center gap-2 sm:gap-3 ${isSearchOpen ? 'flex-1 justify-end' : ''}`}>
             {showSearch && (
-              <div className="relative" ref={searchContainerRef}>
+              <div className={`relative ${isSearchOpen ? 'w-full' : ''}`} ref={searchContainerRef}>
                 {isSearchOpen ? (
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 z-50 origin-right animate-in fade-in slide-in-from-right-4 duration-200">
-                    <div className="relative w-72 md:w-96">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--color-muted-foreground))]" />
+                  <div className="flex items-center w-full animate-in fade-in slide-in-from-right-4 duration-200">
+                    {/* Fixed Width on Tablet/Laptop, Responsive on Mobile */}
+                    <div className="relative w-full sm:w-72 md:w-96">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <input
                         ref={searchInputRef}
                         type="search"
@@ -235,52 +219,35 @@ export const Header: React.FC<HeaderProps> = ({ locale, showSearch = true }) => 
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={handleKeyDown}
                         placeholder={t('search.placeholder') || 'Search tools...'}
-                        className="w-full pl-10 pr-10 py-2.5 text-sm rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-background))] shadow-lg focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary))]"
-                        aria-label="Search tools"
+                        className="w-full pl-10 pr-10 py-2.5 text-sm rounded-xl border border-gray-200 bg-white shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                         autoComplete="off"
                       />
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={handleSearchToggle}
-                        aria-label="Close search"
                         className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent"
                       >
-                        <X className="h-4 w-4 text-[hsl(var(--color-muted-foreground))]" aria-hidden="true" />
+                        <X className="h-4 w-4 text-gray-400" />
                       </Button>
 
-                      {/* Search Results Dropdown */}
+                      {/* Search Results */}
                       {searchResults.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-[hsl(var(--color-background))] border border-[hsl(var(--color-border))] rounded-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                          <ul className="py-2" role="listbox">
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden z-[60] animate-in fade-in slide-in-from-top-2">
+                          <ul className="py-2 max-h-[60vh] overflow-y-auto">
                             {searchResults.map((result, index) => {
                               const localized = localizedTools[result.tool.id];
-                              const toolName = localized?.title || result.tool.id.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                              const toolDescription = localized?.description || result.tool.features.slice(0, 3).join(' • ');
-
                               return (
                                 <li key={result.tool.id}>
                                   <button
                                     onClick={() => navigateToTool(result.tool.slug)}
                                     onMouseEnter={() => setSelectedIndex(index)}
-                                    className={`
-                                      w-full px-4 py-2.5 text-left flex items-center gap-3 transition-colors
-                                      ${index === selectedIndex
-                                        ? 'bg-[hsl(var(--color-primary))/0.1] text-[hsl(var(--color-primary))]'
-                                        : 'hover:bg-[hsl(var(--color-muted))] text-[hsl(var(--color-foreground))]'
-                                      }
-                                    `}
-                                    role="option"
-                                    aria-selected={index === selectedIndex}
+                                    className={`w-full px-4 py-3 text-left flex items-center gap-3 transition-colors ${index === selectedIndex ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'}`}
                                   >
-                                    <span className="text-xl filter grayscale group-hover:grayscale-0">{getToolIcon(result.tool.category)}</span>
-                                    <div className="flex-1 min-w-0">
-                                      <div className="font-semibold text-sm truncate">
-                                        {toolName}
-                                      </div>
-                                      <div className="text-xs text-[hsl(var(--color-muted-foreground))] truncate">
-                                        {toolDescription}
-                                      </div>
+                                    <span className="text-xl">{getToolIcon(result.tool.category)}</span>
+                                    <div className="min-w-0 flex-1">
+                                      <div className="font-bold text-sm truncate">{localized?.title || result.tool.id}</div>
+                                      <div className="text-xs text-gray-400 truncate">{localized?.description}</div>
                                     </div>
                                   </button>
                                 </li>
@@ -296,62 +263,51 @@ export const Header: React.FC<HeaderProps> = ({ locale, showSearch = true }) => 
                     variant="ghost"
                     size="sm"
                     onClick={handleSearchToggle}
-                    aria-label="Open search"
-                    className="relative text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-foreground))]"
+                    className="text-gray-500 hover:text-blue-600 transition-colors"
                   >
-                    <Search className="h-5 w-5" aria-hidden="true" />
-                    <span className="ml-2 hidden lg:inline-block text-xs text-[hsl(var(--color-muted-foreground))/0.5] border border-[hsl(var(--color-border))] rounded px-1.5 py-0.5">⌘K</span>
+                    <Search className="h-5 w-5" />
+                    <span className="ml-2 hidden lg:inline-block text-[10px] font-bold border border-gray-200 rounded-md px-1.5 py-0.5 opacity-50">⌘K</span>
                   </Button>
                 )}
               </div>
             )}
 
-            {/* Recent Files Dropdown */}
-            <RecentFilesDropdown
-              locale={locale}
-              translations={{
-                title: t('recentFiles.title') || 'Recent Files',
-                empty: t('recentFiles.empty') || 'No recent files',
-                clearAll: t('recentFiles.clearAll') || 'Clear all',
-                processedWith: t('recentFiles.processedWith') || 'Processed with',
-              }}
-            />
+            {/* Recent Files - Hide when search is full width on small screens */}
+            <div className={`${isSearchOpen ? 'hidden sm:block' : 'block'}`}>
+              <RecentFilesDropdown
+                locale={locale}
+                translations={{
+                  title: t('recentFiles.title') || 'Recent Files',
+                  empty: t('recentFiles.empty') || 'No recent files',
+                  clearAll: t('recentFiles.clearAll') || 'Clear all',
+                  processedWith: t('recentFiles.processedWith') || 'Processed with',
+                }}
+              />
+            </div>
 
-            {/* Language Selector placeholder */}
-            <div id="language-selector-slot" />
+            <div id="language-selector-slot" className={`${isSearchOpen ? 'hidden md:block' : 'block'}`} />
 
-            {/* Mobile Menu Toggle */}
+            {/* Mobile Menu Toggle - Hide when search is open */}
             <Button
               variant="ghost"
               size="sm"
-              className="lg:hidden"
+              className={`lg:hidden ${isSearchOpen ? 'hidden' : 'block'}`}
               onClick={handleMobileMenuToggle}
-              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={isMobileMenuOpen}
             >
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6" aria-hidden="true" />
-              ) : (
-                <Menu className="h-6 w-6" aria-hidden="true" />
-              )}
+              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
           </div>
         </div>
 
-        {/* --- MODIFIED MOBILE NAVIGATION (DROPDOWN FIX) --- */}
+        {/* Mobile Navigation Dropdown */}
         {isMobileMenuOpen && (
-          <nav
-            id="mobile-menu"
-            className="lg:hidden absolute top-full left-0 w-full bg-[hsl(var(--color-background))] border-b border-[hsl(var(--color-border))] shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200"
-            role="navigation"
-            aria-label="Mobile navigation"
-          >
-            <ul className="flex flex-col gap-1 p-4">
+          <nav className="lg:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
+            <ul className="p-4 space-y-1">
               {navItems.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="block px-4 py-4 text-lg font-semibold text-[hsl(var(--color-foreground))] hover:bg-[hsl(var(--color-muted))] hover:text-[hsl(var(--color-primary))] rounded-xl transition-all"
+                    className="block px-4 py-4 text-lg font-black text-gray-900 hover:bg-blue-50 hover:text-blue-600 rounded-2xl transition-all"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.label}

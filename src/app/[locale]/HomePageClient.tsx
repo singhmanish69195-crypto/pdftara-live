@@ -79,9 +79,10 @@ export default function HomePageClient({ locale, localizedToolContent }: HomePag
     <div className="min-h-screen flex flex-col bg-[hsl(var(--color-background))]">
       <Header locale={locale} />
 
-      <main id="main-content" className="flex-1 relative outline-none" tabIndex={-1}>
+      {/* padding-x added for global mobile safety */}
+      <main id="main-content" className="flex-1 relative outline-none px-4 md:px-0" tabIndex={-1}>
         {/* --- MODERN HERO SECTION --- */}
-        <section className="relative pt-24 pb-20 lg:pt-32 lg:pb-36 overflow-hidden">
+        <section className="relative pt-20 pb-16 lg:pt-32 lg:pb-36 overflow-hidden">
           {/* Advanced Mesh Gradient Background */}
           <div className="absolute inset-0 -z-10 overflow-hidden">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b from-blue-50/50 to-transparent dark:from-blue-900/10 rounded-full blur-3xl opacity-60" />
@@ -89,34 +90,35 @@ export default function HomePageClient({ locale, localizedToolContent }: HomePag
             <div className="absolute top-1/2 -right-24 w-80 h-80 bg-blue-100/30 dark:bg-blue-900/10 rounded-full blur-3xl" />
           </div>
 
-          <div className="container mx-auto px-4 text-center">
+          <div className="container mx-auto text-center">
             {/* Trust Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-8 rounded-full bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 shadow-sm backdrop-blur-md animate-in fade-in slide-in-from-bottom-2">
               <span className="flex h-2 w-2 rounded-full bg-green-500 animate-ping" />
-              <span className="text-xs font-semibold tracking-wide uppercase text-gray-600 dark:text-gray-300">
+              <span className="text-[10px] sm:text-xs font-semibold tracking-wide uppercase text-gray-600 dark:text-gray-300">
                 100% Private • No Files Uploaded
               </span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-6">
-              {t('home.hero.title')}
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 pb-2">
-                {t('home.hero.highlight')}
+            {/* FIX: Heading Made Unique & Responsive */}
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-6 leading-[1.1]">
+              Professional PDF Tools
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 pb-2 mt-2">
+                Secure & Browser-Based
               </span>
             </h1>
 
-            <p className="text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-              {t('home.hero.subtitle')} — fast, secure, and works entirely in your browser.
+            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+              Your ultimate free PDF toolkit — fast, secure, and works entirely in your browser without any server uploads.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link href={`/${locale}/tools`}>
-                <Button variant="primary" size="lg" className="h-14 px-10 text-lg rounded-2xl shadow-xl shadow-blue-500/20 hover:scale-105 transition-all">
+              <Link href={`/${locale}/tools/`}>
+                <Button variant="primary" size="lg" className="h-14 px-10 text-lg rounded-2xl shadow-xl shadow-blue-500/20 hover:scale-105 transition-all w-full sm:w-auto">
                   Get Started for Free
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <div className="flex items-center gap-2 px-5 py-3 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm">
+              <div className="flex items-center gap-2 px-5 py-3 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm w-full sm:w-auto justify-center">
                 <ShieldAlert className="h-5 w-5 text-blue-500" />
                 <span className="text-sm font-medium">Safe for enterprise</span>
               </div>
@@ -124,20 +126,20 @@ export default function HomePageClient({ locale, localizedToolContent }: HomePag
           </div>
         </section>
 
-        {/* --- HOW IT WORKS SECTION (SEO CONTENT) --- */}
+        {/* --- HOW IT WORKS SECTION --- */}
         <section className="py-20 bg-gray-50/50 dark:bg-gray-900/20 border-y border-gray-100 dark:border-gray-800">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl font-bold mb-4">How PDFTara Works?</h2>
               <p className="text-gray-500">Processing PDFs has never been this secure and easy.</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
               {[
                 { icon: MousePointer2, title: "1. Select Tool", desc: "Choose from 20+ professional PDF tools like Merge, Split, or Edit." },
                 { icon: LayoutDashboard, title: "2. Process Local", desc: "Your files are processed in your browser. They never touch our servers." },
                 { icon: CheckCircle2, title: "3. Save Result", desc: "Download your processed PDF instantly with 100% original quality." }
               ].map((step, i) => (
-                <div key={i} className="relative text-center group">
+                <div key={i} className="relative text-center group px-4">
                   <div className="mx-auto w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-lg mb-6 group-hover:-translate-y-2 transition-transform">
                     <step.icon className="h-8 w-8" />
                   </div>
@@ -151,14 +153,14 @@ export default function HomePageClient({ locale, localizedToolContent }: HomePag
 
         {/* Popular Tools */}
         <section className="py-20">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto">
             <div className="text-center mb-12">
                <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-4 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-sm font-bold border border-blue-100 dark:border-blue-800">
                 <Star className="h-4 w-4 fill-current" />
                 {t('home.popularTools.badge')}
               </div>
-              <h2 className="text-4xl font-bold mb-4">{t('home.popularTools.title')}</h2>
-              <p className="text-gray-500 max-w-xl mx-auto">{t('home.popularTools.description')}</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('home.popularTools.title')}</h2>
+              <p className="text-gray-500 max-w-xl mx-auto px-4">{t('home.popularTools.description')}</p>
             </div>
             <ToolGrid tools={popularTools} locale={locale} localizedToolContent={localizedToolContent} />
           </div>
@@ -166,13 +168,13 @@ export default function HomePageClient({ locale, localizedToolContent }: HomePag
 
         {/* Categories Section */}
         <section className="py-20 bg-slate-50 dark:bg-slate-900/40">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6 text-center md:text-left">
-              <div>
-                <h2 className="text-4xl font-bold mb-3">{t('home.categoriesSection.title')}</h2>
+              <div className="px-4">
+                <h2 className="text-3xl md:text-4xl font-bold mb-3">{t('home.categoriesSection.title')}</h2>
                 <p className="text-gray-500">{t('home.categoriesSection.description', { count: allTools.length })}</p>
               </div>
-              <Link href={`/${locale}/tools`}>
+              <Link href={`/${locale}/tools/`}>
                 <Button variant="outline" className="rounded-xl px-8 h-12 hover:bg-blue-600 hover:text-white transition-all">
                   Browse All Tools
                 </Button>
@@ -183,7 +185,7 @@ export default function HomePageClient({ locale, localizedToolContent }: HomePag
                 const categoryTools = getToolsByCategory(category);
                 const Icon = categoryIcons[category];
                 return (
-                  <Link key={category} href={`/${locale}/tools?category=${category}`} className="group">
+                  <Link key={category} href={`/${locale}/tools/?category=${category}`} className="group px-2 sm:px-0">
                     <Card className="p-8 h-full bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:shadow-2xl hover:border-blue-500/50 transition-all rounded-3xl">
                       <div className="flex flex-col h-full">
                         <div className="w-14 h-14 bg-blue-50 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
@@ -209,7 +211,7 @@ export default function HomePageClient({ locale, localizedToolContent }: HomePag
 
         {/* Stats Section */}
         <section className="py-20 border-t border-gray-100 dark:border-gray-800">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {[
                 { label: "Pro Tools", val: allTools.length + "+" },
@@ -217,9 +219,9 @@ export default function HomePageClient({ locale, localizedToolContent }: HomePag
                 { label: "Languages", val: "9+" },
                 { label: "Privacy", val: "100%" }
               ].map((stat, i) => (
-                <div key={i} className="text-center">
-                  <div className="text-4xl font-extrabold text-blue-600 mb-2">{stat.val}</div>
-                  <div className="text-sm font-bold text-gray-400 uppercase tracking-widest">{stat.label}</div>
+                <div key={i} className="text-center px-2">
+                  <div className="text-3xl md:text-4xl font-extrabold text-blue-600 mb-2">{stat.val}</div>
+                  <div className="text-[10px] md:text-sm font-bold text-gray-400 uppercase tracking-widest">{stat.label}</div>
                 </div>
               ))}
             </div>
