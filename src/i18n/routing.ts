@@ -1,21 +1,19 @@
 import { defineRouting } from 'next-intl/routing';
-import { locales, defaultLocale } from '@/lib/i18n/config';
+import { createNavigation } from 'next-intl/navigation'; // Yahan change kiya hai
 
 export const routing = defineRouting({
-  // Saari languages ki list
-  locales,
+  // 🔥 Isse TypeScript ko pata chalta hai ki ye languages fix hain.
+  locales: ['en', 'ja', 'ko', 'es', 'fr', 'de', 'zh', 'pt'] as const,
 
-  // Default language (English)
-  defaultLocale,
+  // Default language
+  defaultLocale: 'en',
 
   /**
-   * IMPORTANT FIX:
-   * 'as-needed' use karne se pdftara.com/en/ ki jagah seedha pdftara.com/ khulega.
-   * Isse ek redirect kam ho jayega. 
-   * Agar aapko 'always' hi pasand hai, toh neeche wala sitemap fix zaroor karna.
+   * 'always' = /en/ hamesha dikhega (Google ke liye best)
    */
-  localePrefix: 'as-needed', 
-
-  // Isse pakka hota hai ki trailing slash handle ho
-  domains: [] 
+  localePrefix: 'always'
 });
+
+// Yahan bhi 'createNavigation' use karna hai
+export const { Link, redirect, usePathname, useRouter } =
+  createNavigation(routing);
