@@ -1,28 +1,17 @@
+import createMiddleware from 'next-intl/middleware';
+import { routing } from '@/i18n/routing';
 
-const fs = require('fs');
+export default createMiddleware(routing);
 
-function getKeys(obj, prefix = '') {
-    let keys = [];
-    for (let key in obj) {
-        if (typeof obj[key] === 'object' && obj[key] !== null) {
-            keys = keys.concat(getKeys(obj[key], prefix + key + '.'));
-        } else {
-            keys.push(prefix + key);
-        }
-    }
-    return keys;
-}
-
-const en = JSON.parse(fs.readFileSync('messages/en.json', 'utf8'));
-const zh = JSON.parse(fs.readFileSync('messages/zh.json', 'utf8'));
-
-const enKeys = getKeys(en.faqPage);
-const zhKeys = getKeys(zh.faqPage);
-
-const missing = enKeys.filter(k => !zhKeys.includes(k));
-const extra = zhKeys.filter(k => !enKeys.includes(k));
-
-console.log('Missing keys in zh.json faqPage:');
-console.log(missing);
-console.log('Extra keys in zh.json faqPage:');
-console.log(extra);
+export const config = {
+  // Match all pathnames except for
+  // - API routes
+  // - Static files (images, fonts, etc.)
+  // - Next.js internals
+  matcher: [
+    // Match all pathnames except for
+    // - ... if they start with `/api`, `/_next` or `/_vercel`
+    // - ... if they contain a dot (e.g. `favicon.ico`)
+    '/((?!api|_next|_vercel|.*\\..*).*)',
+  ],
+};
