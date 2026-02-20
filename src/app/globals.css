@@ -284,6 +284,7 @@ body {
   background: hsl(var(--color-secondary-foreground) / 0.5);
 }
 
+/* --- Pehle se jo code tha --- */
 /* Shimmer */
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
@@ -295,3 +296,15 @@ body {
 .scroll-smooth { scroll-behavior: smooth; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* --- AB YE WALA ZAROOR JODNA (LINK COLOR FIX) --- */
+.blog-content a {
+    color: #2563eb !important; /* Ekdum neela (Blue) */
+    text-decoration: underline !important; /* Underline pakka dikhegi */
+    font-weight: 700 !important; /* Thoda bold taaki nazar aaye */
+}
+
+.blog-content a:hover {
+    color: #1d4ed8 !important; /* Hover karne par dark blue */
+    text-decoration: none !important;
+}
