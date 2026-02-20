@@ -105,30 +105,45 @@ export async function generateStaticParams() {
   );
 }
 
-// --- SEO JUGAD START: Dynamic Title & Description Engine ---
+// --- SEO JUGAD: Title, Description & KEYWORDS Magic Fix ---
 export async function generateMetadata({ params }: ToolPageParams): Promise<Metadata> {
   const { locale: localeParam, tool: toolSlug } = await params;
   const locale = localeParam as Locale;
   const tool = getToolById(toolSlug);
   const content = getToolContent(locale, tool?.id || '');
 
-  if (!tool || !content) return { title: 'PDF Tool | PDFTara' };
+  if (!tool || !content) return { title: 'Free PDF Tools | PDFTara' };
 
-  // Har Language ke liye Clickable "Power Phrases"
+  // 1. Dynamic Keywords Logic (Tags)
+  const dynamicKeywords = [
+    content.title,
+    `${content.title} online`,
+    `${content.title} free`,
+    `best ${content.title} tool`,
+    `how to ${content.title}`,
+    'PDFTara',
+    'free pdf tools',
+    'online pdf editor',
+    'pdftara'
+  ];
+
+  // 2. Language Wise SEO Mapping
   const seoMap: Record<string, { suffix: string; desc: string }> = {
-    en: { suffix: 'Free Online (2026) - No Signup', desc: 'Use our [TOOL] online for free. 100% Secure, fast, and no registration required. Your files stay private.' },
-    ja: { suffix: '無料オンライン (2026) - 登録不要', desc: '[TOOL]をオンラインで無料で利用。100%安全、高速、登録不要。ファイルは非公開のままです。' },
-    ko: { suffix: '무료 온라인 (2026) - 가입 없음', desc: '[TOOL]을 온라인에서 무료로 사용하세요. 100% 보안, 신속, 가입 불필요. 파일은 비공개로 유지됩니다.' },
-    es: { suffix: 'Gratis en línea (2026) - Sin registro', desc: 'Usa nuestro [TOOL] en línea gratis. 100% seguro, rápido y sin registro. Tus archivos son privados.' },
-    fr: { suffix: 'Gratuit en ligne (2026) - Sans inscription', desc: 'Utilisez notre [TOOL] en ligne gratuitement. 100% sécurisé, rapide et sans inscription.' },
-    de: { suffix: 'Kostenlos Online (2026) - Ohne Anmeldung', desc: 'Nutzen Sie unser [TOOL] online kostenlos. 100% sicher, schnell und ohne Anmeldung.' },
-    zh: { suffix: '免费在线 (2026) - 无需注册', desc: '免费在线使用我们的[TOOL]。100%安全、快速、无需注册。您的文件保持私密。' },
-    pt: { suffix: 'Grátis Online (2026) - Sem Registro', desc: 'Use nosso [TOOL] online gratuitamente. 100% seguro, rápido e sem registro.' },
+    en: { suffix: 'Online Free (2026)', desc: `Fast and secure ${content.title} online. 100% free, no registration. Try PDFTara tools.` },
+    ja: { suffix: '無料オンライン', desc: `${content.title}を無料で利用。安全・登録不要。PDFTaraにお任せ。` },
+    ko: { suffix: '무료 온라인', desc: `무료 ${content.title} 서비스. 보안 유지, 가입 없음. PDFTara를 사용해 보세요.` },
+    es: { suffix: 'Gratis Online', desc: `Usa ${content.title} online gratis. Seguro y sin registro. Prueba PDFTara hoy.` },
+    fr: { suffix: 'Gratuit en ligne', desc: `Utilisez ${content.title} en ligne gratuitement. Sécurisé et sans inscription. PDFTara.` },
+    de: { suffix: 'Kostenlos Online', desc: `Nutzen Sie ${content.title} online kostenlos. Sicher und ohne Anmeldung. PDFTara Tools.` },
+    zh: { suffix: '免费在线', desc: `免费在线使用 ${content.title}。安全快速，无需注册。欢迎使用 PDFTara。` },
+    pt: { suffix: 'Grátis Online', desc: `Use ${content.title} online gratuitamente. Seguro e sem registro. PDFTara ferramentas.` },
   };
 
   const currentSeo = seoMap[locale] || seoMap['en'];
-  const finalTitle = `${content.title} ${currentSeo.suffix} | PDFTara`;
-  const finalDesc = currentSeo.desc.replace('[TOOL]', content.title);
+  
+  // Format: [Tool Name] [Suffix] - [Brand]
+  const finalTitle = `${content.title} ${currentSeo.suffix} - PDFTara`;
+  const finalDesc = currentSeo.desc;
 
   const baseMetadata = await generateToolMetadata({
     tool,
@@ -141,7 +156,7 @@ export async function generateMetadata({ params }: ToolPageParams): Promise<Meta
     ...baseMetadata,
     title: finalTitle,
     description: finalDesc,
-    // Hreflang Tags: Sabse zaroori ranking ke liye
+    keywords: dynamicKeywords, // <--- YE RHA TAGS VALA JUGAD
     alternates: {
       canonical: `https://www.pdftara.com/${locale}/tools/${toolSlug}`,
       languages: SUPPORTED_LOCALES.reduce((acc, l) => {
@@ -151,7 +166,6 @@ export async function generateMetadata({ params }: ToolPageParams): Promise<Meta
     },
   };
 }
-// --- SEO JUGAD END ---
 
 export default async function ToolPageRoute({ params }: ToolPageParams) {
   const { locale: localeParam, tool: toolSlug } = await params;
@@ -165,7 +179,7 @@ export default async function ToolPageRoute({ params }: ToolPageParams) {
   const content = getToolContent(locale, tool.id);
   if (!content) notFound();
 
-  // 1. GENERATE ALL SCHEMAS (Fixed for Google Search Console errors)
+  // Schema fix for Google Search Console
   const toolSchema = generateSoftwareApplicationSchema(tool, content, locale);
   const fixedToolSchema = {
     ...toolSchema,
