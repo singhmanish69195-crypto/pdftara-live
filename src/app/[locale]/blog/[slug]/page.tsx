@@ -140,7 +140,6 @@ export default async function ArticleView(props: { params: Promise<{ slug: strin
             </h1>
             <div className="text-slate-400 font-bold text-xs uppercase tracking-[0.2em] flex items-center gap-3">
                <span className="w-12 h-[1px] bg-slate-200"></span>
-               {/* YAHAN DATE AUR TIME DONO DIKHEGA AB */}
                Published on {new Date(p.date).toLocaleString('en-US', {
                   year: 'numeric',
                   month: 'long',
@@ -152,13 +151,14 @@ export default async function ArticleView(props: { params: Promise<{ slug: strin
             </div>
           </header>
 
-          {/* Article Content */}
+          {/* --- ARTICLE CONTENT (LINK COLOR FIXED HERE) --- */}
           <div 
             className="prose prose-xl md:prose-2xl prose-slate max-w-none 
             prose-headings:text-[#0f172a] prose-headings:font-black prose-headings:tracking-tighter
             prose-p:text-slate-700 prose-p:leading-[1.9]
             prose-strong:text-black prose-strong:font-black
-            prose-a:text-blue-600 prose-a:font-bold
+            /* NEELA RANG KE LIYE YE LINES */
+            prose-a:text-blue-700 prose-a:font-extrabold prose-a:underline decoration-blue-300 decoration-2 underline-offset-4 hover:prose-a:text-blue-900 transition-all
             prose-img:w-full prose-img:rounded-[2.5rem] prose-img:shadow-2xl 
             prose-img:mx-auto prose-img:my-20 prose-img:border-[12px] prose-img:border-white 
             prose-img:ring-1 prose-img:ring-slate-200"
