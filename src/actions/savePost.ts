@@ -4,39 +4,61 @@
 import { supabase } from '../lib/supabase'; 
 import { revalidatePath } from 'next/cache';
 
-export async function savePost(formData: FormData) {
+export async function savePostAction(formData: FormData) { // Name match kar diya hai component se
   try {
     const title = formData.get('title') as string;
     const content = formData.get('content') as string;
+    const originalSlug = formData.get('id') as string; // Hum frontend se 'id' ya 'slug' bhejenge identify karne ke liye
 
     if (!title || !content) {
-      throw new Error("Title and Content are required");
+      throw new Error("Title and Content are required bhai!");
     }
 
-    const slug = title
+    // Naya slug banao (SEO ke liye)
+    const newSlug = title
       .toLowerCase()
       .trim()
       .replace(/[^\w\s-]/g, '')
       .replace(/[\s_-]+/g, '-')
       .replace(/^-+|-+$/g, '');
 
-    const { error } = await supabase
-      .from('posts')
-      .insert([{ title, content, slug }]);
+    let result;
 
-    if (error) {
-      console.error("Supabase Error:", error.message);
-      return { success: false, error: error.message };
+    if (originalSlug) {
+      // ==========================================
+      // UPDATE LOGIC: Agar purana slug/id mil raha hai
+      // ==========================================
+      result = await supabase
+        .from('posts')
+        .update({ 
+            title, 
+            content, 
+            slug: newSlug,
+            // yahan aap date ya image update ka logic bhi daal sakte ho agar zaroorat ho
+        })
+        .eq('slug', originalSlug); // Purane slug se match karke update karo
+
+      console.log("✅ Article Update ho gaya!");
+    } else {
+      // ==========================================
+      // INSERT LOGIC: Naya post
+      // ==========================================
+      result = await supabase
+        .from('posts')
+        .insert([{ title, content, slug: newSlug }]);
+
+      console.log("🚀 Naya Article Publish ho gaya!");
     }
 
-    // ==========================================
-    // CONFIRMATION MESSAGE (Bhai yahan dekho)
-    // ==========================================
-    console.log("✅ MUBARAK HO! Article Supabase mein save ho gaya hai.");
-    console.log("Title:", title);
+    if (result.error) {
+      console.error("Supabase Error:", result.error.message);
+      return { success: false, error: result.error.message };
+    }
 
+    // Sab refresh karo
     revalidatePath('/blog'); 
     revalidatePath('/en/blog');
+    revalidatePath('/admin'); 
     
     return { success: true };
   } catch (err: any) {
