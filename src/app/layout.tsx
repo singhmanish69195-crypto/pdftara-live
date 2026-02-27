@@ -1,4 +1,4 @@
-import Script from 'next/script'; // Google Analytics ke liye import kiya
+import Script from 'next/script';
 import type { Metadata } from 'next';
 import '@/app/globals.css';
 
@@ -62,6 +62,7 @@ export const metadata: Metadata = {
   },
 
   verification: {
+    // Note: Agar Google Search Console ka code hai to yahan 'google:' ke aage dalo
     google: 'GSC_KA_ASLI_CODE_YAHAN_DALO', 
   },
 
@@ -89,26 +90,21 @@ export default async function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <style dangerouslySetInnerHTML={{ __html: 'html{scrollbar-gutter:stable}' }} />
 
-        {/* --- GOOGLE ANALYTICS CODE START --- */}
+        {/* --- GOOGLE ANALYTICS (GTAG.JS) --- */}
         <Script
-          strategy="afterInteractive"
+          async
           src="https://www.googletagmanager.com/gtag/js?id=G-E215JB8PYT"
-        />
-        <Script
-          id="google-analytics"
           strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-E215JB8PYT', {
-                page_path: window.location.pathname,
-              });
-            `,
-          }}
         />
-        {/* --- GOOGLE ANALYTICS CODE END --- */}
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-E215JB8PYT');
+          `}
+        </Script>
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
         {children}
