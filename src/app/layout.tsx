@@ -1,7 +1,8 @@
+import Script from 'next/script'; // Google Analytics ke liye import kiya
 import type { Metadata } from 'next';
 import '@/app/globals.css';
 
-// 1. Metadata Configuration - Fixed for SEO and Branding
+// 1. Metadata Configuration
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.pdftara.com/'),
   
@@ -21,7 +22,6 @@ export const metadata: Metadata = {
   creator: 'PDFTara.com',
   publisher: 'PDFTara.com',
 
-  // Canonical aur Alternates Fix: Forced trailing slashes to prevent redirects
   alternates: {
     canonical: 'https://www.pdftara.com/',
     languages: {
@@ -62,7 +62,6 @@ export const metadata: Metadata = {
   },
 
   verification: {
-    // IMPORTANT: Yahan apna asli GSC code daalna mat bhulna
     google: 'GSC_KA_ASLI_CODE_YAHAN_DALO', 
   },
 
@@ -72,10 +71,6 @@ export const metadata: Metadata = {
   },
 };
 
-/**
- * Root Layout Component
- * Handles locale detection and global styles
- */
 export default async function RootLayout({
   children,
   params
@@ -84,7 +79,6 @@ export default async function RootLayout({
   params: Promise<{ locale?: string }>;
 }) {
   
-  // Dynamic params ko await karna Next.js 15+ ke liye zaroori hai
   const resolvedParams = await params;
   const locale = resolvedParams?.locale || 'en';
 
@@ -93,8 +87,28 @@ export default async function RootLayout({
       <head>
         <meta name="color-scheme" content="light dark" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-        {/* Scrollbar gutter prevents layout shift on load */}
         <style dangerouslySetInnerHTML={{ __html: 'html{scrollbar-gutter:stable}' }} />
+
+        {/* --- GOOGLE ANALYTICS CODE START --- */}
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-E215JB8PYT"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-E215JB8PYT', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
+        {/* --- GOOGLE ANALYTICS CODE END --- */}
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
         {children}
