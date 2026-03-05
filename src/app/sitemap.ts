@@ -1,7 +1,7 @@
 /**
- * PDFTARA SITEMAP - VERSION 4.0 (ULTIMATE SEO & SPEED)
+ * PDFTARA SITEMAP - VERSION 5.0 (ULTIMATE SEO & SPEED + NEXT.JS CACHE BYPASS)
  * Purpose: Instant Auto-Indexing & Multi-Language SEO
- * FIX: Force Dynamic Generation to fetch new Supabase posts instantly.
+ * FIX: Supabase Fetch Override to 100% prevent Next.js data caching.
  */
 
 import { MetadataRoute } from 'next';
@@ -12,13 +12,20 @@ import { createClient } from '@supabase/supabase-js';
 // --- 1. SUPABASE CONFIGURATION ---
 const supabaseUrl = 'https://gqyqmhgannypuracasdu.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdxeXFtaGdhbm55cHVyYWNhc2R1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNzkwMDYsImV4cCI6MjA4NDc1NTAwNn0.8dlJNPu6jjQt4vcQiaWfypFuB8fSBpv0F3yI1VkMQE4';
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 /**
- * 🚀 SEO POWER FIX: FORCE DYNAMIC
- * Isse Next.js sitemap ko cache nahi karega. 
- * Naya article publish karte hi wo sitemap mein turant dikhega.
+ * 🔥 FIX 1: BYPASS NEXT.JS FETCH CACHE
+ * Next.js aggressively caches fetches. Yeh line Supabase ko force karegi 
+ * ki wo har baar live database se hi naya data laye, cache se nahi.
  */
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  global: {
+    fetch: (url, options) => {
+      return fetch(url, { ...options, cache: 'no-store' }); // NEVER CACHE
+    },
+  },
+});
+
 export const dynamic = 'force-dynamic';
 export const revalidate = 0; 
 
@@ -28,7 +35,7 @@ const PRIORITY = {
   home: 1.0,
   tools: 0.9,
   toolPage: 0.8,
-  blogPost: 0.9, // High priority for faster ranking
+  blogPost: 0.9, 
   blogHome: 0.7,
   static: 0.5,
 } as const;
@@ -45,10 +52,6 @@ const STATIC_PAGES = [
   { path: 'disclaimer', priority: PRIORITY.static, changeFreq: 'monthly' },
 ];
 
-/**
- * HELPER: buildUrl
- * Ensures SEO-friendly trailing slashes and clean locale paths.
- */
 const buildUrl = (locale: string, path: string) => {
   const cleanPath = path.replace(/^\/+|\/+$/g, '');
   const segment = cleanPath ? `${cleanPath}/` : '';
@@ -59,9 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
   const allEntries: MetadataRoute.Sitemap = [];
 
-  /**
-   * PHASE 1: STATIC PAGES (Multi-language)
-   */
+  // PHASE 1: STATIC PAGES
   for (const page of STATIC_PAGES) {
     for (const locale of locales) {
       allEntries.push({
@@ -76,9 +77,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  /**
-   * PHASE 2: TOOLS (Multi-language)
-   */
+  // PHASE 2: TOOLS
   const tools = getAllTools();
   for (const tool of tools) {
     for (const locale of locales) {
@@ -95,22 +94,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  /**
-   * PHASE 3: DYNAMIC BLOG POSTS (Instant Fetch)
-   * Added 'updated_at' to give Bing/Google the exact last modified date.
-   */
+  // PHASE 3: DYNAMIC BLOG POSTS
+  // Fetching from database directly without caching
   const { data: posts, error } = await supabase
     .from('posts') 
     .select('slug, updated_at')
-    .order('created_at', { ascending: false }); // Newest posts first
+    // .eq('status', 'published') // 🔥 OPTIONAL: Uncomment this if you only want 'published' posts
+    .order('created_at', { ascending: false });
 
-  if (posts && !error) {
+  // 🔥 FIX 2: ERROR LOGGING
+  // Agar Supabase se data aane mein fail hua, toh Terminal/Vercel logs mein dikhega.
+  if (error) {
+    console.error("❌ SITEMAP SUPABASE ERROR:", error.message);
+  }
+
+  if (posts && posts.length > 0) {
     for (const post of posts) {
+      
+      // 🔥 FIX 3: SKIP EMPTY SLUGS
+      if (!post.slug) continue; 
+
       for (const locale of locales) {
         const blogField = `blog/${post.slug}`;
         allEntries.push({
           url: buildUrl(locale, blogField),
-          // Use actual database time for better SEO ranking
           lastModified: post.updated_at ? new Date(post.updated_at) : lastModified,
           changeFrequency: 'daily',
           priority: PRIORITY.blogPost,
@@ -120,6 +127,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         });
       }
     }
+  } else {
+    // Ye tab print hoga jab database empty ho ya RLS policy block kar rahi ho
+    console.warn("⚠️ No posts found for sitemap. Check your Supabase table.");
   }
 
   return allEntries;
