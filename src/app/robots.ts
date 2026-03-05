@@ -1,6 +1,6 @@
 /**
  * PDFTARA ROBOTS CONFIGURATION - ULTIMATE FIX
- * 🏆 Purpose: Fix Bing Blocking & Enable Fast Auto-Indexing
+ * 🏆 Purpose: Clean, Fast Auto-Indexing for All Languages
  */
 
 import { MetadataRoute } from 'next';
@@ -13,25 +13,23 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: [
-          '/',             // Poori site allow hai
-          '/en/blog',      // Saare blog posts allow hain
-          '/en/tools',     // Saare tools allow hain
-          '/_next/static/', 
+          '/',             // Poori site ke har language (/en, /es, /fr sab) ko allow karega
+          '/_next/static/', // Next.js ke design aur scripts ko Google ko padhne dega (Zaroori hai)
         ],
         disallow: [
-          '/api/',         // Private
-          '/admin/',       // Private
-          '/cgi-bin/',     // Server folders
-          // '/*?*'  <-- Yeh hata diya hai, ab tools block nahi honge
+          '/api/',         // Backend APIs ko block karna sahi hai
+          '/admin/',       // Admin panel block
+          '/cgi-bin/',     // Server folders block
+          // Query parameters ko block na karein, jaisa tune theek socha hai
         ],
       },
       {
-        // AI scrapers ko block rakha hai taaki content safe rahe
+        // AI scrapers ko block rakha hai (Content chori hone se bachega)
         userAgent: ['GPTBot', 'CCBot', 'ChatGPT-User', 'anthropic-ai'],
         disallow: ['/'],
       }
     ],
-    // Sitemap sabse zaroori hai automatic indexing ke liye
+    // Sitemap sabse zaroori hai
     sitemap: 'https://www.pdftara.com/sitemap.xml',
   }
 }
