@@ -1,7 +1,7 @@
 /**
- * PDFTARA SITEMAP - VERSION 5.0 (ULTIMATE SEO & SPEED + NEXT.JS CACHE BYPASS)
+ * PDFTARA SITEMAP - VERSION 6.0 (BULLETPROOF FIX)
  * Purpose: Instant Auto-Indexing & Multi-Language SEO
- * FIX: Supabase Fetch Override to 100% prevent Next.js data caching.
+ * FIX: Removed missing columns (updated_at, created_at) to prevent crashes.
  */
 
 import { MetadataRoute } from 'next';
@@ -15,13 +15,11 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 /**
  * 🔥 FIX 1: BYPASS NEXT.JS FETCH CACHE
- * Next.js aggressively caches fetches. Yeh line Supabase ko force karegi 
- * ki wo har baar live database se hi naya data laye, cache se nahi.
  */
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   global: {
     fetch: (url, options) => {
-      return fetch(url, { ...options, cache: 'no-store' }); // NEVER CACHE
+      return fetch(url, { ...options, cache: 'no-store' }); 
     },
   },
 });
@@ -95,15 +93,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // PHASE 3: DYNAMIC BLOG POSTS
-  // Fetching from database directly without caching
+  // 🔥 FIX: Ab sirf 'slug' mang rahe hain taaki koi column missing ka error na aaye
   const { data: posts, error } = await supabase
     .from('posts') 
-    .select('slug, updated_at')
-    // .eq('status', 'published') // 🔥 OPTIONAL: Uncomment this if you only want 'published' posts
-    .order('created_at', { ascending: false });
+    .select('slug'); 
 
-  // 🔥 FIX 2: ERROR LOGGING
-  // Agar Supabase se data aane mein fail hua, toh Terminal/Vercel logs mein dikhega.
   if (error) {
     console.error("❌ SITEMAP SUPABASE ERROR:", error.message);
   }
@@ -111,14 +105,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (posts && posts.length > 0) {
     for (const post of posts) {
       
-      // 🔥 FIX 3: SKIP EMPTY SLUGS
       if (!post.slug) continue; 
 
       for (const locale of locales) {
         const blogField = `blog/${post.slug}`;
         allEntries.push({
           url: buildUrl(locale, blogField),
-          lastModified: post.updated_at ? new Date(post.updated_at) : lastModified,
+          lastModified: lastModified, // Directly using current date
           changeFrequency: 'daily',
           priority: PRIORITY.blogPost,
           alternates: {
@@ -127,9 +120,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         });
       }
     }
-  } else {
-    // Ye tab print hoga jab database empty ho ya RLS policy block kar rahi ho
-    console.warn("⚠️ No posts found for sitemap. Check your Supabase table.");
   }
 
   return allEntries;
