@@ -46,7 +46,6 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
         console.log('Error sharing', err);
       }
     } else {
-      // Fallback for browsers that don't support share
       navigator.clipboard.writeText(window.location.origin);
       alert('Link copied to clipboard!');
     }
@@ -86,15 +85,28 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
               {t('tagline') || 'Professional, secure, and free PDF tools for everyone. No installation required.'}
             </p>
 
-            {/* Share App Button */}
-            <div className="flex gap-4">
+            {/* Social & Share Buttons */}
+            <div className="flex flex-wrap gap-3">
               <button
                 onClick={handleShare}
                 className="flex items-center gap-2 px-4 py-2 rounded-full bg-[hsl(var(--color-muted))] text-[hsl(var(--color-muted-foreground))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all text-xs font-bold uppercase tracking-wider"
               >
                 <Share2 className="w-4 h-4" />
-                <span>Share App</span>
+                <span>Share</span>
               </button>
+              
+              {/* Telegram Button - Added by Bhai's request */}
+              <a
+                href="https://t.me/pdftara"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#229ED9]/10 text-[#229ED9] hover:bg-[#229ED9] hover:text-white transition-all text-xs font-bold uppercase tracking-wider border border-[#229ED9]/20"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                   <path d="M11.944 0C5.346 0 0 5.346 0 11.944C0 18.542 5.346 23.888 11.944 23.888C18.542 23.888 23.888 18.542 23.888 11.944C23.888 5.346 18.542 0 11.944 0ZM18.17 8.03l-2.094 9.869c-.158.7-.573.873-1.159.544l-3.19-2.35l-1.539 1.482c-.171.171-.314.314-.644.314l.229-3.249l5.912-5.341c.257-.229-.056-.356-.398-.128l-7.307 4.603l-3.149-.983c-.685-.214-.699-.685.143-1.013l12.309-4.743c.571-.214 1.069.128.887 1.013Z"/>
+                </svg>
+                <span>Telegram</span>
+              </a>
             </div>
           </div>
 
@@ -196,10 +208,10 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
           </div>
         </div>
 
-        {/* Copyright & Legal Links (FIXED: No Duplicates) */}
+        {/* Copyright & Legal Links */}
         <div className="pt-8 border-t border-[hsl(var(--color-border))] flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-[hsl(var(--color-muted-foreground))]">
-            &copy; {currentYear}PDFTara. All rights reserved.
+            &copy; {currentYear} PDFTara. All rights reserved.
           </p>
           <div className="flex items-center gap-6 flex-wrap justify-center">
             <Link href={`/${locale}/terms`} className="text-xs text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-foreground))]">Terms</Link>
