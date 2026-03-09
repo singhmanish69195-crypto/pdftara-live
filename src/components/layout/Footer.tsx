@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Shield, Lock, FileCheck, Globe, Share2 } from 'lucide-react';
+import { Shield, Lock, FileCheck, Globe, Share2, Send } from 'lucide-react';
 import { type Locale, locales, localeConfig, getLocalizedPath } from '@/lib/i18n/config';
 import { saveLanguagePreference } from './LanguageSelector';
 
@@ -31,7 +31,6 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
     router.push(newPath);
   };
 
-  // Share Button Functionality
   const handleShare = async () => {
     const shareData = {
       title: 'PDFTara',
@@ -85,37 +84,24 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
               {t('tagline') || 'Professional, secure, and free PDF tools for everyone. No installation required.'}
             </p>
 
-            {/* Social & Share Buttons */}
-            <div className="flex flex-wrap gap-3">
+            {/* Share Button (Separated) */}
+            <div className="mt-2">
               <button
                 onClick={handleShare}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-[hsl(var(--color-muted))] text-[hsl(var(--color-muted-foreground))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all text-xs font-bold uppercase tracking-wider"
+                className="flex items-center gap-2 px-4 py-2 rounded-full border border-[hsl(var(--color-border))] text-[hsl(var(--color-muted-foreground))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all text-xs font-bold uppercase tracking-wider"
               >
                 <Share2 className="w-4 h-4" />
-                <span>Share</span>
+                <span>Share App</span>
               </button>
-              
-              {/* Telegram Button - Added by Bhai's request */}
-              <a
-                href="https://t.me/pdftara"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#229ED9]/10 text-[#229ED9] hover:bg-[#229ED9] hover:text-white transition-all text-xs font-bold uppercase tracking-wider border border-[#229ED9]/20"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                   <path d="M11.944 0C5.346 0 0 5.346 0 11.944C0 18.542 5.346 23.888 11.944 23.888C18.542 23.888 23.888 18.542 23.888 11.944C23.888 5.346 18.542 0 11.944 0ZM18.17 8.03l-2.094 9.869c-.158.7-.573.873-1.159.544l-3.19-2.35l-1.539 1.482c-.171.171-.314.314-.644.314l.229-3.249l5.912-5.341c.257-.229-.056-.356-.398-.128l-7.307 4.603l-3.149-.983c-.685-.214-.699-.685.143-1.013l12.309-4.743c.571-.214 1.069.128.887 1.013Z"/>
-                </svg>
-                <span>Telegram</span>
-              </a>
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Resources & Community */}
           <div>
             <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">
               Resources
             </h3>
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-3 mb-8">
               {footerLinks.map((link) => (
                 <li key={link.href}>
                   <Link
@@ -128,6 +114,20 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
                 </li>
               ))}
             </ul>
+
+            {/* Official Telegram Button - Highly Visible */}
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-4">
+              Community
+            </h3>
+            <a
+              href="https://t.me/pdftara"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#229ED9] text-white hover:bg-[#1c86ba] hover:shadow-lg transition-all text-sm font-bold shadow-md"
+            >
+              <Send className="w-4 h-4" />
+              <span>Join Official Telegram</span>
+            </a>
           </div>
 
           {/* Security Features */}
@@ -157,7 +157,7 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
             </ul>
           </div>
 
-          {/* Privacy Badge Block */}
+          {/* Compliance Block */}
           <div className="flex flex-col justify-start">
             <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">
               Compliance
@@ -220,7 +220,6 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
             <Link href={`/${locale}/disclaimer`} className="text-xs text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-foreground))]">Disclaimer</Link>
           </div>
         </div>
-
       </div>
     </footer>
   );
