@@ -1,7 +1,7 @@
 /**
- * PDFTARA SITEMAP - VERSION 6.0 (BULLETPROOF FIX)
- * Purpose: Instant Auto-Indexing & Multi-Language SEO
- * FIX: Removed missing columns (updated_at, created_at) to prevent crashes.
+ * PDFTARA SITEMAP - VERSION 8.0 (THE FINAL FIX)
+ * Purpose: Sync with 'trailingSlash: false' & 'localePrefix: as-needed'
+ * FIX: Removed /en/ from default links and stripped trailing slashes.
  */
 
 import { MetadataRoute } from 'next';
@@ -9,13 +9,9 @@ import { locales } from '@/lib/i18n/config';
 import { getAllTools } from '@/config/tools';
 import { createClient } from '@supabase/supabase-js';
 
-// --- 1. SUPABASE CONFIGURATION ---
 const supabaseUrl = 'https://gqyqmhgannypuracasdu.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdxeXFtaGdhbm55cHVyYWNhc2R1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNzkwMDYsImV4cCI6MjA4NDc1NTAwNn0.8dlJNPu6jjQt4vcQiaWfypFuB8fSBpv0F3yI1VkMQE4';
 
-/**
- * 🔥 FIX 1: BYPASS NEXT.JS FETCH CACHE
- */
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   global: {
     fetch: (url, options) => {
@@ -50,10 +46,18 @@ const STATIC_PAGES = [
   { path: 'disclaimer', priority: PRIORITY.static, changeFreq: 'monthly' },
 ];
 
+/**
+ * 🔥 FIX: Smart URL Builder
+ * 1. Default Locale (en) ke liye path mein '/en' nahi jodega.
+ * 2. Aakhir mein '/' (slash) kabhi nahi lagayega.
+ */
 const buildUrl = (locale: string, path: string) => {
   const cleanPath = path.replace(/^\/+|\/+$/g, '');
-  const segment = cleanPath ? `${cleanPath}/` : '';
-  return `${BASE_URL}/${locale}/${segment}`;
+  const localeSegment = locale === 'en' ? '' : `/${locale}`;
+  const pathSegment = cleanPath ? `/${cleanPath}` : '';
+  
+  // Example: pdftara.com/about (for en) OR pdftara.com/ja/about (for ja)
+  return `${BASE_URL}${localeSegment}${pathSegment}`;
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -69,7 +73,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: page.changeFreq as any,
         priority: page.priority,
         alternates: {
-          languages: Object.fromEntries(locales.map((l) => [l, buildUrl(l, page.path)])),
+          languages: {
+            ...Object.fromEntries(locales.map((l) => [l, buildUrl(l, page.path)])),
+            'x-default': buildUrl('en', page.path),
+          },
         },
       });
     }
@@ -86,36 +93,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: 'weekly',
         priority: PRIORITY.toolPage,
         alternates: {
-          languages: Object.fromEntries(locales.map((l) => [l, buildUrl(l, toolField)])),
+          languages: {
+            ...Object.fromEntries(locales.map((l) => [l, buildUrl(l, toolField)])),
+            'x-default': buildUrl('en', toolField),
+          },
         },
       });
     }
   }
 
   // PHASE 3: DYNAMIC BLOG POSTS
-  // 🔥 FIX: Ab sirf 'slug' mang rahe hain taaki koi column missing ka error na aaye
-  const { data: posts, error } = await supabase
-    .from('posts') 
-    .select('slug'); 
+  const { data: posts, error } = await supabase.from('posts').select('slug'); 
 
-  if (error) {
-    console.error("❌ SITEMAP SUPABASE ERROR:", error.message);
-  }
-
-  if (posts && posts.length > 0) {
+  if (!error && posts) {
     for (const post of posts) {
-      
       if (!post.slug) continue; 
-
       for (const locale of locales) {
         const blogField = `blog/${post.slug}`;
         allEntries.push({
           url: buildUrl(locale, blogField),
-          lastModified: lastModified, // Directly using current date
+          lastModified,
           changeFrequency: 'daily',
           priority: PRIORITY.blogPost,
           alternates: {
-            languages: Object.fromEntries(locales.map((l) => [l, buildUrl(l, blogField)])),
+            languages: {
+              ...Object.fromEntries(locales.map((l) => [l, buildUrl(l, blogField)])),
+              'x-default': buildUrl('en', blogField),
+            },
           },
         });
       }
@@ -123,10 +127,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   return allEntries;
-}
-
-export function getSitemapUrlCount(): number {
-  const toolsCount = getAllTools().length;
-  const baseCount = STATIC_PAGES.length + toolsCount;
-  return baseCount * locales.length;
 }
