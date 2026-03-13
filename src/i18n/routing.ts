@@ -2,20 +2,24 @@ import { defineRouting } from 'next-intl/routing';
 import { createNavigation } from 'next-intl/navigation';
 
 export const routing = defineRouting({
-  // 🔥 Sabhi languages ko yahan list kiya hai.
-  // GSC mein dikh rahe 'zh-TW' ke liye hum 'zh' use karenge jo universal hai.
+  // 🔥 Sabhi languages list
   locales: ['en', 'ja', 'ko', 'es', 'fr', 'de', 'zh', 'pt'] as const,
 
   // Default bhasha English (en) rahegi
   defaultLocale: 'en',
 
   /**
-   * 🔥 FIX: 'as-needed' ka use kiya hai.
-   * Isse default language (English) ke liye URL mein '/en' ki zarurat nahi hogi.
-   * Example: pdftara.com seedha khulega, koi redirect nahi hoga. 
-   * Isse GSC ka "Page with redirect" wala error root page se khatam ho jayega.
+   * 🔥 FIX 1: 'as-needed' ka matlab hai ki English (default) ke liye 
+   * URL mein '/en' bilkul nahi dikhega.
    */
-  localePrefix: 'as-needed'
+  localePrefix: 'as-needed',
+
+  /**
+   * 🔥 FIX 2: Sabse Zaruri! 'localeDetection: false' karne se 
+   * browser aapko apne aap '/en' par redirect nahi karega.
+   * Iske bina URL bar-bar '/en' par chala jata hai.
+   */
+  localeDetection: false
 });
 
 // Navigation helpers jo hum poore app mein use karte hain
