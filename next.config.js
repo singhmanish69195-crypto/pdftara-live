@@ -4,34 +4,44 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 1. GLOBAL REDIRECTS (Non-WWW to WWW Enforcement)
+  // 1. GLOBAL REDIRECTS (Enforcing WWW and Kicking /en out)
   async redirects() {
     return [
+      // 🔥 FIX 1: Non-WWW to WWW (Existing)
       {
         source: '/:path*',
         has: [{ type: 'host', value: 'pdftara.com' }],
         destination: 'https://www.pdftara.com/:path*',
         permanent: true,
       },
+      // 🔥 FIX 2: JOOTA MAAR LOGIC - /en को उखाड़ फेंको (Redirect to Root)
+      {
+        source: '/en',
+        destination: '/',
+        permanent: true, // 301 Redirect: Google ko bolega ki /en mar chuka hai
+      },
+      // 🔥 FIX 3: /en/ ke aage kuch bhi ho, use bhi saaf karo
+      {
+        source: '/en/:path*',
+        destination: '/:path*',
+        permanent: true,
+      },
     ];
   },
 
-  // 🔥 FIX: Trailing Slash ko false kiya hai taaki GSC Redirect Errors khatam hon.
-  // Ab links clean dikhenge (e.g., /en/blog) aur Google ko extra redirect nahi milega.
+  // trailingSlash false hi rakho taaki clean URLs milein
   trailingSlash: false,
 
-  // 3. PERFORMANCE & SEO BOOSTERS
   poweredByHeader: false,
   reactStrictMode: true,
 
-  // 4. SERVER ACTIONS (PDF Upload Limits - 50MB)
   experimental: {
     serverActions: {
       bodySizeLimit: '50mb',
     },
   },
 
-  // 5. WEBPACK CONFIGURATION (WASM & PDF Libraries Fix)
+  // Webpack for WASM & PDF Libraries
   webpack: (config, { isServer, webpack }) => {
     if (!isServer) {
       config.resolve.fallback = {
@@ -65,7 +75,6 @@ const nextConfig = {
     return config;
   },
 
-  // 6. IMAGE OPTIMIZATION
   images: {
     unoptimized: true,
     formats: ['image/avif', 'image/webp'],
@@ -74,7 +83,6 @@ const nextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 30,
   },
 
-  // 7. SECURITY & CACHING HEADERS
   async headers() {
     return [
       {
