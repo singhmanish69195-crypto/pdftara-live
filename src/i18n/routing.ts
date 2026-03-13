@@ -1,28 +1,19 @@
 import { defineRouting } from 'next-intl/routing';
-import { createNavigation } from 'next-intl/navigation';
+import { createNavigation } from 'next-intl/navigation'; // Yahan change kiya hai
 
 export const routing = defineRouting({
-  // 1. Sabhi languages ki list
+  // 🔥 Isse TypeScript ko pata chalta hai ki ye languages fix hain.
   locales: ['en', 'ja', 'ko', 'es', 'fr', 'de', 'zh', 'pt'] as const,
 
-  // 2. Default language hamesha English rahegi
+  // Default language
   defaultLocale: 'en',
 
   /**
-   * 🔥 SABSE ZARURI FIX:
-   * 'as-needed' ka matlab hai ki English (default) ke liye 
-   * URL mein '/en' bilkul nahi aayega.
+   * 'always' = /en/ hamesha dikhega (Google ke liye best)
    */
-  localePrefix: 'as-needed',
-
-  /**
-   * 🔥 AUTOMATIC REDIRECT BAND:
-   * 'localeDetection: false' karne se browser zabardasti 
-   * user ko '/en' par nahi bhejega.
-   */
-  localeDetection: false
+  localePrefix: 'always'
 });
 
-// Navigation helpers jo hum poore app mein use karte hain
+// Yahan bhi 'createNavigation' use karna hai
 export const { Link, redirect, usePathname, useRouter } =
   createNavigation(routing);
