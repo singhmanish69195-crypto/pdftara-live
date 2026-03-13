@@ -8,23 +8,24 @@ const intlMiddleware = createMiddleware(routing);
 export default function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // 🔥 1. FORCE REDIRECT: अगर URL में /en है, तो उसे हटाओ और Root पर भेजो
+    // 🔥 1. JOOTA MAAR REDIRECT: अगर URL में /en है, तो उसे लात मारो
+    // ये SEO के लिए सबसे बेस्ट है, Google को 301 (Permanent) मैसेज जाएगा
     if (pathname === '/en' || pathname.startsWith('/en/')) {
         const newPathname = pathname.replace(/^\/en/, '') || '/';
-        const url = request.nextUrl.clone();
-        url.pathname = newPathname;
+        const url = new URL(newPathname, request.url);
         
         const response = NextResponse.redirect(url, 301);
         
-        // ब्राउज़र को बोलो कि English की पुरानी कुकी हटा दे, वरना ये बार-बार /en लाएगा
-        response.cookies.set('NEXT_LOCALE', 'en'); 
+        // पुरानी कुकी को डिलीट करो, ये ही सबसे बड़ी जड़ है `/en` की
+        response.cookies.delete('NEXT_LOCALE'); 
         return response;
     }
 
-    // 2. intlMiddleware को चलाओ
+    // 2. intlMiddleware चलाओ (ये बाकी भाषाओं ja, ko, hi आदि को संभालेगा)
     const response = intlMiddleware(request);
 
-    // 3. Security Headers for WASM (PDF Tools के लिए ज़रूरी)
+    // 3. WASM Security Headers (तेरे PDF Tools को चलाने के लिए)
+    // ये headers हर हाल में होने चाहिए वरना Tools लोड नहीं होंगे
     response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
     response.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
     response.headers.set('Cross-Origin-Resource-Policy', 'cross-origin');
@@ -33,10 +34,7 @@ export default function middleware(request: NextRequest) {
 }
 
 export const config = {
-    // matcher को "Strict" रखा है ताकि सैटमैप और फाइलों में गड़बड़ न हो
-    matcher: [
-        '/',
-        '/(ja|ko|es|fr|de|zh|pt)/:path*',
-        '/((?!api|_next|_vercel|.*\\..*).*)',
-    ],
+    // 🔥 MATCH KRNE KA SAHI TARIKA:
+    // ये matcher सुनिश्चित करता है कि फालतू फाइलों (images, api) को छोड़कर सब पर चले
+    matcher: ['/((?!api|_next|_vercel|.*\\..*).*)']
 };
