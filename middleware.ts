@@ -1,21 +1,34 @@
 import createMiddleware from 'next-intl/middleware';
 import { routing } from '@/i18n/routing';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export default createMiddleware(routing);
+const intlMiddleware = createMiddleware(routing);
+
+export default function middleware(request: NextRequest) {
+    const { pathname } = request.nextUrl;
+
+    // 🔥 SEO Safe Redirect: /en को हमेशा के लिए हटा दो
+    if (pathname === '/en' || pathname.startsWith('/en/')) {
+        const newPathname = pathname.replace(/^\/en/, '') || '/';
+        const url = new URL(newPathname, request.url);
+        // 301 redirect गूगल को बताता है कि ये परमानेंट बदलाव है (Best for SEO)
+        return NextResponse.redirect(url, 301);
+    }
+
+    const response = intlMiddleware(request);
+
+    // Security Headers for WASM
+    response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+    response.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
+    response.headers.set('Cross-Origin-Resource-Policy', 'cross-origin');
+
+    return response;
+}
 
 export const config = {
-  // 🔥 FIX: Matcher ko thoda aur "Strict" kiya hai.
-  // Ye sirf unhi pages ko catch karega jo asli hain.
-  // Isse sitemap.xml, robots.txt aur static files par redirect error nahi aayega.
-  matcher: [
-    // 1. Sabse pehle root '/' ko pakdo
-    '/',
-
-    // 2. Phir saare locales ko pakdo (en, ja, ko, etc.)
-    '/(ja|ko|es|fr|de|zh|pt)/:path*',
-
-    // 3. Phir un paths ko pakdo jinmein locale nahi hai (as-needed logic)
-    // Lekin api, _next, aur static files (.ico, .png, etc.) ko chhod do.
-    '/((?!api|_next|_vercel|.*\\..*).*)',
-  ],
+    matcher: [
+        // सिर्फ ज़रूरी पेजों को स्कैन करो, फालतू फाइलों को छोड़ दो
+        '/((?!api|_next|_vercel|.*\\..*).*)',
+    ],
 };
