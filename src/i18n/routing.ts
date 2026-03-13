@@ -2,22 +2,23 @@ import { defineRouting } from 'next-intl/routing';
 import { createNavigation } from 'next-intl/navigation';
 
 export const routing = defineRouting({
-  // 🔥 Sabhi languages list
+  // 1. Sabhi languages ki list
   locales: ['en', 'ja', 'ko', 'es', 'fr', 'de', 'zh', 'pt'] as const,
 
-  // Default bhasha English (en) rahegi
+  // 2. Default language hamesha English rahegi
   defaultLocale: 'en',
 
   /**
-   * 🔥 FIX 1: 'as-needed' ka matlab hai ki English (default) ke liye 
-   * URL mein '/en' bilkul nahi dikhega.
+   * 🔥 SABSE ZARURI FIX:
+   * 'as-needed' ka matlab hai ki English (default) ke liye 
+   * URL mein '/en' bilkul nahi aayega.
    */
   localePrefix: 'as-needed',
 
   /**
-   * 🔥 FIX 2: Sabse Zaruri! 'localeDetection: false' karne se 
-   * browser aapko apne aap '/en' par redirect nahi karega.
-   * Iske bina URL bar-bar '/en' par chala jata hai.
+   * 🔥 AUTOMATIC REDIRECT BAND:
+   * 'localeDetection: false' karne se browser zabardasti 
+   * user ko '/en' par nahi bhejega.
    */
   localeDetection: false
 });
