@@ -1,119 +1,23 @@
-import createNextIntlPlugin from 'next-intl/plugin';
+import createMiddleware from 'next-intl/middleware';
+import { routing } from '@/i18n/routing';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
+const intlMiddleware = createMiddleware(routing);
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  // 1. GLOBAL REDIRECTS (Enforcing WWW and Kicking /en out)
-  async redirects() {
-    return [
-      // 🔥 FIX 1: Non-WWW to WWW (Existing)
-      {
-        source: '/:path*',
-        has: [{ type: 'host', value: 'pdftara.com' }],
-        destination: 'https://www.pdftara.com/:path*',
-        permanent: true,
-      },
-      // 🔥 FIX 2: JOOTA MAAR LOGIC - /en को उखाड़ फेंको (Redirect to Root)
-      {
-        source: '/en',
-        destination: '/',
-        permanent: true, // 301 Redirect: Google ko bolega ki /en mar chuka hai
-      },
-      // 🔥 FIX 3: /en/ ke aage kuch bhi ho, use bhi saaf karo
-      {
-        source: '/en/:path*',
-        destination: '/:path*',
-        permanent: true,
-      },
-    ];
-  },
+export default function middleware(request: NextRequest) {
+    // 1. intlMiddleware को चलाने दो (ये अपने आप 'as-needed' हैंडल करेगा)
+    const response = intlMiddleware(request);
 
-  // trailingSlash false hi rakho taaki clean URLs milein
-  trailingSlash: false,
+    // 2. WASM Security Headers (तेरे PDF Tools के लिए ज़रूरी)
+    response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+    response.headers.set('Cross-Origin-Embedder-Policy', 'require-corp');
+    response.headers.set('Cross-Origin-Resource-Policy', 'cross-origin');
 
-  poweredByHeader: false,
-  reactStrictMode: true,
+    return response;
+}
 
-  experimental: {
-    serverActions: {
-      bodySizeLimit: '50mb',
-    },
-  },
-
-  // Webpack for WASM & PDF Libraries
-  webpack: (config, { isServer, webpack }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        path: false,
-        crypto: false,
-        module: false,
-        url: false,
-        worker_threads: false,
-      };
-    }
-
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      'module': false,
-    };
-
-    config.plugins.push(
-      new webpack.IgnorePlugin({
-        resourceRegExp: /^module$/,
-        contextRegExp: /@bentopdf/,
-      })
-    );
-
-    config.experiments = {
-      ...config.experiments,
-      asyncWebAssembly: true,
-    };
-
-    return config;
-  },
-
-  images: {
-    unoptimized: true,
-    formats: ['image/avif', 'image/webp'],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60 * 60 * 24 * 30,
-  },
-
-  async headers() {
-    return [
-      {
-        source: '/:path*.(ico|jpg|jpeg|png|gif|svg|webp|avif|woff|woff2|ttf|eot)',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
-        ],
-      },
-      {
-        source: '/:path*.(js|css)',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
-        ],
-      },
-      {
-        source: '/:path*',
-        headers: [
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-          { key: 'X-XSS-Protection', value: '1; mode=block' },
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-        ],
-      },
-    ];
-  },
-
-  typescript: { ignoreBuildErrors: false },
-  eslint: { ignoreDuringBuilds: false },
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
-  },
+export const config = {
+    // matcher को सही रखो ताकि फालतू फाइलों पर न चले
+    matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
 };
-
-export default withNextIntl(nextConfig);
