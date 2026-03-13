@@ -4,7 +4,7 @@ import '@/app/globals.css';
 
 // 1. Metadata Configuration
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.pdftara.com'),
+  metadataBase: new URL('https://www.pdftara.com/'),
   
   title: {
     default: 'PDFTara.com - Free Online PDF Tools | Merge, Split & Compress',
@@ -18,22 +18,19 @@ export const metadata: Metadata = {
     'convert pdf to word', 'secure pdf tools', 'no upload pdf editor'
   ],
 
-  authors: [{ name: 'PDFTara Team', url: 'https://www.pdftara.com' }],
+  authors: [{ name: 'PDFTara Team', url: 'https://www.pdftara.com/' }],
   creator: 'PDFTara.com',
   publisher: 'PDFTara.com',
 
   alternates: {
-    canonical: 'https://www.pdftara.com',
+    canonical: 'https://www.pdftara.com/',
     languages: {
-      // 🔥 FIX 1: Yahan '/en/' ko hata kar sirf '/' kar diya taaki redirect na ho
-      'en-US': '/', 
-      'ja-JP': '/ja',
-      'ko-KR': '/ko',
-      'es-ES': '/es',
-      'fr-FR': '/fr',
-      'de-DE': '/de',
-      'zh-TW': '/zh',
-      'pt-PT': '/pt',
+      'en-US': '/en/',
+      'zh-TW': '/zh-TW/',
+      'es-ES': '/es/',
+      'hi-IN': '/hi-IN/',
+      'ko-KR': '/ko/',
+      'ja-JP': '/ja/',
     },
   },
 
@@ -51,7 +48,7 @@ export const metadata: Metadata = {
 
   openGraph: {
     type: 'website',
-    url: 'https://www.pdftara.com',
+    url: 'https://www.pdftara.com/',
     siteName: 'PDFTara.com',
     title: 'PDFTara.com - 100% Free & Private PDF Tools',
     description: 'Process PDFs directly in your browser. No uploads, completely secure.',
@@ -65,6 +62,7 @@ export const metadata: Metadata = {
   },
 
   verification: {
+    // Note: Agar Google Search Console ka code hai to yahan 'google:' ke aage dalo
     google: 'GSC_KA_ASLI_CODE_YAHAN_DALO', 
   },
 
@@ -92,7 +90,7 @@ export default async function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <style dangerouslySetInnerHTML={{ __html: 'html{scrollbar-gutter:stable}' }} />
 
-        {/* --- GOOGLE ANALYTICS --- */}
+        {/* --- GOOGLE ANALYTICS (GTAG.JS) --- */}
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-E215JB8PYT"
@@ -103,6 +101,7 @@ export default async function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
+
             gtag('config', 'G-E215JB8PYT');
           `}
         </Script>
