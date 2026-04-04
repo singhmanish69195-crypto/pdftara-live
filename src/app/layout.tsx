@@ -86,6 +86,9 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
+        {/* --- ADSENSE VERIFICATION META TAG --- */}
+        <meta name="google-adsense-account" content="ca-pub-4129411618696895" />
+
         <meta name="color-scheme" content="light dark" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <style dangerouslySetInnerHTML={{ __html: 'html{scrollbar-gutter:stable}' }} />
