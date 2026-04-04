@@ -90,6 +90,14 @@ export default async function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <style dangerouslySetInnerHTML={{ __html: 'html{scrollbar-gutter:stable}' }} />
 
+        {/* --- GOOGLE ADSENSE CODE --- */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4129411618696895"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+
         {/* --- GOOGLE ANALYTICS (GTAG.JS) --- */}
         <Script
           async
