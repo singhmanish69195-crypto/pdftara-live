@@ -10,8 +10,8 @@ import { getAllTools } from '@/config/tools';
 import { createClient } from '@supabase/supabase-js';
 
 // --- 1. SUPABASE CONFIGURATION ---
-const supabaseUrl = 'https://gqyqmhgannypuracasdu.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdxeXFtaGdhbm55cHVyYWNhc2R1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNzkwMDYsImV4cCI6MjA4NDc1NTAwNn0.8dlJNPu6jjQt4vcQiaWfypFuB8fSBpv0F3yI1VkMQE4';
+const supabaseUrl = 'https://qsyesrmjddqcsledxtva.supabase.co';
+const supabaseAnonKey = 'sb_publishable_uhzhKdRqKdB5gcXdnxgFsg_tsP875JG';
 
 /**
  * 🔥 FIX 1: BYPASS NEXT.JS FETCH CACHE
