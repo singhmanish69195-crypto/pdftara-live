@@ -113,6 +113,10 @@ export default async function ArticleView(props: { params: Promise<{ slug: strin
     }
   }
 
+  // --- SAFETY FOR COMMENTS ---
+  // Agar p.comments null ya undefined hai, toh usey empty array [] maan lo
+  const safeComments = Array.isArray(p.comments) ? p.comments : [];
+
   return (
     <div className="min-h-screen flex flex-col bg-[#fafafa]">
       
@@ -151,13 +155,12 @@ export default async function ArticleView(props: { params: Promise<{ slug: strin
             </div>
           </header>
 
-          {/* --- ARTICLE CONTENT (LINK COLOR FIXED HERE) --- */}
+          {/* --- ARTICLE CONTENT --- */}
           <div 
             className="prose prose-xl md:prose-2xl prose-slate max-w-none 
             prose-headings:text-[#0f172a] prose-headings:font-black prose-headings:tracking-tighter
             prose-p:text-slate-700 prose-p:leading-[1.9]
             prose-strong:text-black prose-strong:font-black
-            /* NEELA RANG KE LIYE YE LINES */
             prose-a:text-blue-700 prose-a:font-extrabold prose-a:underline decoration-blue-300 decoration-2 underline-offset-4 hover:prose-a:text-blue-900 transition-all
             prose-img:w-full prose-img:rounded-[2.5rem] prose-img:shadow-2xl 
             prose-img:mx-auto prose-img:my-20 prose-img:border-[12px] prose-img:border-white 
@@ -174,10 +177,10 @@ export default async function ArticleView(props: { params: Promise<{ slug: strin
              </div>
           </div>
 
-          {/* Comments */}
+          {/* Comments Section */}
           <div className="mt-28">
              <div className="flex items-center gap-4 mb-10">
-                <h3 className="text-3xl font-[1000] text-[#0f172a] tracking-tight">Discussion ({p.comments?.length || 0})</h3>
+                <h3 className="text-3xl font-[1000] text-[#0f172a] tracking-tight">Discussion ({safeComments.length})</h3>
                 <div className="flex-1 h-[1px] bg-slate-100"></div>
              </div>
              
@@ -197,8 +200,8 @@ export default async function ArticleView(props: { params: Promise<{ slug: strin
              </form>
 
              <div className="space-y-6">
-               {p.comments && p.comments.length > 0 ? (
-                 p.comments.slice().reverse().map((c: any, i: number) => (
+               {safeComments.length > 0 ? (
+                 safeComments.slice().reverse().map((c: any, i: number) => (
                    <div key={i} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:border-blue-200 transition-colors">
                      <div className="flex justify-between items-center mb-4">
                         <span className="font-black text-blue-600 text-sm italic">@Guest_User</span>
