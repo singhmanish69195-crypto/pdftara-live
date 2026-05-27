@@ -6,11 +6,9 @@ import { GoogleScripts } from '@/components/GoogleScripts';
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.pdftara.com/'),
   title: {
-    // Naver limit: 40 chars. Humara: 32 chars (Perfect)
     default: 'PDFTara - Free Private PDF Tools', 
     template: '%s | PDFTara'
   },
-  // Naver limit: 80 chars. Humara: 61 chars (Perfect)
   description: 'Secure browser-based tools to merge, split and compress PDFs.', 
   keywords: [
     'PDF tools', 'PDFTara', 'merge pdf', 'split pdf', 'compress pdf', 
@@ -45,9 +43,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: 'https://www.pdftara.com/',
     siteName: 'PDFTara',
-    // OG Title chota kar diya (Naver ke liye)
     title: 'PDFTara - Free & Private PDF Tools', 
-    // OG Description bhi chota kar diya
     description: 'Merge and edit PDFs securely in your browser. No uploads.', 
     images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
   },
@@ -73,16 +69,14 @@ export default async function RootLayout({
       <head>
         {/* NAVER VERIFICATION TAG */}
         <meta name="naver-site-verification" content="a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a" />
-        
         <meta name="google-adsense-account" content="ca-pub-4129411618696895" />
         <meta name="color-scheme" content="light dark" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <style dangerouslySetInnerHTML={{ __html: 'html{scrollbar-gutter:stable}' }} />
-        
-        {/* Analytics aur Ads Logic */}
-        <GoogleScripts />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
+        {/* Sabse Zaruri: Script ko Body ke shuruat mein rakhein */}
+        <GoogleScripts />
         {children}
       </body>
     </html>
