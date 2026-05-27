@@ -14,7 +14,6 @@ const nextConfig = {
     },
   },
 
-  // 1. IMAGE OPTIMIZATION
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -24,10 +23,7 @@ const nextConfig = {
     ],
   },
 
-  // 2. WEBPACK CONFIG (SABSE ZAROORI FIX)
   webpack: (config, { isServer, webpack }) => {
-    
-    // --- CANVAS FIX ---
     config.resolve.alias.canvas = false;
     config.resolve.alias.encoding = false;
 
@@ -43,13 +39,10 @@ const nextConfig = {
       };
     }
 
-    // next-intl parsing fix
     config.module.rules.push({
       test: /\.m?js$/,
       type: "javascript/auto",
-      resolve: {
-        fullySpecified: false,
-      },
+      resolve: { fullySpecified: false },
     });
 
     config.plugins.push(
@@ -68,18 +61,23 @@ const nextConfig = {
     return config;
   },
 
-  // 3. SECURITY HEADERS (YAHAN HAI FIX)
+  // --- HEADERS FIX (Sabse Main Part) ---
   async headers() {
     return [
       {
+        // Sabhi pages ke liye normal headers (Taaki Ads na rukein)
         source: '/:path*',
         headers: [
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          
-          // --- WASM & ADSENSE FIX ---
-          // 'credentialless' se WASM ko performance milti hai aur AdSense block nahi hota
+        ],
+      },
+      {
+        // WASM Headers sirf tool pages par lagayenge (Specific Paths)
+        // Agar aapke tools ka path alag hai toh use yahan add karein
+        source: '/:locale/(merge-pdf|split-pdf|compress-pdf|pdf-to-word|word-to-pdf)/:path*', 
+        headers: [
           { key: 'Cross-Origin-Embedder-Policy', value: 'credentialless' },
           { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
         ],
@@ -87,7 +85,6 @@ const nextConfig = {
     ];
   },
 
-  // BUILD SETTINGS
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
 };
