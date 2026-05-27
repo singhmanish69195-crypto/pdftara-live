@@ -27,7 +27,7 @@ const nextConfig = {
   // 2. WEBPACK CONFIG (SABSE ZAROORI FIX)
   webpack: (config, { isServer, webpack }) => {
     
-    // --- CANVAS FIX (Isko condition se bahar rakha hai taaki build time pe error na aaye) ---
+    // --- CANVAS FIX ---
     config.resolve.alias.canvas = false;
     config.resolve.alias.encoding = false;
 
@@ -43,7 +43,7 @@ const nextConfig = {
       };
     }
 
-    // next-intl parsing fix: Jo 'import(t)' wala error aa raha tha uske liye
+    // next-intl parsing fix
     config.module.rules.push({
       test: /\.m?js$/,
       type: "javascript/auto",
@@ -62,13 +62,13 @@ const nextConfig = {
     config.experiments = {
       ...config.experiments,
       asyncWebAssembly: true,
-      layers: true, // WASM aur complex builds ke liye helpful hai
+      layers: true, 
     };
 
     return config;
   },
 
-  // 3. SECURITY HEADERS
+  // 3. SECURITY HEADERS (YAHAN HAI FIX)
   async headers() {
     return [
       {
@@ -77,6 +77,11 @@ const nextConfig = {
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          
+          // --- WASM & ADSENSE FIX ---
+          // 'credentialless' se WASM ko performance milti hai aur AdSense block nahi hota
+          { key: 'Cross-Origin-Embedder-Policy', value: 'credentialless' },
+          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
         ],
       },
     ];
