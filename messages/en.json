@@ -424,15 +424,12 @@
     "unknown": "An unexpected error occurred. Please try again.",
     "toolNotFound": "Tool Not Found"
   },
- "home": {
-  "hero": {
-    "title": "Free & 100% Private PDF Tools",
-    "highlight": "Professional Power, Zero Uploads",
-    "subtitle": "Powered by LibreOffice WASM — High-speed, private PDF processing entirely in your browser. No Server Uploads, No Privacy Risks.",
-    "cta": "Get Started",
-    "badge": "Powered by LibreOffice WASM"
-  }
-}
+  "home": {
+    "hero": {
+      "title": "Free & 100% Private PDF Tools",
+      "highlight": "🚀 Powered by LibreOffice WASM — No Server Uploads",
+      "subtitle": "Free, private, and powerful PDF processing in your browser",
+      "cta": "Get Started"
     },
     "features": {
       "privacy": {
