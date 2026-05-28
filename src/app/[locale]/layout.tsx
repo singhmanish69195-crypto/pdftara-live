@@ -8,7 +8,7 @@ import { fontVariables } from '@/lib/fonts';
 import { SkipLink } from '@/components/common/SkipLink';
 import { GoogleScripts } from '@/components/GoogleScripts'; 
 
-// CSS Path fix: globals.css ek folder peeche hai (app folder mein)
+// CSS Path fix
 import '../globals.css';
 
 export function generateStaticParams() {
@@ -34,7 +34,6 @@ export async function generateMetadata({
   const validLocale = locales.includes(locale as Locale) ? (locale as Locale) : 'en';
   const metadata = await generateHomeMetadata(validLocale);
 
-  // --- 🌍 14 LANGUAGES SEO ---
   const seoData: Record<string, { title: string; desc: string }> = {
     en: { title: "PDFTara - Free Private PDF Tools", desc: "Merge, split and compress PDFs securely in your browser." },
     hi: { title: "PDFTara - फ्री प्राइवेट PDF टूल्स", desc: "ब्राउज़र में सुरक्षित रूप से PDF मर्ज और कंप्रेस करें।" },
@@ -44,12 +43,12 @@ export async function generateMetadata({
     fr: { title: "PDFTara - Outils PDF gratuits et privés", desc: "Fusionnez et compressez des PDF en toute sécurité." },
     de: { title: "PDFTara - Kostenlose PDF-Tools", desc: "PDFs sicher im Browser zusammenführen und komprimieren." },
     zh: { title: "PDFTara - 免费私密 PDF 工具", desc: "在浏览器中安全地合并、拆分和压缩 PDF。" },
-    pt: { title: "PDFTara - Ferramentas PDF Gratuitas", desc: "Mescle e comprima PDFs com segurança no seu navegador." },
+    pt: { title: "PDFTara - Ferramentas PDF Gratuitas", desc: "Mescle e comprimi PDFs com segurança no seu navegador." },
     ar: { title: "PDFTara - أدوات PDF مجانية", desc: "دمج وضغط ملفات PDF بأمان في متصفحك." },
     it: { title: "PDFTara - Strumenti PDF gratuiti", desc: "Unisci e comprimi PDF in modo sicuro nel tuo browser." },
     ro: { title: "PDFTara - Instrumente PDF gratuite", desc: "Combinați și comprimați PDF-urile în siguranță." },
     vi: { title: "PDFTara - Công cụ PDF miễn phí", desc: "Ghép và nén PDF an toàn ngay trên trình duyệt." },
-    "zh-TW": { title: "PDFTara - 免費私密 PDF 工具", desc: "在瀏覽器中安全地合併、拆分和壓縮 PDF。" }
+    "zh-TW": { title: "PDFTara - 免費私密 PDF 工具", desc: "在瀏覽器中安全地合併、拆分และ壓縮 PDF。" }
   };
 
   const currentSeo = seoData[validLocale] || seoData['en'];
@@ -57,31 +56,13 @@ export async function generateMetadata({
   return {
     ...metadata,
     metadataBase: new URL('https://www.pdftara.com/'),
-    title: {
-      default: currentSeo.title,
-      template: `%s | PDFTara`, 
-    },
+    title: { default: currentSeo.title, template: `%s | PDFTara` },
     description: currentSeo.desc,
-    
     alternates: {
       canonical: `https://www.pdftara.com/${validLocale}`,
-      languages: locales.reduce((acc, l) => {
-        acc[l] = `https://www.pdftara.com/${l}`;
-        return acc;
-      }, {} as Record<string, string>),
+      languages: locales.reduce((acc, l) => { acc[l] = `https://www.pdftara.com/${l}`; return acc; }, {} as Record<string, string>),
     },
-
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-      },
-    },
-
+    robots: { index: true, follow: true },
     openGraph: {
       ...metadata.openGraph,
       title: currentSeo.title,
@@ -114,31 +95,31 @@ export default async function LocaleLayout({
     'applicationCategory': 'MultimediaApplication',
     'operatingSystem': 'Web, Windows, macOS, Android, iOS',
     'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
-    'aggregateRating': {
-      '@type': 'AggregateRating',
-      'ratingValue': '4.9',
-      'ratingCount': '18540',
-      'bestRating': '5',
-      'worstRating': '1'
-    }
+    'aggregateRating': { '@type': 'AggregateRating', 'ratingValue': '4.9', 'ratingCount': '18540', 'bestRating': '5', 'worstRating': '1' }
   };
 
   return (
     <html lang={locale} dir={direction} className={fontVariables} suppressHydrationWarning>
       <head>
-        {/* NAVER & GOOGLE VERIFICATION */}
+        {/* 1. WASM + Ads Fix: Service Worker sabse upar */}
+        <script src="/coi-serviceworker.js" async></script>
+        
+        {/* 2. Google AdSense (RAW Tag: data-nscript error fix karne ke liye) */}
+        <script 
+          async 
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4129411618696895"
+          crossOrigin="anonymous"
+        ></script>
+
         <meta name="naver-site-verification" content="a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a" />
         <meta name="google-adsense-account" content="ca-pub-4129411618696895" />
-        
-        {/* COI Service Worker (WASM + Ads Fix) */}
-        <script src="/coi-serviceworker.js" async></script>
         
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         
-        {/* Adsense aur Analytics logic */}
+        {/* Sirf Google Analytics yahan rahega */}
         <GoogleScripts />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased font-sans">
