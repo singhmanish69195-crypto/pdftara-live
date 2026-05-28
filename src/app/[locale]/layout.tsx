@@ -7,6 +7,7 @@ import { generateHomeMetadata } from '@/lib/seo';
 import { fontVariables } from '@/lib/fonts';
 import { SkipLink } from '@/components/common/SkipLink';
 import { GoogleScripts } from '@/components/GoogleScripts'; 
+import Script from 'next/script'; // Next.js का Script कॉम्पोनेंट इस्तेमाल करो
 
 // CSS Path fix
 import '../globals.css';
@@ -37,18 +38,18 @@ export async function generateMetadata({
   const seoData: Record<string, { title: string; desc: string }> = {
     en: { title: "PDFTara - Free Private PDF Tools", desc: "Merge, split and compress PDFs securely in your browser." },
     hi: { title: "PDFTara - फ्री प्राइवेट PDF टूल्स", desc: "ब्राउज़र में सुरक्षित रूप से PDF मर्ज और कंप्रेस करें।" },
-    ja: { title: "PDFTara - 無料のプライベートPDFツール", desc: "ブラウザでPDFを安全に結合、分割、圧縮します。" },
+    ja: { title: "PDFTara - 無料のプライベートPDFツール", desc: "ブラウザでPDFを安全に結合、分割、圧縮します।" },
     ko: { title: "PDFTara - 무료 개인용 PDF 도구", desc: "브라우저에서 안전하게 PDF를 병합, 분할 및 압축하세요." },
     es: { title: "PDFTara - Herramientas PDF gratuitas", desc: "Combine y comprima PDF de forma segura en su navegador." },
     fr: { title: "PDFTara - Outils PDF gratuits et privés", desc: "Fusionnez et compressez des PDF en toute sécurité." },
     de: { title: "PDFTara - Kostenlose PDF-Tools", desc: "PDFs sicher im Browser zusammenführen und komprimieren." },
-    zh: { title: "PDFTara - 免费私密 PDF 工具", desc: "在浏览器中安全地合并、拆分和压缩 PDF。" },
+    zh: { title: "PDFTara - 免费私密 PDF 工具", desc: "在浏览器中安全地合并、拆分和压缩 PDF।" },
     pt: { title: "PDFTara - Ferramentas PDF Gratuitas", desc: "Mescle e comprimi PDFs com segurança no seu navegador." },
     ar: { title: "PDFTara - أدوات PDF مجانية", desc: "دمج وضغط ملفات PDF بأمان في متصفحك." },
     it: { title: "PDFTara - Strumenti PDF gratuiti", desc: "Unisci e comprimi PDF in modo sicuro nel tuo browser." },
     ro: { title: "PDFTara - Instrumente PDF gratuite", desc: "Combinați și comprimați PDF-urile în siguranță." },
     vi: { title: "PDFTara - Công cụ PDF miễn phí", desc: "Ghép và nén PDF an toàn ngay trên trình duyệt." },
-    "zh-TW": { title: "PDFTara - 免費私密 PDF 工具", desc: "在瀏覽器中安全地合併、拆分และ壓縮 PDF。" }
+    "zh-TW": { title: "PDFTara - 免費私密 PDF 工具", desc: "在瀏覽器中安全地合併、拆分และ壓縮 PDF।" }
   };
 
   const currentSeo = seoData[validLocale] || seoData['en'];
@@ -101,15 +102,19 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} dir={direction} className={fontVariables} suppressHydrationWarning>
       <head>
-        {/* 1. WASM + Ads Fix: Service Worker sabse upar */}
-        <script src="/coi-serviceworker.js" async></script>
+        {/* 1. WASM Fix: Service Worker को सबसे पहले लोड करो ताकि Isolation सेट हो सके */}
+        <Script 
+          src="/coi-serviceworker.js" 
+          strategy="beforeInteractive" 
+        />
         
-        {/* 2. Google AdSense (RAW Tag: data-nscript error fix karne ke liye) */}
-        <script 
+        {/* 2. Google AdSense: crossOrigin "anonymous" सबसे ज़रूरी है Ads को WASM के साथ चलाने के लिए */}
+        <Script 
           async 
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4129411618696895"
           crossOrigin="anonymous"
-        ></script>
+          strategy="afterInteractive"
+        />
 
         <meta name="naver-site-verification" content="a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a" />
         <meta name="google-adsense-account" content="ca-pub-4129411618696895" />
@@ -119,7 +124,7 @@ export default async function LocaleLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         
-        {/* Sirf Google Analytics yahan rahega */}
+        {/* Google Analytics */}
         <GoogleScripts />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased font-sans">
