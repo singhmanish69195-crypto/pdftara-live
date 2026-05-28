@@ -67,6 +67,9 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
+        {/* 🚀 WASM + ADS FIX: Is script ko sabse upar rakhein */}
+        <script src="/coi-serviceworker.js" async></script>
+
         {/* NAVER VERIFICATION TAG */}
         <meta name="naver-site-verification" content="a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a" />
         <meta name="google-adsense-account" content="ca-pub-4129411618696895" />
@@ -75,7 +78,7 @@ export default async function RootLayout({
         <style dangerouslySetInnerHTML={{ __html: 'html{scrollbar-gutter:stable}' }} />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
-        {/* Sabse Zaruri: Script ko Body ke shuruat mein rakhein */}
+        {/* Adsense aur Analytics scripts yahan hain */}
         <GoogleScripts />
         {children}
       </body>
