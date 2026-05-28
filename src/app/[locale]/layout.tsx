@@ -34,7 +34,7 @@ export async function generateMetadata({
   const validLocale = locales.includes(locale as Locale) ? (locale as Locale) : 'en';
   const metadata = await generateHomeMetadata(validLocale);
 
-  // --- 🌍 14 LANGUAGES SEO (Short & Unique) ---
+  // --- 🌍 14 LANGUAGES SEO ---
   const seoData: Record<string, { title: string; desc: string }> = {
     en: { title: "PDFTara - Free Private PDF Tools", desc: "Merge, split and compress PDFs securely in your browser." },
     hi: { title: "PDFTara - फ्री प्राइवेट PDF टूल्स", desc: "ब्राउज़र में सुरक्षित रूप से PDF मर्ज और कंप्रेस करें।" },
@@ -45,7 +45,6 @@ export async function generateMetadata({
     de: { title: "PDFTara - Kostenlose PDF-Tools", desc: "PDFs sicher im Browser zusammenführen und komprimieren." },
     zh: { title: "PDFTara - 免费私密 PDF 工具", desc: "在浏览器中安全地合并、拆分和压缩 PDF。" },
     pt: { title: "PDFTara - Ferramentas PDF Gratuitas", desc: "Mescle e comprima PDFs com segurança no seu navegador." },
-    // --- 5 Nayi Bhashaye Add Kar Di Hain ---
     ar: { title: "PDFTara - أدوات PDF مجانية", desc: "دمج وضغط ملفات PDF بأمان في متصفحك." },
     it: { title: "PDFTara - Strumenti PDF gratuiti", desc: "Unisci e comprimi PDF in modo sicuro nel tuo browser." },
     ro: { title: "PDFTara - Instrumente PDF gratuite", desc: "Combinați și comprimați PDF-urile în siguranță." },
@@ -127,14 +126,18 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} dir={direction} className={fontVariables} suppressHydrationWarning>
       <head>
-        {/* NAVER VERIFICATION */}
+        {/* NAVER & GOOGLE VERIFICATION */}
         <meta name="naver-site-verification" content="a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a" />
         <meta name="google-adsense-account" content="ca-pub-4129411618696895" />
+        
+        {/* COI Service Worker (WASM + Ads Fix) */}
+        <script src="/coi-serviceworker.js" async></script>
         
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        
         {/* Adsense aur Analytics logic */}
         <GoogleScripts />
       </head>
