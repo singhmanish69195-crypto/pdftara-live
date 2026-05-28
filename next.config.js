@@ -3,11 +3,13 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  trailingSlash: true,
+  // 🚀 ब्रह्मास्त्र टिप: trailingSlash को true रखने से सर्विस वर्कर का पाथ कभी-कभी बिगड़ता है।
+  // पक्का करना कि 'coi-serviceworker.js' हमेशा रूट (pdftara.com/coi-serviceworker.js) पर ही रहे।
+  trailingSlash: true, 
   reactStrictMode: true,
-  poweredByHeader: false, // Security ke liye off rakho
+  poweredByHeader: false, 
 
-  // --- HEADERS RESET (YAHAN SE BLOCKED HEADERS HATA DIYE HAIN) ---
+  // --- HEADERS RESET ---
   async headers() {
     return [
       {
@@ -16,17 +18,18 @@ const nextConfig = {
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          // COOP aur COEP headers yahan se hata diye hain taaki Ads na rukein
+          // ⚠️ ध्यान दें: COOP और COEP यहाँ से हटा दिए हैं। 
+          // इनका काम अब 'coi-serviceworker.js' और 'vercel.json' (credentialless के साथ) संभालेंगे।
         ],
       },
     ];
   },
 
-  webpack: (config, { isServer, webpack }) => {
+  webpack: (config) => {
     config.resolve.alias.canvas = false;
     config.resolve.alias.encoding = false;
 
-    // WASM Experiments zaroori hain, inhein rehne dena
+    // 🚀 WASM की पावर के लिए ये सेटिंग्स ज़रूरी हैं
     config.experiments = { 
       ...config.experiments, 
       asyncWebAssembly: true,
@@ -36,7 +39,7 @@ const nextConfig = {
     return config;
   },
 
-  // Build errors ko ignore karne ke liye taaki Vercel deploy kar de
+  // Build के टाइम फालतू एरर्स को इग्नोर करो ताकि डिप्लॉयमेंट फ़ास्ट हो
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
 };
