@@ -1,4 +1,4 @@
-import Script from 'next/script';
+import Script from 'next/script'; // Next.js Script component
 import type { Metadata } from 'next';
 import '@/app/globals.css';
 import { GoogleScripts } from '@/components/GoogleScripts'; 
@@ -67,8 +67,21 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
-        {/* 🚀 WASM + ADS FIX: Is script ko sabse upar rakhein */}
-        <script src="/coi-serviceworker.js" async></script>
+        {/* 🚀 ब्रह्मास्त्र 1: Service Worker को सबसे पहले लोड करो */}
+        {/* 'beforeInteractive' का मतलब है कि पेज लोड होने से पहले ही WASM प्रोटेक्शन चालू हो जाएगी */}
+        <Script 
+          src="/coi-serviceworker.js" 
+          strategy="beforeInteractive" 
+        />
+
+        {/* 🚀 ब्रह्मास्त्र 2: Google AdSense Script */}
+        {/* crossOrigin="anonymous" लगाना सबसे ज़रूरी है, वरना COEP इसे ब्लॉक कर देगा */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4129411618696895"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
 
         {/* NAVER VERIFICATION TAG */}
         <meta name="naver-site-verification" content="a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a" />
@@ -78,8 +91,10 @@ export default async function RootLayout({
         <style dangerouslySetInnerHTML={{ __html: 'html{scrollbar-gutter:stable}' }} />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
-        {/* Adsense aur Analytics scripts yahan hain */}
+        {/* 🚀 ब्रह्मास्त्र 3: बाकी Scripts (Analytics आदि) */}
+        {/* सुनिश्चित करें कि GoogleScripts के अंदर फिर से AdSense स्क्रिप्ट न हो, वरना टकराव होगा */}
         <GoogleScripts />
+        
         {children}
       </body>
     </html>
