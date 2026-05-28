@@ -52,34 +52,26 @@ const nextConfig = {
       })
     );
 
+    // WASM Experiments ko yahan se hata diya hai taaki koi conflict na ho
     config.experiments = {
       ...config.experiments,
-      asyncWebAssembly: true,
-      layers: true, 
+      asyncWebAssembly: false, // Disabled for testing ads
+      layers: false, 
     };
 
     return config;
   },
 
-  // --- HEADERS FIX (Sabse Main Part) ---
+  // --- HEADERS RESET ---
   async headers() {
     return [
       {
-        // Sabhi pages ke liye normal headers (Taaki Ads na rukein)
         source: '/:path*',
         headers: [
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-        ],
-      },
-      {
-        // WASM Headers sirf tool pages par lagayenge (Specific Paths)
-        // Agar aapke tools ka path alag hai toh use yahan add karein
-        source: '/:locale/(merge-pdf|split-pdf|compress-pdf|pdf-to-word|word-to-pdf)/:path*', 
-        headers: [
-          { key: 'Cross-Origin-Embedder-Policy', value: 'credentialless' },
-          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+          // COOP aur COEP headers ko poori tarah hata diya hai
         ],
       },
     ];
