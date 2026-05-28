@@ -1,5 +1,6 @@
-/*! coi-serviceworker v0.1.7 - Guido Zuidhof and contributors, licensed under MIT */
-// --- 🚀 ADS FIX: Ise 'true' kiya hai taaki mobile aur laptop dono par ads chalein ---
+/*! coi-serviceworker v0.1.7 - Optimized for PDFTara (Ads + WASM) */
+
+// ब्रह्मास्त्र सेटिंग: इसे हमेशा true रखेंगे ताकि Ads न रुकें
 let coepCredentialless = true; 
 
 if (typeof window === 'undefined') {
@@ -7,49 +8,52 @@ if (typeof window === 'undefined') {
     self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
 
     self.addEventListener("message", (ev) => {
-        if (!ev.data) {
-            return;
-        } else if (ev.data.type === "deregister") {
-            self.registration
-                .unregister()
-                .then(() => {
-                    return self.clients.matchAll();
-                })
-                .then(clients => {
-                    clients.forEach((client) => client.navigate(client.url));
-                });
-        } else if (ev.data.type === "coepCredentialless") {
-            coepCredentialless = ev.data.value;
+        if (!ev.data) return;
+        if (ev.data.type === "deregister") {
+            self.registration.unregister().then(() => {
+                return self.clients.matchAll();
+            }).then(clients => {
+                clients.forEach((client) => client.navigate(client.url));
+            });
         }
     });
 
     self.addEventListener("fetch", function (event) {
         const r = event.request;
+        const url = r.url;
+
+        // --- 🛡️ AD-SHIELD LOGIC: Google Ads को बाईपास करो ---
+        if (
+            url.includes("google") || 
+            url.includes("adsbygoogle") || 
+            url.includes("doubleclick") || 
+            url.includes("googlesyndication") ||
+            url.includes("static.pub")
+        ) {
+            // एड्स के लिए कुछ भी मत बदलो, जैसा है वैसा जाने दो
+            return; 
+        }
+
         if (r.cache === "only-if-cached" && r.mode !== "same-origin") {
             return;
         }
 
-        const request = (coepCredentialless && r.mode === "no-cors")
-            ? new Request(r, {
-                credentials: "omit",
-            })
+        // Credentialless मोड में रिक्वेस्ट भेजें
+        const request = (r.mode === "no-cors")
+            ? new Request(r, { credentials: "omit" })
             : r;
+
         event.respondWith(
             fetch(request)
                 .then((response) => {
-                    if (response.status === 0) {
-                        return response;
-                    }
+                    if (response.status === 0) return response;
 
                     const newHeaders = new Headers(response.headers);
-                    // Yahan headers ko dynamically set kiya jata hai bina ads ko roke
-                    newHeaders.set("Cross-Origin-Embedder-Policy",
-                        coepCredentialless ? "credentialless" : "require-corp"
-                    );
-                    if (!coepCredentialless) {
-                        newHeaders.set("Cross-Origin-Resource-Policy", "cross-origin");
-                    }
+                    
+                    // WASM को पावर देने और Ads को खुश रखने वाले Headers
+                    newHeaders.set("Cross-Origin-Embedder-Policy", "credentialless");
                     newHeaders.set("Cross-Origin-Opener-Policy", "same-origin");
+                    newHeaders.set("Cross-Origin-Resource-Policy", "cross-origin");
 
                     return new Response(response.body, {
                         status: response.status,
@@ -57,64 +61,30 @@ if (typeof window === 'undefined') {
                         headers: newHeaders,
                     });
                 })
-                .catch((e) => console.error(e))
+                .catch((e) => {
+                    // अगर नेटवर्क एरर है तो कम से कम ओरिजिनल रिस्पॉन्स की कोशिश करो
+                    console.error("COI Fetch Error:", e);
+                })
         );
     });
 
 } else {
+    // क्लाइंट साइड लॉजिक (ब्राउज़र में रन होता है)
     (() => {
         const reloadedBySelf = window.sessionStorage.getItem("coiReloadedBySelf");
         window.sessionStorage.removeItem("coiReloadedBySelf");
-        const coepDegrading = (reloadedBySelf == "coepdegrade");
 
         const coi = {
             shouldRegister: () => !reloadedBySelf,
-            shouldDeregister: () => false,
-            coepCredentialless: () => true, // ✅ Mandatory for Ads
-            coepDegrade: () => true,
             doReload: () => window.location.reload(),
             quiet: false,
             ...window.coi
         };
 
         const n = navigator;
-        const controlling = n.serviceWorker && n.serviceWorker.controller;
-
-        if (controlling && !window.crossOriginIsolated) {
-            window.sessionStorage.setItem("coiCoepHasFailed", "true");
-        }
-        const coepHasFailed = window.sessionStorage.getItem("coiCoepHasFailed");
-
-        if (controlling) {
-            const reloadToDegrade = coi.coepDegrade() && !(
-                coepDegrading || window.crossOriginIsolated
-            );
-            n.serviceWorker.controller.postMessage({
-                type: "coepCredentialless",
-                value: (reloadToDegrade || coepHasFailed && coi.coepDegrade())
-                    ? false
-                    : coi.coepCredentialless(),
-            });
-            if (reloadToDegrade) {
-                !coi.quiet && console.log("Reloading page to degrade COEP.");
-                window.sessionStorage.setItem("coiReloadedBySelf", "coepdegrade");
-                coi.doReload("coepdegrade");
-            }
-
-            if (coi.shouldDeregister()) {
-                n.serviceWorker.controller.postMessage({ type: "deregister" });
-            }
-        }
-
         if (window.crossOriginIsolated !== false || !coi.shouldRegister()) return;
 
-        if (!window.isSecureContext) {
-            return;
-        }
-
-        if (!n.serviceWorker) {
-            return;
-        }
+        if (!window.isSecureContext || !n.serviceWorker) return;
 
         n.serviceWorker.register(window.document.currentScript.src).then(
             (registration) => {
@@ -129,7 +99,7 @@ if (typeof window === 'undefined') {
                 }
             },
             (err) => {
-                !coi.quiet && console.error("COOP/COEP Service Worker failed to register:", err);
+                !coi.quiet && console.error("SW Registration failed:", err);
             }
         );
     })();
