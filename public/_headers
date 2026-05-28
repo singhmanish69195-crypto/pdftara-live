@@ -1,88 +1,72 @@
 # Cache Control Headers for Static Assets
 # Requirements: 8.5 - Configure caching headers
-# 
-# This file is used by Netlify and Cloudflare Pages
-# For other platforms, configure headers in their respective config files
 
-# Default headers for all pages
+# --- STEP 1: GLOBAL HEADERS (Ads yahan se aazaad honge) ---
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
-  # Required for SharedArrayBuffer (LibreOffice WASM pthreads)
-  Cross-Origin-Opener-Policy: same-origin
-  Cross-Origin-Embedder-Policy: require-corp
-  Cross-Origin-Resource-Policy: cross-origin
+  # Same-origin aur require-corp yahan se hata diye hain taaki Ads block na hon.
+  # WASM ka kaam ab 'coi-serviceworker.js' sambhaal lega jo humne layout mein dala hai.
 
 # HTML pages - no cache, always revalidate
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
 
-# JavaScript files - immutable cache (hashed filenames)
+# JavaScript files - immutable cache
 /*.js
   Cache-Control: public, max-age=31536000, immutable
 
-# CSS files - immutable cache (hashed filenames)
+# CSS files - immutable cache
 /*.css
   Cache-Control: public, max-age=31536000, immutable
 
 # Images - long cache
 /*.png
   Cache-Control: public, max-age=31536000, immutable
-
 /*.jpg
   Cache-Control: public, max-age=31536000, immutable
-
 /*.jpeg
   Cache-Control: public, max-age=31536000, immutable
-
 /*.gif
   Cache-Control: public, max-age=31536000, immutable
-
 /*.svg
   Cache-Control: public, max-age=31536000, immutable
-
 /*.webp
   Cache-Control: public, max-age=31536000, immutable
-
 /*.avif
   Cache-Control: public, max-age=31536000, immutable
-
 /*.ico
   Cache-Control: public, max-age=31536000, immutable
 
 # Fonts - long cache
 /*.woff
   Cache-Control: public, max-age=31536000, immutable
-
 /*.woff2
   Cache-Control: public, max-age=31536000, immutable
-
 /*.ttf
   Cache-Control: public, max-age=31536000, immutable
-
 /*.eot
   Cache-Control: public, max-age=31536000, immutable
 
 # PDF.js and worker files
 /workers/*
   Cache-Control: public, max-age=31536000, immutable
-
 /pdfjs-viewer/*
   Cache-Control: public, max-age=31536000, immutable
 
-# JSON files (translations, etc.)
+# JSON files
 /*.json
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 
-# WASM files
+# WASM files (MIME Type Fix)
 /*.wasm
   Cache-Control: public, max-age=31536000, immutable
   Content-Type: application/wasm
 
-# LibreOffice WASM data files
+# --- STEP 2: LIBREOFFICE WASM (Sirf in assets par headers rehne do) ---
 /libreoffice-wasm/soffice.wasm.gz
   Cache-Control: public, max-age=31536000, immutable
   Content-Type: application/wasm
@@ -105,12 +89,11 @@
   Cross-Origin-Embedder-Policy: require-corp
   Cross-Origin-Resource-Policy: cross-origin
 
-# MJS files (ES Modules) - must have correct MIME type
+# MJS files
 /*.mjs
   Cache-Control: public, max-age=31536000, immutable
   Content-Type: application/javascript
 
-# PDF.js viewer MJS files
 /pdfjs-viewer/*.mjs
   Cache-Control: public, max-age=31536000, immutable
   Content-Type: application/javascript
