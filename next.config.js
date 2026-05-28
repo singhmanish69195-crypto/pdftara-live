@@ -1,35 +1,48 @@
 import createNextIntlPlugin from 'next-intl/plugin';
-
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   trailingSlash: true,
   reactStrictMode: true,
-  // poweredByHeader hata diya taaki confusion na ho
 
-  images: {
-    unoptimized: true,
-    remotePatterns: [
-      { protocol: 'https', hostname: 'www.pdftara.com' },
-      { protocol: 'https', hostname: 'pdftara.com' },
-    ],
+  // --- HEADERS KA KHEL (YAHAN HAI FIX) ---
+  async headers() {
+    return [
+      {
+        // 1. Sabhi pages ke liye (Homepage, Blog, etc.)
+        // In par koi COOP/COEP nahi hoga, Ads mast chalenge
+        source: '/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+        ],
+      },
+      {
+        // 2. Sirf Tools waale pages ke liye (Jahan WASM ki zaroorat hai)
+        // Note: Check karo aapke tools ka path kya hai. 
+        // Agar /en/merge-pdf hai toh ye niche wala pattern sahi hai.
+        source: '/:locale/(merge-pdf|split-pdf|compress-pdf|word-to-pdf|pdf-to-word|pdf-to-cbz)/:path*', 
+        headers: [
+          {
+            key: 'Cross-Origin-Embedder-Policy',
+            value: 'credentialless', // 'require-corp' se behtar hai ads ke liye
+          },
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin',
+          },
+        ],
+      },
+    ];
   },
 
   webpack: (config) => {
-    // PDF tools ke liye ye alias zaroori hote hain
     config.resolve.alias.canvas = false;
     config.resolve.alias.encoding = false;
+    config.experiments = { ...config.experiments, asyncWebAssembly: true };
     return config;
   },
 
-  // Headers ko abhi ke liye poori tarah hata diya hai 
-  // taaki ads bina kisi rukawat ke load ho sakein
-  async headers() {
-    return [];
-  },
-
-  // Errors ko ignore karne ke liye taaki build pass ho jaye
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
 };
