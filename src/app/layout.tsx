@@ -5,11 +5,15 @@ import { GoogleScripts } from '@/components/GoogleScripts';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.pdftara.com/'),
+
   title: {
     default: 'PDFTara - Free Private PDF Tools',
     template: '%s | PDFTara'
   },
-  description: 'Secure browser-based tools to merge, split and compress PDFs.',
+
+  description:
+    'Secure browser-based tools to merge, split and compress PDFs.',
+
   keywords: [
     'PDF tools',
     'PDFTara',
@@ -19,7 +23,14 @@ export const metadata: Metadata = {
     'secure pdf tools',
     'no upload pdf editor'
   ],
-  authors: [{ name: 'PDFTara Team', url: 'https://www.pdftara.com/' }],
+
+  authors: [
+    {
+      name: 'PDFTara Team',
+      url: 'https://www.pdftara.com/'
+    }
+  ],
+
   creator: 'PDFTara.com',
   publisher: 'PDFTara.com',
 
@@ -38,6 +49,7 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+
     googleBot: {
       index: true,
       follow: true,
@@ -51,8 +63,12 @@ export const metadata: Metadata = {
     type: 'website',
     url: 'https://www.pdftara.com/',
     siteName: 'PDFTara',
+
     title: 'PDFTara - Free & Private PDF Tools',
-    description: 'Merge and edit PDFs securely in your browser. No uploads.',
+
+    description:
+      'Merge and edit PDFs securely in your browser. No uploads.',
+
     images: [
       {
         url: '/og-image.jpg',
@@ -83,7 +99,13 @@ export default async function RootLayout({
     <html lang={locale} suppressHydrationWarning>
       <head>
 
-        {/* Google AdSense */}
+        {/* 🚀 COI Service Worker */}
+        <Script
+          src="/coi-serviceworker.js"
+          strategy="beforeInteractive"
+        />
+
+        {/* 🚀 Google AdSense */}
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4129411618696895"
