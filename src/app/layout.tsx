@@ -1,22 +1,28 @@
-import Script from 'next/script'; // Next.js Script component
+import Script from 'next/script';
 import type { Metadata } from 'next';
 import '@/app/globals.css';
-import { GoogleScripts } from '@/components/GoogleScripts'; 
+import { GoogleScripts } from '@/components/GoogleScripts';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.pdftara.com/'),
   title: {
-    default: 'PDFTara - Free Private PDF Tools', 
+    default: 'PDFTara - Free Private PDF Tools',
     template: '%s | PDFTara'
   },
-  description: 'Secure browser-based tools to merge, split and compress PDFs.', 
+  description: 'Secure browser-based tools to merge, split and compress PDFs.',
   keywords: [
-    'PDF tools', 'PDFTara', 'merge pdf', 'split pdf', 'compress pdf', 
-    'secure pdf tools', 'no upload pdf editor'
+    'PDF tools',
+    'PDFTara',
+    'merge pdf',
+    'split pdf',
+    'compress pdf',
+    'secure pdf tools',
+    'no upload pdf editor'
   ],
   authors: [{ name: 'PDFTara Team', url: 'https://www.pdftara.com/' }],
   creator: 'PDFTara.com',
   publisher: 'PDFTara.com',
+
   alternates: {
     canonical: 'https://www.pdftara.com/',
     languages: {
@@ -28,6 +34,7 @@ export const metadata: Metadata = {
       'ja-JP': '/ja/',
     },
   },
+
   robots: {
     index: true,
     follow: true,
@@ -39,14 +46,22 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+
   openGraph: {
     type: 'website',
     url: 'https://www.pdftara.com/',
     siteName: 'PDFTara',
-    title: 'PDFTara - Free & Private PDF Tools', 
-    description: 'Merge and edit PDFs securely in your browser. No uploads.', 
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
+    title: 'PDFTara - Free & Private PDF Tools',
+    description: 'Merge and edit PDFs securely in your browser. No uploads.',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630
+      }
+    ],
   },
+
   icons: {
     icon: '/favicon.svg',
     apple: '/favicon.svg',
@@ -60,22 +75,15 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: Promise<{ locale?: string }>;
 }) {
-  
+
   const resolvedParams = await params;
   const locale = resolvedParams?.locale || 'en';
 
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
-        {/* 🚀 ब्रह्मास्त्र 1: Service Worker को सबसे पहले लोड करो */}
-        {/* 'beforeInteractive' का मतलब है कि पेज लोड होने से पहले ही WASM प्रोटेक्शन चालू हो जाएगी */}
-        <Script 
-          src="/coi-serviceworker.js" 
-          strategy="beforeInteractive" 
-        />
 
-        {/* 🚀 ब्रह्मास्त्र 2: Google AdSense Script */}
-        {/* crossOrigin="anonymous" लगाना सबसे ज़रूरी है, वरना COEP इसे ब्लॉक कर देगा */}
+        {/* Google AdSense */}
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4129411618696895"
@@ -83,19 +91,38 @@ export default async function RootLayout({
           strategy="afterInteractive"
         />
 
-        {/* NAVER VERIFICATION TAG */}
-        <meta name="naver-site-verification" content="a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a" />
-        <meta name="google-adsense-account" content="ca-pub-4129411618696895" />
+        {/* Verification Tags */}
+        <meta
+          name="naver-site-verification"
+          content="a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a"
+        />
+
+        <meta
+          name="google-adsense-account"
+          content="ca-pub-4129411618696895"
+        />
+
         <meta name="color-scheme" content="light dark" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-        <style dangerouslySetInnerHTML={{ __html: 'html{scrollbar-gutter:stable}' }} />
+
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=5"
+        />
+
+        <style
+          dangerouslySetInnerHTML={{
+            __html: 'html{scrollbar-gutter:stable}'
+          }}
+        />
       </head>
+
       <body className="min-h-screen bg-background text-foreground antialiased">
-        {/* 🚀 ब्रह्मास्त्र 3: बाकी Scripts (Analytics आदि) */}
-        {/* सुनिश्चित करें कि GoogleScripts के अंदर फिर से AdSense स्क्रिप्ट न हो, वरना टकराव होगा */}
+
+        {/* Analytics / Other Scripts */}
         <GoogleScripts />
-        
+
         {children}
+
       </body>
     </html>
   );
