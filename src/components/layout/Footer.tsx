@@ -25,6 +25,25 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
     { href: `/${locale}/contact`, label: t('navigation.contact') },
   ];
 
+  // Social & Review Links with Favicons
+  const socialLinks = [
+    { 
+      href: "https://www.producthunt.com/products/pdftara-secure-free", 
+      label: "Product Hunt", 
+      domain: "producthunt.com" 
+    },
+    { 
+      href: "https://www.trustpilot.com/review/pdftara.com", 
+      label: "Trustpilot Reviews", 
+      domain: "trustpilot.com" 
+    },
+    { 
+      href: "https://x.com/ManishS99961475", 
+      label: "Follow on X (Twitter)", 
+      domain: "x.com" 
+    },
+  ];
+
   const handleLanguageChange = (newLocale: Locale) => {
     saveLanguagePreference(newLocale);
     const newPath = getLocalizedPath(pathname, newLocale);
@@ -101,7 +120,7 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
             <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">
               Resources
             </h3>
-            <ul className="flex flex-col gap-3 mb-8">
+            <ul className="flex flex-col gap-3 mb-10">
               {footerLinks.map((link) => (
                 <li key={link.href}>
                   <Link
@@ -115,19 +134,44 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
               ))}
             </ul>
 
-            {/* Official Telegram Button - Highly Visible */}
+            {/* Community Section */}
             <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-4">
               Community
             </h3>
-            <a
-              href="https://t.me/pdftara"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#229ED9] text-white hover:bg-[#1c86ba] hover:shadow-lg transition-all text-sm font-bold shadow-md"
-            >
-              <Send className="w-4 h-4" />
-              <span>Join Official Telegram</span>
-            </a>
+            <div className="flex flex-col gap-4">
+              {/* Telegram Button */}
+              <a
+                href="https://t.me/pdftara"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#229ED9] text-white hover:bg-[#1c86ba] hover:shadow-lg transition-all text-sm font-bold shadow-md"
+              >
+                <Send className="w-4 h-4" />
+                <span>Join Official Telegram</span>
+              </a>
+
+              {/* Social & Review Links with Favicons */}
+              <div className="flex flex-col gap-3 mt-2">
+                {socialLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 text-sm text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-primary))] transition-colors group"
+                  >
+                    <div className="w-5 h-5 flex items-center justify-center overflow-hidden rounded-sm grayscale group-hover:grayscale-0 transition-all">
+                      <img 
+                        src={`https://www.google.com/s2/favicons?domain=${link.domain}&sz=32`} 
+                        alt={link.label}
+                        className="w-4 h-4 object-contain"
+                      />
+                    </div>
+                    <span className="font-medium">{link.label}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Security Features */}
