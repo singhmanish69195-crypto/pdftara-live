@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Shield, Lock, FileCheck, Globe, Share2, Send } from 'lucide-react';
+import { Shield, Lock, FileCheck, Globe, Share2, Send, Star, Twitter, Award } from 'lucide-react';
 import { type Locale, locales, localeConfig, getLocalizedPath } from '@/lib/i18n/config';
 import { saveLanguagePreference } from './LanguageSelector';
 
@@ -25,22 +25,31 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
     { href: `/${locale}/contact`, label: t('navigation.contact') },
   ];
 
-  // Social & Review Links with Favicons
-  const socialLinks = [
+  // Updated Social Links with Colors & Icons
+  const communityLinks = [
+    { 
+      href: "https://t.me/pdftara", 
+      label: "Official Telegram", 
+      color: "bg-[#229ED9] hover:bg-[#1c86ba]",
+      icon: <Send className="w-4 h-4" />
+    },
     { 
       href: "https://www.producthunt.com/products/pdftara-secure-free", 
       label: "Product Hunt", 
-      domain: "producthunt.com" 
+      color: "bg-[#DA552F] hover:bg-[#bd4828]",
+      icon: <Award className="w-4 h-4" />
     },
     { 
       href: "https://www.trustpilot.com/review/pdftara.com", 
       label: "Trustpilot Reviews", 
-      domain: "trustpilot.com" 
+      color: "bg-[#00B67A] hover:bg-[#009e6a]",
+      icon: <Star className="w-4 h-4" />
     },
     { 
       href: "https://x.com/ManishS99961475", 
-      label: "Follow on X (Twitter)", 
-      domain: "x.com" 
+      label: "Follow on X", 
+      color: "bg-[#000000] hover:bg-[#333333]",
+      icon: <Twitter className="w-4 h-4" />
     },
   ];
 
@@ -54,7 +63,7 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
     const shareData = {
       title: 'PDFTara',
       text: 'Check out these professional PDF tools - Free & Private!',
-      url: window.location.origin,
+      url: typeof window !== 'undefined' ? window.location.origin : '',
     };
 
     if (navigator.share) {
@@ -103,7 +112,7 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
               {t('tagline') || 'Professional, secure, and free PDF tools for everyone. No installation required.'}
             </p>
 
-            {/* Share Button (Separated) */}
+            {/* Share Button */}
             <div className="mt-2">
               <button
                 onClick={handleShare}
@@ -134,43 +143,23 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
               ))}
             </ul>
 
-            {/* Community Section */}
+            {/* Community Section - COLORFUL BUTTONS */}
             <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-4">
               Community
             </h3>
-            <div className="flex flex-col gap-4">
-              {/* Telegram Button */}
-              <a
-                href="https://t.me/pdftara"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#229ED9] text-white hover:bg-[#1c86ba] hover:shadow-lg transition-all text-sm font-bold shadow-md"
-              >
-                <Send className="w-4 h-4" />
-                <span>Join Official Telegram</span>
-              </a>
-
-              {/* Social & Review Links with Favicons */}
-              <div className="flex flex-col gap-3 mt-2">
-                {socialLinks.map((link) => (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-sm text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-primary))] transition-colors group"
-                  >
-                    <div className="w-5 h-5 flex items-center justify-center overflow-hidden rounded-sm grayscale group-hover:grayscale-0 transition-all">
-                      <img 
-                        src={`https://www.google.com/s2/favicons?domain=${link.domain}&sz=32`} 
-                        alt={link.label}
-                        className="w-4 h-4 object-contain"
-                      />
-                    </div>
-                    <span className="font-medium">{link.label}</span>
-                  </a>
-                ))}
-              </div>
+            <div className="flex flex-col gap-3">
+              {communityLinks.map((item, index) => (
+                <a
+                  key={index}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-white transition-all text-sm font-bold shadow-md hover:shadow-lg ${item.color}`}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </a>
+              ))}
             </div>
           </div>
 
