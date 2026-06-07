@@ -63,19 +63,34 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
           </div>
         </section>
 
-        {/* --- NEW CONTACT DETAILS SECTION (Manish Singh Info) --- */}
+        {/* --- NEW CONTACT DETAILS SECTION --- */}
         <section className="py-12">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
               
-              {/* Box 1: Name */}
+              {/* Box 1: Updated Owner & Developer Info */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-blue-500">
                 <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center mb-4 text-blue-600">
                   <User className="h-7 w-7" />
                 </div>
-                <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-2">Owner & Developer</h3>
-                <p className="text-[hsl(var(--color-muted-foreground))] font-medium">Manish Singh</p>
-                <p className="text-xs text-[hsl(var(--color-muted-foreground))] mt-1">PDFTara Administrator</p>
+                <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4">Owner & Developer</h3>
+                
+                <div className="space-y-4">
+                  {/* Amar Singh Info */}
+                  <div>
+                    <p className="text-[hsl(var(--color-muted-foreground))] font-bold text-base">Mr. Amar Singh</p>
+                    <p className="text-xs text-[hsl(var(--color-muted-foreground))]">CEO of PDFTara</p>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="w-12 h-px bg-slate-200 mx-auto"></div>
+                  
+                  {/* Manish Singh Info */}
+                  <div>
+                    <p className="text-[hsl(var(--color-muted-foreground))] font-medium">Mr. Manish Singh</p>
+                    <p className="text-xs text-[hsl(var(--color-muted-foreground))] mt-1">PDFTara Administrator</p>
+                  </div>
+                </div>
               </Card>
 
               {/* Box 2: Address */}
