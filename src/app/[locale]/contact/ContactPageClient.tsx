@@ -85,10 +85,10 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                   {/* Divider */}
                   <div className="w-12 h-px bg-slate-200 mx-auto"></div>
                   
-                  {/* Manish Singh Info */}
+                  {/* Manish Singh Info - Fixed Title */}
                   <div>
-                    <p className="text-[hsl(var(--color-muted-foreground))] font-medium">Mr. Manish Singh</p>
-                    <p className="text-xs text-[hsl(var(--color-muted-foreground))] mt-1">PDFTara Administrator</p>
+                    <p className="text-[hsl(var(--color-muted-foreground))] font-bold text-base">Mr. Manish Singh</p>
+                    <p className="text-xs text-[hsl(var(--color-muted-foreground))] mt-1">Owner & Developer</p>
                   </div>
                 </div>
               </Card>
