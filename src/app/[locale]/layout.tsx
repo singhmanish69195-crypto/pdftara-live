@@ -42,7 +42,7 @@ export async function generateMetadata({
     es: { title: "PDFTara - Herramientas PDF gratuitas", desc: "Combine y comprima PDF de forma segura en su navegador." },
     fr: { title: "PDFTara - Outils PDF gratuits et privés", desc: "Fusionnez et compressez des PDF en toute sécurité." },
     de: { title: "PDFTara - Kostenlose PDF-Tools", desc: "PDFs sicher im Browser zusammenführen und komprimieren." },
-    zh: { title: "PDFTara - 免费私密 PDF 工具", desc: "在浏览器中安全地合并、拆分 और壓縮 PDF。" },
+    zh: { title: "PDFTara - 免费私密 PDF 工具", desc: "在浏览器中安全地合并、拆分 और壓縮 PDF।" },
     pt: { title: "PDFTara - Ferramentas PDF Gratuitas", desc: "Mescle e comprimi PDFs com segurança no seu navegador." },
     ar: { title: "PDFTara - أدوات PDF مجانية", desc: "دمज وضغط ملفات PDF بأمان في متصفحك." },
     it: { title: "PDFTara - Strumenti PDF gratuiti", desc: "Unisci e comprimi PDF in modo sicuro nel tuo browser." },
@@ -61,6 +61,13 @@ export async function generateMetadata({
     alternates: {
       canonical: `https://www.pdftara.com/${validLocale}`,
       languages: locales.reduce((acc, l) => { acc[l] = `https://www.pdftara.com/${l}`; return acc; }, {} as Record<string, string>),
+    },
+    verification: {
+      google: 'ca-pub-4129411618696895', // Placeholder from your AdSense
+      other: {
+        'msvalidate.01': 'BING_VERIFICATION_CODE', // TODO: Replace with your actual Bing code
+        'naver-site-verification': 'a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a',
+      },
     },
     robots: { index: true, follow: true },
     openGraph: {
@@ -88,38 +95,60 @@ export default async function LocaleLayout({
   const messages = await getMessages();
   const direction = localeConfig[locale as Locale]?.direction || 'ltr';
 
-  const jsonLd = {
+  // Bing & Google Friendly Schemas
+  const softwareSchema = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     'name': 'PDFTara Free PDF Tools',
+    'url': 'https://www.pdftara.com/',
     'applicationCategory': 'MultimediaApplication',
     'operatingSystem': 'Web, Windows, macOS, Android, iOS',
     'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'USD' },
     'aggregateRating': { '@type': 'AggregateRating', 'ratingValue': '4.9', 'ratingCount': '18540', 'bestRating': '5', 'worstRating': '1' }
   };
 
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    'name': 'PDFTara',
+    'url': 'https://www.pdftara.com/',
+    'potentialAction': {
+      '@type': 'SearchAction',
+      'target': 'https://www.pdftara.com/search?q={search_term_string}',
+      'query-input': 'required name=search_term_string'
+    }
+  };
+
   return (
     <html lang={locale} dir={direction} className={fontVariables} suppressHydrationWarning>
       <head>
-        {/* 1. WASM Fix: Service Worker को सबसे पहले लोड करो */}
+        {/* 1. WASM Fix: Service Worker लोड */}
         <script src="/coi-serviceworker.js"></script>
         
-        {/* 2. Google AdSense: Standard HTML Tag (Isse 'data-nscript' error khatam hoga) */}
+        {/* 2. Google AdSense Script */}
         <script 
           async 
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4129411618696895"
           crossOrigin="anonymous"
         ></script>
 
+        {/* SEO Verifications */}
         <meta name="naver-site-verification" content="a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a" />
         <meta name="google-adsense-account" content="ca-pub-4129411618696895" />
+        {/* Bing Verification Tag (Replace placeholder if you have the code) */}
+        <meta name="msvalidate.01" content="BING_VERIFICATION_CODE" />
         
+        {/* Schemas for Google and Bing SEO */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
         
-        {/* Google Analytics (Iske andar sirf Analytics hai) */}
+        {/* Analytics Script Component */}
         <GoogleScripts />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased font-sans">
