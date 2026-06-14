@@ -112,7 +112,7 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                 </div>
                 <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4">PDFTara Directors</h3>
                 <div className="space-y-2">
-                  <p className="text-[hsl(var(--color-foreground))] font-bold text-base">Mrs. Sariti Deva</p>
+                  <p className="text-[hsl(var(--color-foreground))] font-bold text-base">Mrs. Sariti Devi</p>
                   <div className="w-8 h-px bg-slate-200 mx-auto"></div>
                   <p className="text-[hsl(var(--color-foreground))] font-bold text-base">Mr. Arjun Singh</p>
                   <p className="text-xs text-[hsl(var(--color-muted-foreground))]">Company Directors</p>
