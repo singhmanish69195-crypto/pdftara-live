@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import Image from 'next/image'; // Image support ke liye
 import { 
-  Mail, 
   MessageSquare, 
   Send, 
   CheckCircle, 
@@ -39,17 +39,14 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
     message: '',
   });
 
-  // Handle Input Changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Handle Form Submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormStatus('submitting');
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     setFormStatus('success');
     setFormData({ name: '', email: '', subject: '', message: '' });
@@ -78,13 +75,12 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
         {/* --- TEAM & CONTACT DETAILS SECTION --- */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            {/* Grid Layout: 1 col on mobile, 2 on tablet, 3 on desktop */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               
-              {/* 1. CEO Section (Amar Singh) */}
+              {/* 1. CEO Section (Amar Singh) - Icon (No image yet) */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-blue-600">
-                <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center mb-4 text-blue-600">
-                  <UserCheck className="h-7 w-7" />
+                <div className="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mb-4 text-blue-600 border-2 border-blue-100">
+                  <UserCheck className="h-10 w-10" />
                 </div>
                 <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4">CEO</h3>
                 <div>
@@ -93,10 +89,15 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                 </div>
               </Card>
 
-              {/* 2. Owner, Developer & Shareholder (Manish Singh) */}
+              {/* 2. Owner & Developer (Manish Singh) - WITH IMAGE */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-indigo-500">
-                <div className="w-14 h-14 rounded-full bg-indigo-50 flex items-center justify-center mb-4 text-indigo-600">
-                  <User className="h-7 w-7" />
+                <div className="relative w-24 h-24 mb-4">
+                  <Image 
+                    src="/images/manish.jpg" 
+                    alt="Mr. Manish Singh"
+                    fill
+                    className="rounded-full object-cover border-2 border-indigo-200 shadow-md"
+                  />
                 </div>
                 <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4">Owner & Developer</h3>
                 <div>
@@ -105,10 +106,10 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                 </div>
               </Card>
 
-              {/* 3. Directors Section */}
+              {/* 3. Directors Section - Icon (No image yet) */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-cyan-500">
-                <div className="w-14 h-14 rounded-full bg-cyan-50 flex items-center justify-center mb-4 text-cyan-600">
-                  <Users className="h-7 w-7" />
+                <div className="w-20 h-20 rounded-full bg-cyan-50 flex items-center justify-center mb-4 text-cyan-600 border-2 border-cyan-100">
+                  <Users className="h-10 w-10" />
                 </div>
                 <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4">PDFTara Directors</h3>
                 <div className="space-y-2">
@@ -119,10 +120,10 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                 </div>
               </Card>
 
-              {/* 4. CMO Section */}
+              {/* 4. CMO Section (Anek Singh) - Icon (No image yet) */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-orange-500">
-                <div className="w-14 h-14 rounded-full bg-orange-50 flex items-center justify-center mb-4 text-orange-600">
-                  <ShieldCheck className="h-7 w-7" />
+                <div className="w-20 h-20 rounded-full bg-orange-50 flex items-center justify-center mb-4 text-orange-600 border-2 border-orange-100">
+                  <ShieldCheck className="h-10 w-10" />
                 </div>
                 <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4">CMO</h3>
                 <div>
@@ -131,10 +132,22 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                 </div>
               </Card>
 
-              {/* 5. HR Managers Section */}
+              {/* 5. HR Managers Section - NEERAJ WITH IMAGE, ANUJ WITH ICON */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-pink-500">
-                <div className="w-14 h-14 rounded-full bg-pink-50 flex items-center justify-center mb-4 text-pink-600">
-                  <Briefcase className="h-7 w-7" />
+                <div className="flex -space-x-4 mb-4">
+                  {/* Neeraj's Image */}
+                  <div className="relative w-20 h-20">
+                    <Image 
+                      src="/images/neeraj.jpg" 
+                      alt="Mr. Neeraj Singh" 
+                      fill 
+                      className="rounded-full object-cover border-4 border-white shadow-sm" 
+                    />
+                  </div>
+                  {/* Anuj's Placeholder Icon */}
+                  <div className="w-20 h-20 rounded-full bg-pink-50 flex items-center justify-center text-pink-600 border-4 border-white shadow-sm">
+                    <User className="h-8 w-8" />
+                  </div>
                 </div>
                 <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4">HR Managers</h3>
                 <div className="space-y-2">
@@ -159,7 +172,7 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                 </p>
               </Card>
 
-              {/* 7. Contact Number (Centered on large screens if possible or just in grid) */}
+              {/* 7. Contact Number */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-purple-500">
                 <div className="w-14 h-14 rounded-full bg-purple-50 flex items-center justify-center mb-4 text-purple-600">
                   <Phone className="h-7 w-7" />
@@ -206,9 +219,7 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm font-bold text-[hsl(var(--color-foreground))] mb-2">
-                          Your Name
-                        </label>
+                        <label className="block text-sm font-bold text-[hsl(var(--color-foreground))] mb-2">Your Name</label>
                         <input
                           type="text"
                           name="name"
@@ -220,9 +231,7 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-bold text-[hsl(var(--color-foreground))] mb-2">
-                          Email Address
-                        </label>
+                        <label className="block text-sm font-bold text-[hsl(var(--color-foreground))] mb-2">Email Address</label>
                         <input
                           type="email"
                           name="email"
@@ -234,11 +243,8 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                         />
                       </div>
                     </div>
-
                     <div>
-                      <label className="block text-sm font-bold text-[hsl(var(--color-foreground))] mb-2">
-                        Subject
-                      </label>
+                      <label className="block text-sm font-bold text-[hsl(var(--color-foreground))] mb-2">Subject</label>
                       <select
                         name="subject"
                         value={formData.subject}
@@ -253,11 +259,8 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                         <option value="feedback">Feedback & Suggestions</option>
                       </select>
                     </div>
-
                     <div>
-                      <label className="block text-sm font-bold text-[hsl(var(--color-foreground))] mb-2">
-                        Message
-                      </label>
+                      <label className="block text-sm font-bold text-[hsl(var(--color-foreground))] mb-2">Message</label>
                       <textarea
                         name="message"
                         value={formData.message}
@@ -268,14 +271,7 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                         placeholder="How can we help you today?"
                       />
                     </div>
-
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      className="w-full py-4 text-lg font-bold"
-                      loading={formStatus === 'submitting'}
-                      disabled={formStatus === 'submitting'}
-                    >
+                    <Button type="submit" variant="primary" className="w-full py-4 text-lg font-bold" loading={formStatus === 'submitting'} disabled={formStatus === 'submitting'}>
                       {formStatus === 'submitting' ? 'Sending...' : 'Send Message'}
                       {formStatus !== 'submitting' && <Send className="ml-2 h-5 w-5" />}
                     </Button>
@@ -291,16 +287,10 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
           <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto text-center">
               <MessageSquare className="h-12 w-12 mx-auto mb-4 text-[hsl(var(--color-muted-foreground))]" />
-              <h2 className="text-2xl font-bold text-[hsl(var(--color-foreground))] mb-4">
-                Looking for quick answers?
-              </h2>
-              <p className="text-[hsl(var(--color-muted-foreground))] mb-8">
-                Check out our Frequently Asked Questions section for immediate help with common issues.
-              </p>
+              <h2 className="text-2xl font-bold text-[hsl(var(--color-foreground))] mb-4">Looking for quick answers?</h2>
+              <p className="text-[hsl(var(--color-muted-foreground))] mb-8">Check out our FAQ for immediate help.</p>
               <Link href={`/${locale}/faq`}>
-                <Button variant="outline" className="px-8 py-3">
-                  Visit FAQ Center
-                </Button>
+                <Button variant="outline" className="px-8 py-3">Visit FAQ Center</Button>
               </Link>
             </div>
           </div>
