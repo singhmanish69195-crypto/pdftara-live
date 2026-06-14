@@ -3,7 +3,19 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { Mail, MessageSquare, Send, CheckCircle, AlertCircle, MapPin, Phone, User } from 'lucide-react';
+import { 
+  Mail, 
+  MessageSquare, 
+  Send, 
+  CheckCircle, 
+  MapPin, 
+  Phone, 
+  User, 
+  Users, 
+  ShieldCheck, 
+  Briefcase,
+  UserCheck
+} from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
@@ -63,37 +75,77 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
           </div>
         </section>
 
-        {/* --- NEW CONTACT DETAILS SECTION --- */}
+        {/* --- TEAM & CONTACT DETAILS SECTION --- */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {/* Grid Layout: 1 col on mobile, 2 on tablet, 3 on desktop */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               
-              {/* Box 1: Updated Owner & Developer Info */}
-              <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-blue-500">
+              {/* 1. CEO Section (Amar Singh) */}
+              <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-blue-600">
                 <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center mb-4 text-blue-600">
-                  <User className="h-7 w-7" />
+                  <UserCheck className="h-7 w-7" />
                 </div>
-                <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4">Owner & Developer</h3>
-                
-                <div className="space-y-4">
-                  {/* Amar Singh Info */}
-                  <div>
-                    <p className="text-[hsl(var(--color-muted-foreground))] font-bold text-base">Mr. Amar Singh</p>
-                    <p className="text-xs text-[hsl(var(--color-muted-foreground))]">CEO of PDFTara</p>
-                  </div>
-
-                  {/* Divider */}
-                  <div className="w-12 h-px bg-slate-200 mx-auto"></div>
-                  
-                  {/* Manish Singh Info - Fixed Title */}
-                  <div>
-                    <p className="text-[hsl(var(--color-muted-foreground))] font-bold text-base">Mr. Manish Singh</p>
-                    <p className="text-xs text-[hsl(var(--color-muted-foreground))] mt-1">Owner & Developer</p>
-                  </div>
+                <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4">CEO</h3>
+                <div>
+                  <p className="text-[hsl(var(--color-foreground))] font-bold text-lg">Mr. Amar Singh</p>
+                  <p className="text-sm text-[hsl(var(--color-muted-foreground))]">CEO of PDFTara</p>
                 </div>
               </Card>
 
-              {/* Box 2: Address */}
+              {/* 2. Owner, Developer & Shareholder (Manish Singh) */}
+              <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-indigo-500">
+                <div className="w-14 h-14 rounded-full bg-indigo-50 flex items-center justify-center mb-4 text-indigo-600">
+                  <User className="h-7 w-7" />
+                </div>
+                <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4">Owner & Developer</h3>
+                <div>
+                  <p className="text-[hsl(var(--color-foreground))] font-bold text-lg">Mr. Manish Singh</p>
+                  <p className="text-sm text-[hsl(var(--color-muted-foreground))] mt-1">Owner, Developer & Shareholder</p>
+                </div>
+              </Card>
+
+              {/* 3. Directors Section */}
+              <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-cyan-500">
+                <div className="w-14 h-14 rounded-full bg-cyan-50 flex items-center justify-center mb-4 text-cyan-600">
+                  <Users className="h-7 w-7" />
+                </div>
+                <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4">PDFTara Directors</h3>
+                <div className="space-y-2">
+                  <p className="text-[hsl(var(--color-foreground))] font-bold text-base">Mrs. Sariti Deva</p>
+                  <div className="w-8 h-px bg-slate-200 mx-auto"></div>
+                  <p className="text-[hsl(var(--color-foreground))] font-bold text-base">Mr. Arjun Singh</p>
+                  <p className="text-xs text-[hsl(var(--color-muted-foreground))]">Company Directors</p>
+                </div>
+              </Card>
+
+              {/* 4. CMO Section */}
+              <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-orange-500">
+                <div className="w-14 h-14 rounded-full bg-orange-50 flex items-center justify-center mb-4 text-orange-600">
+                  <ShieldCheck className="h-7 w-7" />
+                </div>
+                <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4">CMO</h3>
+                <div>
+                  <p className="text-[hsl(var(--color-foreground))] font-bold text-lg">Mr. Anek Singh</p>
+                  <p className="text-sm text-[hsl(var(--color-muted-foreground))]">CMO of PDFTara</p>
+                </div>
+              </Card>
+
+              {/* 5. HR Managers Section */}
+              <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-pink-500">
+                <div className="w-14 h-14 rounded-full bg-pink-50 flex items-center justify-center mb-4 text-pink-600">
+                  <Briefcase className="h-7 w-7" />
+                </div>
+                <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4">HR Managers</h3>
+                <div className="space-y-2">
+                  <p className="text-[hsl(var(--color-foreground))] font-bold text-base">Mr. Neeraj Singh</p>
+                  <div className="w-8 h-px bg-slate-200 mx-auto"></div>
+                  <p className="text-[hsl(var(--color-foreground))] font-bold text-base">Mr. Anuj Singh</p>
+                  <p className="text-xs text-[hsl(var(--color-muted-foreground))]">HR Management Team</p>
+                </div>
+              </Card>
+
+              {/* 6. Office Address */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-green-500">
                 <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mb-4 text-green-600">
                   <MapPin className="h-7 w-7" />
@@ -107,13 +159,13 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                 </p>
               </Card>
 
-              {/* Box 3: Phone */}
+              {/* 7. Contact Number (Centered on large screens if possible or just in grid) */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-purple-500">
                 <div className="w-14 h-14 rounded-full bg-purple-50 flex items-center justify-center mb-4 text-purple-600">
                   <Phone className="h-7 w-7" />
                 </div>
                 <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-2">Contact Number</h3>
-                <p className="text-[hsl(var(--color-muted-foreground))] font-medium">+91 9451091583</p>
+                <p className="text-[hsl(var(--color-muted-foreground))] font-medium text-lg">+91 9451091583</p>
                 <p className="text-xs text-[hsl(var(--color-muted-foreground))] mt-1">Available: Mon-Fri (10 AM - 6 PM)</p>
               </Card>
 
