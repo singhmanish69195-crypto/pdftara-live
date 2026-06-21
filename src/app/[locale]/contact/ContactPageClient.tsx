@@ -10,6 +10,7 @@ import {
   CheckCircle, 
   MapPin, 
   Phone, 
+  Mail, // Mail icon add kiya
   User, 
   Users, 
   ShieldCheck, 
@@ -172,14 +173,20 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                 </p>
               </Card>
 
-              {/* 7. Contact Number */}
+              {/* 7. Contact Details (Number & Email) */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-purple-500">
-                <div className="w-14 h-14 rounded-full bg-purple-50 flex items-center justify-center mb-4 text-purple-600">
-                  <Phone className="h-7 w-7" />
+                <div className="flex gap-3 mb-4">
+                  <div className="w-14 h-14 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
+                    <Phone className="h-7 w-7" />
+                  </div>
+                  <div className="w-14 h-14 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
+                    <Mail className="h-7 w-7" />
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-2">Contact Number</h3>
+                <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-2">Contact Details</h3>
                 <p className="text-[hsl(var(--color-muted-foreground))] font-medium text-lg">+91 9451091583</p>
-                <p className="text-xs text-[hsl(var(--color-muted-foreground))] mt-1">Available: Mon-Fri (10 AM - 6 PM)</p>
+                <p className="text-[hsl(var(--color-muted-foreground))] font-medium text-base mt-1">contactpdftara@gmail.com</p>
+                <p className="text-xs text-[hsl(var(--color-muted-foreground))] mt-2">Available: Mon-Fri (10 AM - 6 PM)</p>
               </Card>
 
             </div>
