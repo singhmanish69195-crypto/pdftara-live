@@ -1,10 +1,3 @@
-/**
- * Robots.txt Generation
- * Configures crawling rules for search engines
- * 
- * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/robots
- */
-
 import { MetadataRoute } from 'next';
 import { siteConfig } from '@/config/site';
 
@@ -18,12 +11,12 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         allow: '/',
         disallow: [
-          '/api/',
-          '/_next/',
-          '/static/',
+          '/api/', // Sirf API ko hide rakho
+          '/admin/', // Agar koi admin panel hai toh use hide rakho
         ],
       },
     ],
+    // Ensure siteConfig.url is "https://www.pdftara.com"
     sitemap: `${siteConfig.url}/sitemap.xml`,
   };
 }
