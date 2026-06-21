@@ -1,7 +1,6 @@
 /**
- * PDFTARA SITEMAP - VERSION 6.0 (BULLETPROOF FIX)
- * Purpose: Instant Auto-Indexing & Multi-Language SEO
- * FIX: Removed missing columns (updated_at, created_at) to prevent crashes.
+ * PDFTARA SITEMAP - VERSION 7.0 (PERFORMANCE & SEO FIX)
+ * Purpose: Fix "Temporary processing error" and ensure all 14 languages are linked.
  */
 
 import { MetadataRoute } from 'next';
@@ -9,23 +8,14 @@ import { locales } from '@/lib/i18n/config';
 import { getAllTools } from '@/config/tools';
 import { createClient } from '@supabase/supabase-js';
 
-// --- 1. SUPABASE CONFIGURATION ---
 const supabaseUrl = 'https://qsyesrmjddqcsledxtva.supabase.co';
 const supabaseAnonKey = 'sb_publishable_uhzhKdRqKdB5gcXdnxgFsg_tsP875JG';
 
-/**
- * 🔥 FIX 1: BYPASS NEXT.JS FETCH CACHE
- */
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  global: {
-    fetch: (url, options) => {
-      return fetch(url, { ...options, cache: 'no-store' }); 
-    },
-  },
-});
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0; 
+// 🔥 FIX: force-dynamic ki jagah revalidate use karein (Har 1 ghante mein update hoga)
+// Isse Google ko sitemap turant milega bina kisi error ke.
+export const revalidate = 3600; 
 
 const BASE_URL = 'https://www.pdftara.com';
 
@@ -52,15 +42,14 @@ const STATIC_PAGES = [
 
 const buildUrl = (locale: string, path: string) => {
   const cleanPath = path.replace(/^\/+|\/+$/g, '');
-  const segment = cleanPath ? `${cleanPath}/` : '';
-  return `${BASE_URL}/${locale}/${segment}`;
+  return cleanPath ? `${BASE_URL}/${locale}/${cleanPath}` : `${BASE_URL}/${locale}`;
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
   const allEntries: MetadataRoute.Sitemap = [];
 
-  // PHASE 1: STATIC PAGES
+  // PHASE 1: STATIC PAGES (Home, Tools, Contact etc.)
   for (const page of STATIC_PAGES) {
     for (const locale of locales) {
       allEntries.push({
@@ -75,7 +64,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // PHASE 2: TOOLS
+  // PHASE 2: TOOLS (PDF Converter, Split etc.)
   const tools = getAllTools();
   for (const tool of tools) {
     for (const locale of locales) {
@@ -93,25 +82,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // PHASE 3: DYNAMIC BLOG POSTS
-  // 🔥 FIX: Ab sirf 'slug' mang rahe hain taaki koi column missing ka error na aaye
-  const { data: posts, error } = await supabase
-    .from('posts') 
-    .select('slug'); 
+  const { data: posts } = await supabase.from('posts').select('slug'); 
 
-  if (error) {
-    console.error("❌ SITEMAP SUPABASE ERROR:", error.message);
-  }
-
-  if (posts && posts.length > 0) {
+  if (posts) {
     for (const post of posts) {
-      
       if (!post.slug) continue; 
-
       for (const locale of locales) {
         const blogField = `blog/${post.slug}`;
         allEntries.push({
           url: buildUrl(locale, blogField),
-          lastModified: lastModified, // Directly using current date
+          lastModified,
           changeFrequency: 'daily',
           priority: PRIORITY.blogPost,
           alternates: {
@@ -123,10 +103,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   return allEntries;
-}
-
-export function getSitemapUrlCount(): number {
-  const toolsCount = getAllTools().length;
-  const baseCount = STATIC_PAGES.length + toolsCount;
-  return baseCount * locales.length;
 }
