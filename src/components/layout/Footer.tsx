@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Shield, Lock, FileCheck, Globe, Share2, Send, Star, Twitter, Award } from 'lucide-react';
+import { Shield, Lock, FileCheck, Globe, Share2, Send, Star, Twitter, Award, CheckCircle2 } from 'lucide-react';
 import { type Locale, locales, localeConfig, getLocalizedPath } from '@/lib/i18n/config';
 import { saveLanguagePreference } from './LanguageSelector';
 
@@ -124,7 +124,7 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
             </div>
           </div>
 
-          {/* Resources & Community */}
+          {/* Resources & Community Section */}
           <div>
             <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">
               Resources
@@ -143,7 +143,7 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
               ))}
             </ul>
 
-            {/* Community Section - COLORFUL BUTTONS */}
+            {/* Community Section */}
             <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-4">
               Community
             </h3>
@@ -160,6 +160,40 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
                   <span>{item.label}</span>
                 </a>
               ))}
+            </div>
+          </div>
+
+          {/* Legal Company Section (Naya Section - Community ke bagal mein) */}
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">
+              Legal Company
+            </h3>
+            <div className="flex flex-col gap-4">
+              {/* Udyam Registration Button with SEO optimized text */}
+              <div 
+                className="inline-flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#E67E22] hover:bg-[#D35400] transition-all shadow-md cursor-default border-b-4 border-[#A04000]"
+                title="Verified MSME Udyam Registration"
+              >
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span className="text-xs font-black uppercase tracking-tighter">Registered MSME</span>
+                </div>
+                <span className="text-[11px] font-bold opacity-90 tracking-tight">UDYAM-UP-69-0015414</span>
+              </div>
+
+              {/* Compliance Info moved here for better layout balance */}
+              <div className="mt-2">
+                <h4 className="text-xs font-bold text-[hsl(var(--color-muted-foreground))] uppercase mb-3">Compliance</h4>
+                <div className="flex items-center gap-3 p-3 bg-[hsl(var(--color-card))] border border-[hsl(var(--color-border))] rounded-xl shadow-sm">
+                  <div className="h-8 w-8 rounded-full bg-[hsl(var(--color-success)/0.1)] flex items-center justify-center flex-shrink-0">
+                    <Shield className="h-4 w-4 text-[hsl(var(--color-success))]" />
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-bold text-[hsl(var(--color-foreground))] leading-none">GDPR Compliant</div>
+                    <div className="text-[10px] text-[hsl(var(--color-muted-foreground))] mt-1">100% Private Data</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -188,24 +222,6 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
                 </div>
               </li>
             </ul>
-          </div>
-
-          {/* Compliance Block */}
-          <div className="flex flex-col justify-start">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">
-              Compliance
-            </h3>
-            <div
-              className="flex items-center gap-3 p-4 bg-[hsl(var(--color-card))] border border-[hsl(var(--color-border))] rounded-xl shadow-sm"
-            >
-              <div className="h-10 w-10 rounded-full bg-[hsl(var(--color-success)/0.1)] flex items-center justify-center flex-shrink-0">
-                <Shield className="h-5 w-5 text-[hsl(var(--color-success))]" aria-hidden="true" />
-              </div>
-              <div>
-                <div className="text-sm font-bold text-[hsl(var(--color-foreground))]">GDPR Compliant</div>
-                <div className="text-xs text-[hsl(var(--color-muted-foreground))]">{t('footer.privacyBadge')}</div>
-              </div>
-            </div>
           </div>
         </div>
 
