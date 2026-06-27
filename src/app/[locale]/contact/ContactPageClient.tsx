@@ -3,19 +3,21 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import Image from 'next/image'; // Image support ke liye
+import Image from 'next/image';
 import { 
   MessageSquare, 
   Send, 
   CheckCircle, 
   MapPin, 
   Phone, 
-  Mail, // Mail icon add kiya
+  Mail, 
   User, 
   Users, 
   ShieldCheck, 
   Briefcase,
-  UserCheck
+  UserCheck,
+  Award,
+  BadgeCheck
 } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -48,6 +50,7 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormStatus('submitting');
+    // Simulating form submission
     await new Promise(resolve => setTimeout(resolve, 1500));
     setFormStatus('success');
     setFormData({ name: '', email: '', subject: '', message: '' });
@@ -67,7 +70,7 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
               </h1>
               <p className="text-lg text-[hsl(var(--color-muted-foreground))]">
                 Have questions regarding our PDF tools, privacy policy, or need technical support? 
-                We are here to help. Reach out to us directly or fill out the form below.
+                We are here to help. Reach out to our professional team directly.
               </p>
             </div>
           </div>
@@ -78,7 +81,7 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               
-              {/* 1. CEO Section (Amar Singh) - Icon (No image yet) */}
+              {/* 1. CEO Section */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-blue-600">
                 <div className="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mb-4 text-blue-600 border-2 border-blue-100">
                   <UserCheck className="h-10 w-10" />
@@ -90,12 +93,12 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                 </div>
               </Card>
 
-              {/* 2. Owner & Developer (Manish Singh) - WITH IMAGE */}
+              {/* 2. Owner & Developer (Manish Singh) */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-indigo-500">
                 <div className="relative w-24 h-24 mb-4">
                   <Image 
                     src="/images/manish.jpg" 
-                    alt="Mr. Manish Singh"
+                    alt="Mr. Manish Singh - Owner & Developer"
                     fill
                     className="rounded-full object-cover border-2 border-indigo-200 shadow-md"
                   />
@@ -107,7 +110,7 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                 </div>
               </Card>
 
-              {/* 3. Directors Section - Icon (No image yet) */}
+              {/* 3. Directors Section */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-cyan-500">
                 <div className="w-20 h-20 rounded-full bg-cyan-50 flex items-center justify-center mb-4 text-cyan-600 border-2 border-cyan-100">
                   <Users className="h-10 w-10" />
@@ -121,7 +124,7 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                 </div>
               </Card>
 
-              {/* 4. CMO Section (Anek Singh) - Icon (No image yet) */}
+              {/* 4. CMO Section */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-orange-500">
                 <div className="w-20 h-20 rounded-full bg-orange-50 flex items-center justify-center mb-4 text-orange-600 border-2 border-orange-100">
                   <ShieldCheck className="h-10 w-10" />
@@ -133,10 +136,9 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                 </div>
               </Card>
 
-              {/* 5. HR Managers Section - NEERAJ WITH IMAGE, ANUJ WITH ICON */}
+              {/* 5. HR Managers Section */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-pink-500">
                 <div className="flex -space-x-4 mb-4">
-                  {/* Neeraj's Image */}
                   <div className="relative w-20 h-20">
                     <Image 
                       src="/images/neeraj.jpg" 
@@ -145,7 +147,6 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                       className="rounded-full object-cover border-4 border-white shadow-sm" 
                     />
                   </div>
-                  {/* Anuj's Placeholder Icon */}
                   <div className="w-20 h-20 rounded-full bg-pink-50 flex items-center justify-center text-pink-600 border-4 border-white shadow-sm">
                     <User className="h-8 w-8" />
                   </div>
@@ -159,7 +160,26 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                 </div>
               </Card>
 
-              {/* 6. Office Address */}
+              {/* 6. NEW: LEGAL REGISTRATION SECTION (For Google Trust & Branding) */}
+              <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-[#E67E22] bg-orange-50/20">
+                <div className="w-20 h-20 rounded-full bg-[#E67E22]/10 flex items-center justify-center mb-4 text-[#E67E22] border-2 border-[#E67E22]/20">
+                  <Award className="h-10 w-10" />
+                </div>
+                <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4 uppercase tracking-tight">Legal Registration</h3>
+                <div className="flex flex-col items-center">
+                  <div className="flex items-center gap-1.5 mb-2 bg-[#E67E22] text-white px-3 py-1 rounded-full">
+                    <BadgeCheck className="w-4 h-4" />
+                    <span className="text-[10px] font-black tracking-widest uppercase">Registered MSME</span>
+                  </div>
+                  <p className="text-[hsl(var(--color-foreground))] font-bold text-base mb-1">PDFTARA</p>
+                  <p className="text-xs font-mono font-bold text-[#A04000] bg-orange-100/50 px-2 py-1 rounded border border-[#E67E22]/30">
+                    UDYAM-UP-69-0015414
+                  </p>
+                  <p className="text-[10px] text-[hsl(var(--color-muted-foreground))] mt-2 font-medium">Govt. of India Certified Unit</p>
+                </div>
+              </Card>
+
+              {/* 7. Office Address */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-green-500">
                 <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mb-4 text-green-600">
                   <MapPin className="h-7 w-7" />
@@ -167,13 +187,13 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                 <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-2">Office Address</h3>
                 <p className="text-[hsl(var(--color-muted-foreground))] text-sm leading-relaxed">
                   Raja Habeli, Chotikothi Peeche<br />
-                  Mo. Kotriyast<br />
-                  Bhinga, Shrawasti, Pin 271831<br />
-                  Uttar Pradesh, India
+                  Mo. Kotriyast, Bhinga<br />
+                  Shrawasti, Uttar Pradesh<br />
+                  Pin 271831, India
                 </p>
               </Card>
 
-              {/* 7. Contact Details (Number & Email) */}
+              {/* 8. Contact Details (Number & Email) */}
               <Card className="p-8 text-center flex flex-col items-center hover:shadow-lg transition-shadow border-t-4 border-t-purple-500">
                 <div className="flex gap-3 mb-4">
                   <div className="w-14 h-14 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
@@ -183,10 +203,10 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                     <Mail className="h-7 w-7" />
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-2">Contact Details</h3>
-                <p className="text-[hsl(var(--color-muted-foreground))] font-medium text-lg">+91 9451091583</p>
+                <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-2">Connect Directly</h3>
+                <p className="text-[hsl(var(--color-muted-foreground))] font-bold text-lg">+91 9451091583</p>
                 <p className="text-[hsl(var(--color-muted-foreground))] font-medium text-base mt-1">contactpdftara@gmail.com</p>
-                <p className="text-xs text-[hsl(var(--color-muted-foreground))] mt-2">Available: Mon-Fri (10 AM - 6 PM)</p>
+                <p className="text-xs text-[hsl(var(--color-muted-foreground))] mt-2">Mon-Fri (10 AM - 6 PM IST)</p>
               </Card>
 
             </div>
@@ -289,13 +309,13 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
           </div>
         </section>
 
-        {/* FAQ Link */}
+        {/* FAQ Link Section */}
         <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-2xl mx-auto text-center">
               <MessageSquare className="h-12 w-12 mx-auto mb-4 text-[hsl(var(--color-muted-foreground))]" />
               <h2 className="text-2xl font-bold text-[hsl(var(--color-foreground))] mb-4">Looking for quick answers?</h2>
-              <p className="text-[hsl(var(--color-muted-foreground))] mb-8">Check out our FAQ for immediate help.</p>
+              <p className="text-[hsl(var(--color-muted-foreground))] mb-8">Check out our FAQ for immediate help regarding our secure PDF services.</p>
               <Link href={`/${locale}/faq`}>
                 <Button variant="outline" className="px-8 py-3">Visit FAQ Center</Button>
               </Link>
