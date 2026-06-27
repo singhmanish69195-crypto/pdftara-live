@@ -4,7 +4,19 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Shield, Lock, FileCheck, Globe, Share2, Send, Star, Twitter, Award, CheckCircle2 } from 'lucide-react';
+import { 
+  Shield, 
+  Lock, 
+  FileCheck, 
+  Globe, 
+  Share2, 
+  Send, 
+  Star, 
+  Twitter, 
+  Award, 
+  CheckCircle2,
+  Youtube 
+} from 'lucide-react';
 import { type Locale, locales, localeConfig, getLocalizedPath } from '@/lib/i18n/config';
 import { saveLanguagePreference } from './LanguageSelector';
 
@@ -25,13 +37,29 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
     { href: `/${locale}/contact`, label: t('navigation.contact') },
   ];
 
-  // Updated Social Links with Colors & Icons
+  // Updated Social Links with YouTube & Pinterest
   const communityLinks = [
     { 
       href: "https://t.me/pdftara", 
       label: "Official Telegram", 
       color: "bg-[#229ED9] hover:bg-[#1c86ba]",
       icon: <Send className="w-4 h-4" />
+    },
+    { 
+      href: "https://www.youtube.com/@PDFtara/shorts", 
+      label: "YouTube Shorts", 
+      color: "bg-[#FF0000] hover:bg-[#cc0000]",
+      icon: <Youtube className="w-4 h-4" />
+    },
+    { 
+      href: "https://in.pinterest.com/PDFtara/", 
+      label: "Pinterest", 
+      color: "bg-[#E60023] hover:bg-[#ad001a]",
+      icon: (
+        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.966 1.406-5.966s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146 1.124.347 2.317.535 3.554.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/>
+        </svg>
+      )
     },
     { 
       href: "https://www.producthunt.com/products/pdftara-secure-free", 
@@ -163,13 +191,12 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
             </div>
           </div>
 
-          {/* Legal Company Section (Naya Section - Community ke bagal mein) */}
+          {/* Legal Company Section */}
           <div>
             <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">
               Legal Company
             </h3>
             <div className="flex flex-col gap-4">
-              {/* Udyam Registration Button with SEO optimized text */}
               <div 
                 className="inline-flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#E67E22] hover:bg-[#D35400] transition-all shadow-md cursor-default border-b-4 border-[#A04000]"
                 title="Verified MSME Udyam Registration"
@@ -181,7 +208,6 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
                 <span className="text-[11px] font-bold opacity-90 tracking-tight">UDYAM-UP-69-0015414</span>
               </div>
 
-              {/* Compliance Info moved here for better layout balance */}
               <div className="mt-2">
                 <h4 className="text-xs font-bold text-[hsl(var(--color-muted-foreground))] uppercase mb-3">Compliance</h4>
                 <div className="flex items-center gap-3 p-3 bg-[hsl(var(--color-card))] border border-[hsl(var(--color-border))] rounded-xl shadow-sm">
