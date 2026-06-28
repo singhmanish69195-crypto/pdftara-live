@@ -124,6 +124,12 @@ export default async function RootLayout({
           content="ca-pub-4129411618696895"
         />
 
+        {/* Pinterest Verification Tag */}
+        <meta 
+          name="p:domain_verify" 
+          content="4047b6a7242d326afbebdff67d9377fd"
+        />
+
         <meta name="color-scheme" content="light dark" />
 
         <meta
