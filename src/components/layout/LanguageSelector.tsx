@@ -108,8 +108,15 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ currentLocal
     // Save preference to localStorage
     saveLanguagePreference(locale);
     
-    // Navigate to the new locale path
-    const newPath = getLocalizedPath(pathname, locale);
+    // 🚀 RAM-BAN FIX: Ensure the new path ALWAYS ends with a trailing slash
+    // This prevents "Page with redirect" errors in Google Search Console.
+    let newPath = getLocalizedPath(pathname, locale);
+    
+    // Agar path ke end mein slash nahi hai, to add kar do
+    if (!newPath.endsWith('/')) {
+      newPath = `${newPath}/`;
+    }
+    
     router.push(newPath);
     
     setIsOpen(false);
