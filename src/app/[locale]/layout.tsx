@@ -40,11 +40,11 @@ export async function generateMetadata({
     ja: { title: "PDFTara - 無料のプライベートPDFツール", desc: "ブラウザでPDFを安全に結合、分割、圧縮します।" },
     ko: { title: "PDFTara - 무료 개인용 PDF 도구", desc: "브라우저에서 안전하게 PDF를 병합, 분할 및 압축하세요." },
     es: { title: "PDFTara - Herramientas PDF gratuitas", desc: "Combine y comprima PDF de forma segura en su navegador." },
-    fr: { title: "PDFTara - Outils PDF gratuits et privés", desc: "Fusionnez et compressez des PDF en toute sécurité." },
+    fr: { title: "PDFTara - Outils PDF gratuits et privés", desc: "Fusionnez et compressez des PDF en toute segurança." },
     de: { title: "PDFTara - Kostenlose PDF-Tools", desc: "PDFs sicher im Browser zusammenführen und komprimieren." },
     zh: { title: "PDFTara - 免费私密 PDF 工具", desc: "在浏览器中安全地合并、拆分 और壓縮 PDF।" },
     pt: { title: "PDFTara - Ferramentas PDF Gratuitas", desc: "Mescle e comprimi PDFs com segurança no seu navegador." },
-    ar: { title: "PDFTara - أدوات PDF مجانية", desc: "دمज وضغط ملفات PDF بأمان في متصفحك." },
+    ar: { title: "PDFTara - أدوات PDF مجانية", desc: "دمج وضغط ملفات PDF بأمان في متصفحك." },
     it: { title: "PDFTara - Strumenti PDF gratuiti", desc: "Unisci e comprimi PDF in modo sicuro nel tuo browser." },
     ro: { title: "PDFTara - Instrumente PDF gratuite", desc: "Combinați și comprimați PDF-urile în siguranță." },
     vi: { title: "PDFTara - Công cụ PDF miễn phí", desc: "Ghép và nén PDF an toàn ngay trên trình duyệt." },
@@ -59,13 +59,15 @@ export async function generateMetadata({
     title: { default: currentSeo.title, template: `%s | PDFTara` },
     description: currentSeo.desc,
     alternates: {
-      canonical: `https://www.pdftara.com/${validLocale}`,
-      languages: locales.reduce((acc, l) => { acc[l] = `https://www.pdftara.com/${l}`; return acc; }, {} as Record<string, string>),
+      // ✅ FIXED: Added trailing slash (/)
+      canonical: `https://www.pdftara.com/${validLocale}/`,
+      // ✅ FIXED: Added trailing slash (/) to all language alternates
+      languages: locales.reduce((acc, l) => { acc[l] = `https://www.pdftara.com/${l}/`; return acc; }, {} as Record<string, string>),
     },
     verification: {
-      google: 'ca-pub-4129411618696895', // Placeholder from your AdSense
+      google: 'ca-pub-4129411618696895',
       other: {
-        'msvalidate.01': 'BING_VERIFICATION_CODE', // TODO: Replace with your actual Bing code
+        'msvalidate.01': 'BING_VERIFICATION_CODE', 
         'naver-site-verification': 'a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a',
       },
     },
@@ -74,7 +76,8 @@ export async function generateMetadata({
       ...metadata.openGraph,
       title: currentSeo.title,
       description: currentSeo.desc,
-      url: `https://www.pdftara.com/${validLocale}`,
+      // ✅ FIXED: Added trailing slash (/)
+      url: `https://www.pdftara.com/${validLocale}/`,
       siteName: 'PDFTara',
       images: [{ url: '/og-image-home.jpg', width: 1200, height: 630 }]
     }
@@ -95,7 +98,6 @@ export default async function LocaleLayout({
   const messages = await getMessages();
   const direction = localeConfig[locale as Locale]?.direction || 'ltr';
 
-  // Bing & Google Friendly Schemas
   const softwareSchema = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -122,23 +124,16 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} dir={direction} className={fontVariables} suppressHydrationWarning>
       <head>
-        {/* 1. WASM Fix: Service Worker लोड */}
         <script src="/coi-serviceworker.js"></script>
-        
-        {/* 2. Google AdSense Script */}
         <script 
           async 
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4129411618696895"
           crossOrigin="anonymous"
         ></script>
-
-        {/* SEO Verifications */}
         <meta name="naver-site-verification" content="a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a" />
         <meta name="google-adsense-account" content="ca-pub-4129411618696895" />
-        {/* Bing Verification Tag (Replace placeholder if you have the code) */}
         <meta name="msvalidate.01" content="BING_VERIFICATION_CODE" />
         
-        {/* Schemas for Google and Bing SEO */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
@@ -147,8 +142,6 @@ export default async function LocaleLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
-        
-        {/* Analytics Script Component */}
         <GoogleScripts />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased font-sans">
