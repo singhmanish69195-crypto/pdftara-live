@@ -1,6 +1,6 @@
 /**
- * PDFTARA SITEMAP - VERSION 7.0 (PERFORMANCE & SEO FIX)
- * Purpose: Fix "Temporary processing error" and ensure all 14 languages are linked.
+ * PDFTARA SITEMAP - VERSION 8.0 (TRAILING SLASH FIX - FINAL)
+ * Purpose: Ensure all URLs end with '/' to match live site and fix GSC errors.
  */
 
 import { MetadataRoute } from 'next';
@@ -13,8 +13,7 @@ const supabaseAnonKey = 'sb_publishable_uhzhKdRqKdB5gcXdnxgFsg_tsP875JG';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// 🔥 FIX: force-dynamic ki jagah revalidate use karein (Har 1 ghante mein update hoga)
-// Isse Google ko sitemap turant milega bina kisi error ke.
+// Har 1 ghante mein update hoga
 export const revalidate = 3600; 
 
 const BASE_URL = 'https://www.pdftara.com';
@@ -40,9 +39,11 @@ const STATIC_PAGES = [
   { path: 'disclaimer', priority: PRIORITY.static, changeFreq: 'monthly' },
 ];
 
+// ✅ FIXED: Asli Chor yahi tha. Ab ye hamesha slash (/) ke saath URL banayega.
 const buildUrl = (locale: string, path: string) => {
   const cleanPath = path.replace(/^\/+|\/+$/g, '');
-  return cleanPath ? `${BASE_URL}/${locale}/${cleanPath}` : `${BASE_URL}/${locale}`;
+  // Path ho ya na ho, end mein '/' pakka lagega
+  return cleanPath ? `${BASE_URL}/${locale}/${cleanPath}/` : `${BASE_URL}/${locale}/`;
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -52,8 +53,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // PHASE 1: STATIC PAGES (Home, Tools, Contact etc.)
   for (const page of STATIC_PAGES) {
     for (const locale of locales) {
+      const url = buildUrl(locale, page.path);
       allEntries.push({
-        url: buildUrl(locale, page.path),
+        url: url,
         lastModified,
         changeFrequency: page.changeFreq as any,
         priority: page.priority,
@@ -69,8 +71,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const tool of tools) {
     for (const locale of locales) {
       const toolField = `tools/${tool.slug}`;
+      const url = buildUrl(locale, toolField);
       allEntries.push({
-        url: buildUrl(locale, toolField),
+        url: url,
         lastModified,
         changeFrequency: 'weekly',
         priority: PRIORITY.toolPage,
@@ -89,8 +92,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (!post.slug) continue; 
       for (const locale of locales) {
         const blogField = `blog/${post.slug}`;
+        const url = buildUrl(locale, blogField);
         allEntries.push({
-          url: buildUrl(locale, blogField),
+          url: url,
           lastModified,
           changeFrequency: 'daily',
           priority: PRIORITY.blogPost,
