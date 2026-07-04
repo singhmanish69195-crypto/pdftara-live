@@ -24,8 +24,7 @@ export const metadata: Metadata = {
   creator: 'PDFTara.com',
   publisher: 'PDFTara.com',
 
-  // ✅ FIXED: Layout se hardcoded canonical hata diya hai. 
-  // Ab har page (tool/blog) apna sahi URL index karwa payega.
+  // ✅ KING FIX: Trailing slashes added to prevent GSC redirect errors
   alternates: {
     languages: {
       'en': '/en/',
@@ -84,18 +83,35 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
+        {/* 🚀 RAM-BAN WASM OPTIMIZATION: Browser ko pehle hi bata do WASM load karna hai */}
+        {/* Note: Agar file ka naam alag hai to niche badal lena, mostly .wasm extension hoti hai */}
+        <link 
+          rel="preload" 
+          href="/assets/libreoffice/libreoffice.wasm" 
+          as="fetch" 
+          type="application/wasm" 
+          crossOrigin="anonymous" 
+        />
+
+        {/* 🚀 COI Service Worker: Crucial for WASM Multi-threading speed */}
         <Script src="/coi-serviceworker.js" strategy="beforeInteractive" />
+
+        {/* 🚀 Google AdSense */}
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4129411618696895"
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
+
+        {/* Verification Tags */}
         <meta name="naver-site-verification" content="a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a" />
         <meta name="google-adsense-account" content="ca-pub-4129411618696895" />
         <meta name="p:domain_verify" content="4047b6a7242d326afbebdff67d9377fd" />
+        
         <meta name="color-scheme" content="light dark" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        
         <style dangerouslySetInnerHTML={{ __html: 'html{scrollbar-gutter:stable}' }} />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
