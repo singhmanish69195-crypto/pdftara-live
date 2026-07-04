@@ -83,11 +83,19 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
-        {/* 🚀 RAM-BAN WASM OPTIMIZATION: LibreOffice ki bhari file ko pehle hi bula lo */}
-        {/* Screenshot 21 ke mutabiq asli path yahi hai */}
+        {/* 🚀 RAM-BAN WASM OPTIMIZATION 1: LibreOffice Preload */}
         <link 
           rel="preload" 
           href="/libreoffice-wasm/soffice.wasm.gz" 
+          as="fetch" 
+          type="application/wasm" 
+          crossOrigin="anonymous" 
+        />
+
+        {/* 🚀 RAM-BAN WASM OPTIMIZATION 2: PyMuPDF Preload */}
+        <link 
+          rel="preload" 
+          href="/pymupdf-wasm/pymupdf.wasm" 
           as="fetch" 
           type="application/wasm" 
           crossOrigin="anonymous" 
