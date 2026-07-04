@@ -83,17 +83,17 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
-        {/* 🚀 RAM-BAN WASM OPTIMIZATION: Browser ko pehle hi bata do WASM load karna hai */}
-        {/* Note: Agar file ka naam alag hai to niche badal lena, mostly .wasm extension hoti hai */}
+        {/* 🚀 RAM-BAN WASM OPTIMIZATION: LibreOffice ki bhari file ko pehle hi bula lo */}
+        {/* Screenshot 21 ke mutabiq asli path yahi hai */}
         <link 
           rel="preload" 
-          href="/assets/libreoffice/libreoffice.wasm" 
+          href="/libreoffice-wasm/soffice.wasm.gz" 
           as="fetch" 
           type="application/wasm" 
           crossOrigin="anonymous" 
         />
 
-        {/* 🚀 COI Service Worker: Crucial for WASM Multi-threading speed */}
+        {/* 🚀 COI Service Worker: WASM multi-threading ke liye sabse zaroori script */}
         <Script src="/coi-serviceworker.js" strategy="beforeInteractive" />
 
         {/* 🚀 Google AdSense */}
@@ -104,7 +104,7 @@ export default async function RootLayout({
           strategy="afterInteractive"
         />
 
-        {/* Verification Tags */}
+        {/* SEO & Search Verifications */}
         <meta name="naver-site-verification" content="a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a" />
         <meta name="google-adsense-account" content="ca-pub-4129411618696895" />
         <meta name="p:domain_verify" content="4047b6a7242d326afbebdff67d9377fd" />
@@ -112,10 +112,13 @@ export default async function RootLayout({
         <meta name="color-scheme" content="light dark" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         
+        {/* Smooth scroll and scrollbar fix */}
         <style dangerouslySetInnerHTML={{ __html: 'html{scrollbar-gutter:stable}' }} />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
+        {/* Analytics / Tracking Scripts */}
         <GoogleScripts />
+        
         {children}
       </body>
     </html>
