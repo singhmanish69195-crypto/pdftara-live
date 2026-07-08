@@ -154,11 +154,11 @@ export const Header: React.FC<HeaderProps> = ({ locale, showSearch = true }) => 
     return icons[category] || '📄';
   };
 
-  // FAQ ko hta kar Blog kar diya
+  // FAQ ko hta kar Blog kar diya aur workflow ko Workflow BETA kar diya
   const navItems = [
     { href: `/${locale}`, label: t('navigation.home') },
     { href: `/${locale}/tools`, label: t('navigation.tools') },
-    { href: `/${locale}/workflow`, label: t('navigation.workflow') || 'Workflow' },
+    { href: `/${locale}/workflow`, label: `${t('navigation.workflow') || 'Workflow'} BETA` },
     { href: `/${locale}/about`, label: t('navigation.about') },
     { href: `/${locale}/blog`, label: 'Blog' },
   ];
