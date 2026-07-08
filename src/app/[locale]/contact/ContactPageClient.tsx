@@ -98,7 +98,7 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                 <div className="relative w-24 h-24 mb-4">
                   <Image 
                     src="/images/manish.jpg" 
-                    alt="Mr. Manish Singh - Owner & Developer"
+                    alt="Mr. Manish Singh - Owner "
                     fill
                     className="rounded-full object-cover border-2 border-indigo-200 shadow-md"
                   />
