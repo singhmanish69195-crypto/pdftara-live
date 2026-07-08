@@ -103,10 +103,10 @@ export default function ContactPageClient({ locale }: ContactPageClientProps) {
                     className="rounded-full object-cover border-2 border-indigo-200 shadow-md"
                   />
                 </div>
-                <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4">Owner & Developer</h3>
+                <h3 className="text-xl font-bold text-[hsl(var(--color-foreground))] mb-4">Owner </h3>
                 <div>
                   <p className="text-[hsl(var(--color-foreground))] font-bold text-lg">Mr. Manish Singh</p>
-                  <p className="text-sm text-[hsl(var(--color-muted-foreground))] mt-1">Owner, Developer & Shareholder</p>
+                  <p className="text-sm text-[hsl(var(--color-muted-foreground))] mt-1">Owner,  & Shareholder</p>
                 </div>
               </Card>
 
