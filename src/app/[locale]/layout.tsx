@@ -44,7 +44,7 @@ export async function generateMetadata({
     de: { title: "PDFTara - Kostenlose PDF-Tools", desc: "PDFs sicher im Browser zusammenführen und komprimieren." },
     zh: { title: "PDFTara - 免费私密 PDF 工具", desc: "在浏览器中安全地合并、拆分 और壓縮 PDF।" },
     pt: { title: "PDFTara - Ferramentas PDF Gratuitas", desc: "Mescle e comprimi PDFs com segurança no seu navegador." },
-    ar: { title: "PDFTara - أدوات PDF مجانية", desc: "دمج وضغط ملفات PDF بأمان في متصفحك." },
+    ar: { title: "PDFTara - أدوات PDF مجانية", desc: "دمज وضغط ملفات PDF بأمان في متصفحك." },
     it: { title: "PDFTara - Strumenti PDF gratuiti", desc: "Unisci e comprimi PDF in modo sicuro nel tuo browser." },
     ro: { title: "PDFTara - Instrumente PDF gratuite", desc: "Combinați și comprimați PDF-urile în siguranță." },
     vi: { title: "PDFTara - Công cụ PDF miễn phí", desc: "Ghép và nén PDF an toàn ngay trên trình duyệt." },
@@ -56,12 +56,11 @@ export async function generateMetadata({
   return {
     ...metadata,
     metadataBase: new URL('https://www.pdftara.com/'),
-    title: { default: currentSeo.title, template: `%s | PDFTara` },
+    // ✅ RAM-BAN FIX: Template ko sirf '%s' rakha hai taaki double branding na ho
+    title: { default: currentSeo.title, template: `%s` }, 
     description: currentSeo.desc,
     alternates: {
-      // ✅ FIXED: Added trailing slash (/)
       canonical: `https://www.pdftara.com/${validLocale}/`,
-      // ✅ FIXED: Added trailing slash (/) to all language alternates
       languages: locales.reduce((acc, l) => { acc[l] = `https://www.pdftara.com/${l}/`; return acc; }, {} as Record<string, string>),
     },
     verification: {
@@ -76,7 +75,6 @@ export async function generateMetadata({
       ...metadata.openGraph,
       title: currentSeo.title,
       description: currentSeo.desc,
-      // ✅ FIXED: Added trailing slash (/)
       url: `https://www.pdftara.com/${validLocale}/`,
       siteName: 'PDFTara',
       images: [{ url: '/og-image-home.jpg', width: 1200, height: 630 }]
@@ -124,12 +122,16 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} dir={direction} className={fontVariables} suppressHydrationWarning>
       <head>
+        {/* WASM Fix */}
         <script src="/coi-serviceworker.js"></script>
+        
+        {/* Google AdSense */}
         <script 
           async 
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4129411618696895"
           crossOrigin="anonymous"
         ></script>
+
         <meta name="naver-site-verification" content="a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a" />
         <meta name="google-adsense-account" content="ca-pub-4129411618696895" />
         <meta name="msvalidate.01" content="BING_VERIFICATION_CODE" />
