@@ -11,7 +11,8 @@ export const metadata: Metadata = {
 
   title: {
     default: 'PDFTara - Free Private PDF Tools',
-    template: '%s | PDFTara'
+    // ✅ FIXED: Template se '| PDFTara' hata diya hai taaki double branding na ho.
+    template: '%s' 
   },
 
   description: 'Secure browser-based tools to merge, split and compress PDFs.',
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   creator: 'PDFTara.com',
   publisher: 'PDFTara.com',
 
-  // ✅ KING FIX: Trailing slashes added to prevent GSC redirect errors
+  // ✅ KING FIX: Trailing slashes to prevent GSC redirect errors
   alternates: {
     languages: {
       'en': '/en/',
@@ -83,7 +84,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
-        {/* 🚀 RAM-BAN WASM OPTIMIZATION 1: LibreOffice Preload */}
+        {/* 🚀 WASM OPTIMIZATION 1: LibreOffice Preload */}
         <link 
           rel="preload" 
           href="/libreoffice-wasm/soffice.wasm.gz" 
@@ -92,7 +93,7 @@ export default async function RootLayout({
           crossOrigin="anonymous" 
         />
 
-        {/* 🚀 RAM-BAN WASM OPTIMIZATION 2: PyMuPDF Preload */}
+        {/* 🚀 WASM OPTIMIZATION 2: PyMuPDF Preload */}
         <link 
           rel="preload" 
           href="/pymupdf-wasm/pymupdf.wasm" 
@@ -101,7 +102,7 @@ export default async function RootLayout({
           crossOrigin="anonymous" 
         />
 
-        {/* 🚀 COI Service Worker: WASM multi-threading ke liye sabse zaroori script */}
+        {/* 🚀 COI Service Worker: Multithreading support */}
         <Script src="/coi-serviceworker.js" strategy="beforeInteractive" />
 
         {/* 🚀 Google AdSense */}
@@ -112,7 +113,7 @@ export default async function RootLayout({
           strategy="afterInteractive"
         />
 
-        {/* SEO & Search Verifications */}
+        {/* Verification Tags */}
         <meta name="naver-site-verification" content="a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a" />
         <meta name="google-adsense-account" content="ca-pub-4129411618696895" />
         <meta name="p:domain_verify" content="4047b6a7242d326afbebdff67d9377fd" />
@@ -120,13 +121,10 @@ export default async function RootLayout({
         <meta name="color-scheme" content="light dark" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         
-        {/* Smooth scroll and scrollbar fix */}
         <style dangerouslySetInnerHTML={{ __html: 'html{scrollbar-gutter:stable}' }} />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
-        {/* Analytics / Tracking Scripts */}
         <GoogleScripts />
-        
         {children}
       </body>
     </html>
