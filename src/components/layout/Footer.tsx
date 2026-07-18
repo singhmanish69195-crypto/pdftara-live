@@ -15,6 +15,7 @@ import {
   Twitter, 
   Award, 
   CheckCircle2,
+  TrendingUp,
   Youtube 
 } from 'lucide-react';
 import { type Locale, locales, localeConfig, getLocalizedPath } from '@/lib/i18n/config';
@@ -197,6 +198,7 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
               Legal Company
             </h3>
             <div className="flex flex-col gap-4">
+              {/* MSME Badge */}
               <div 
                 className="inline-flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#E67E22] hover:bg-[#D35400] transition-all shadow-md cursor-default border-b-4 border-[#A04000]"
                 title="Verified MSME Udyam Registration"
@@ -207,6 +209,21 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
                 </div>
                 <span className="text-[11px] font-bold opacity-90 tracking-tight">UDYAM-UP-69-0015414</span>
               </div>
+
+              {/* Crunchbase Rank Badge - Added as requested */}
+              <a 
+                href="https://www.crunchbase.com/organization/pdftara"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#0284c7] hover:bg-[#0369a1] transition-all shadow-md border-b-4 border-[#075985]"
+                title="View PDFTara on Crunchbase"
+              >
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4" />
+                  <span className="text-xs font-black uppercase tracking-tighter">Crunchbase Rank</span>
+                </div>
+                <span className="text-[11px] font-bold opacity-90 tracking-tight">#5328545</span>
+              </a>
 
               <div className="mt-2">
                 <h4 className="text-xs font-bold text-[hsl(var(--color-muted-foreground))] uppercase mb-3">Compliance</h4>
