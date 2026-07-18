@@ -38,7 +38,6 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
     { href: `/${locale}/contact`, label: t('navigation.contact') },
   ];
 
-  // Updated Social Links with YouTube & Pinterest
   const communityLinks = [
     { 
       href: "https://t.me/pdftara", 
@@ -94,13 +93,8 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
       text: 'Check out these professional PDF tools - Free & Private!',
       url: typeof window !== 'undefined' ? window.location.origin : '',
     };
-
     if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch (err) {
-        console.log('Error sharing', err);
-      }
+      try { await navigator.share(shareData); } catch (err) { console.log('Error sharing', err); }
     } else {
       navigator.clipboard.writeText(window.location.origin);
       alert('Link copied to clipboard!');
@@ -108,45 +102,25 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
   };
 
   return (
-    <footer
-      className="w-full border-t border-[hsl(var(--color-border))] bg-[hsl(var(--color-background))] pt-16 pb-8"
-      role="contentinfo"
-    >
+    <footer className="w-full border-t border-[hsl(var(--color-border))] bg-[hsl(var(--color-background))] pt-16 pb-8" role="contentinfo">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand Column */}
-          <div className="col-span-1 md:col-span-1 flex flex-col gap-6">
-            <Link
-              href={`/${locale}`}
-              className="group flex items-center gap-2.5 text-xl font-bold text-[hsl(var(--color-foreground))]"
-              aria-label={`${t('brand')} - ${t('navigation.home')}`}
-            >
+          <div className="col-span-1 flex flex-col gap-6">
+            <Link href={`/${locale}`} className="group flex items-center gap-2.5 text-xl font-bold text-[hsl(var(--color-foreground))]">
               <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-[hsl(var(--color-primary))] text-white shadow-md transition-transform group-hover:scale-105">
-                <svg
-                  className="h-5 w-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
                   <polyline points="14 2 14 8 20 8" />
                 </svg>
               </div>
-              <span data-testid="footer-brand-name">{t('brand')}</span>
+              <span>{t('brand')}</span>
             </Link>
             <p className="text-sm text-[hsl(var(--color-muted-foreground))] leading-relaxed max-w-xs">
               {t('tagline') || 'Professional, secure, and free PDF tools for everyone. No installation required.'}
             </p>
-
-            {/* Share Button */}
             <div className="mt-2">
-              <button
-                onClick={handleShare}
-                className="flex items-center gap-2 px-4 py-2 rounded-full border border-[hsl(var(--color-border))] text-[hsl(var(--color-muted-foreground))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all text-xs font-bold uppercase tracking-wider"
-              >
+              <button onClick={handleShare} className="flex items-center gap-2 px-4 py-2 rounded-full border border-[hsl(var(--color-border))] text-[hsl(var(--color-muted-foreground))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all text-xs font-bold uppercase tracking-wider">
                 <Share2 className="w-4 h-4" />
                 <span>Share App</span>
               </button>
@@ -154,37 +128,22 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
           </div>
 
           {/* Resources & Community Section */}
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">
-              Resources
-            </h3>
+          <div className="flex flex-col">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">Resources</h3>
             <ul className="flex flex-col gap-3 mb-10">
               {footerLinks.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-primary))] transition-colors flex items-center gap-2 group"
-                  >
+                  <Link href={link.href} className="text-sm text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-primary))] transition-colors flex items-center gap-2 group">
                     <span className="w-1 h-1 rounded-full bg-[hsl(var(--color-muted-foreground))] group-hover:bg-[hsl(var(--color-primary))] transition-colors" />
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
-
-            {/* Community Section */}
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-4">
-              Community
-            </h3>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-4">Community</h3>
             <div className="flex flex-col gap-3">
               {communityLinks.map((item, index) => (
-                <a
-                  key={index}
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-white transition-all text-sm font-bold shadow-md hover:shadow-lg ${item.color}`}
-                >
+                <a key={index} href={item.href} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-white transition-all text-sm font-bold shadow-md hover:shadow-lg ${item.color}`}>
                   {item.icon}
                   <span>{item.label}</span>
                 </a>
@@ -192,17 +151,14 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
             </div>
           </div>
 
-          {/* Legal Company Section */}
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">
+          {/* Legal Company Section - Centered Alignment Fix */}
+          <div className="flex flex-col items-center md:items-start text-center md:text-left">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6 w-full">
               Legal Company
             </h3>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 w-full max-w-[240px]">
               {/* MSME Badge */}
-              <div 
-                className="inline-flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#E67E22] hover:bg-[#D35400] transition-all shadow-md cursor-default border-b-4 border-[#A04000]"
-                title="Verified MSME Udyam Registration"
-              >
+              <div className="flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#E67E22] hover:bg-[#D35400] transition-all shadow-md border-b-4 border-[#A04000]" title="Verified MSME Udyam Registration">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4" />
                   <span className="text-xs font-black uppercase tracking-tighter">Registered MSME</span>
@@ -210,22 +166,19 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
                 <span className="text-[11px] font-bold opacity-90 tracking-tight">UDYAM-UP-69-0015414</span>
               </div>
 
-              {/* Crunchbase Rank Badge - Added as requested */}
-              <a 
-                href="https://www.crunchbase.com/organization/pdftara"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#0284c7] hover:bg-[#0369a1] transition-all shadow-md border-b-4 border-[#075985]"
-                title="View PDFTara on Crunchbase"
-              >
+              {/* Unique Crunchbase Badge with Verified Software Co. */}
+              <a href="https://www.crunchbase.com/organization/pdftara" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#0284c7] hover:bg-[#0369a1] transition-all shadow-md border-b-4 border-[#075985]" title="View PDFTara on Crunchbase">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4" />
-                  <span className="text-xs font-black uppercase tracking-tighter">Crunchbase Rank</span>
+                  <Shield className="w-4 h-4 text-white fill-white/20" />
+                  <span className="text-xs font-black uppercase tracking-tighter text-shadow-sm">Verified Software Co.</span>
                 </div>
-                <span className="text-[11px] font-bold opacity-90 tracking-tight">#5328545</span>
+                <div className="flex items-center gap-1.5 opacity-90">
+                  <TrendingUp className="w-3 h-3" />
+                  <span className="text-[10px] font-bold tracking-tight">CB Rank: #5328545</span>
+                </div>
               </a>
 
-              <div className="mt-2">
+              <div className="mt-4 w-full text-left">
                 <h4 className="text-xs font-bold text-[hsl(var(--color-muted-foreground))] uppercase mb-3">Compliance</h4>
                 <div className="flex items-center gap-3 p-3 bg-[hsl(var(--color-card))] border border-[hsl(var(--color-border))] rounded-xl shadow-sm">
                   <div className="h-8 w-8 rounded-full bg-[hsl(var(--color-success)/0.1)] flex items-center justify-center flex-shrink-0">
@@ -241,10 +194,8 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
           </div>
 
           {/* Security Features */}
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">
-              Security
-            </h3>
+          <div className="flex flex-col">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">Security</h3>
             <ul className="flex flex-col gap-4">
               <li className="flex items-start gap-3">
                 <div className="mt-0.5 p-1 rounded bg-[hsl(var(--color-success)/0.1)] text-[hsl(var(--color-success))]">
@@ -272,27 +223,14 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
         <div className="py-6 border-t border-[hsl(var(--color-border))]">
           <div className="flex items-center gap-3 mb-4">
             <Globe className="h-4 w-4 text-[hsl(var(--color-muted-foreground))]" />
-            <span className="text-sm font-medium text-[hsl(var(--color-foreground))]">
-              {t('buttons.selectLanguage')}
-            </span>
+            <span className="text-sm font-medium text-[hsl(var(--color-foreground))]">{t('buttons.selectLanguage')}</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {locales.map((loc) => {
               const config = localeConfig[loc];
               const isActive = loc === locale;
               return (
-                <button
-                  key={loc}
-                  onClick={() => handleLanguageChange(loc)}
-                  className={`
-                    px-3 py-1.5 text-sm rounded-full transition-all
-                    ${isActive
-                      ? 'bg-[hsl(var(--color-primary))] text-white font-medium'
-                      : 'bg-[hsl(var(--color-muted))] text-[hsl(var(--color-muted-foreground))] hover:bg-[hsl(var(--color-primary)/0.1)] hover:text-[hsl(var(--color-primary))]'
-                    }
-                  `}
-                  aria-current={isActive ? 'true' : undefined}
-                >
+                <button key={loc} onClick={() => handleLanguageChange(loc)} className={`px-3 py-1.5 text-sm rounded-full transition-all ${isActive ? 'bg-[hsl(var(--color-primary))] text-white font-medium' : 'bg-[hsl(var(--color-muted))] text-[hsl(var(--color-muted-foreground))] hover:bg-[hsl(var(--color-primary)/0.1)] hover:text-[hsl(var(--color-primary))]'}`} aria-current={isActive ? 'true' : undefined}>
                   {config.nativeName}
                 </button>
               );
@@ -302,9 +240,7 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
 
         {/* Copyright & Legal Links */}
         <div className="pt-8 border-t border-[hsl(var(--color-border))] flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-[hsl(var(--color-muted-foreground))]">
-            &copy; {currentYear} PDFTara. All rights reserved.
-          </p>
+          <p className="text-sm text-[hsl(var(--color-muted-foreground))]">&copy; {currentYear} PDFTara. All rights reserved.</p>
           <div className="flex items-center gap-6 flex-wrap justify-center">
             <Link href={`/${locale}/terms`} className="text-xs text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-foreground))]">Terms</Link>
             <Link href={`/${locale}/privacy`} className="text-xs text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-foreground))]">Privacy</Link>
