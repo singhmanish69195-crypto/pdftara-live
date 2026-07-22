@@ -10,13 +10,11 @@ import {
   FileCheck, 
   Globe, 
   Share2, 
-  Send, 
   Star, 
-  Twitter, 
-  Award, 
   CheckCircle2,
   TrendingUp,
-  Youtube 
+  ExternalLink,
+  Award
 } from 'lucide-react';
 import { type Locale, locales, localeConfig, getLocalizedPath } from '@/lib/i18n/config';
 import { saveLanguagePreference } from './LanguageSelector';
@@ -25,14 +23,14 @@ export interface FooterProps {
   locale: Locale;
 }
 
-// Custom Star Component for high-quality feel
+// Custom Star Rating Component
 const StarRating = ({ rating }: { rating: number }) => {
   return (
-    <div className="flex gap-0.5">
+    <div className="flex gap-0.5 mt-1">
       {[...Array(5)].map((_, i) => (
         <Star 
           key={i} 
-          className={`w-3.5 h-3.5 ${i < Math.floor(rating) ? 'fill-[#FFB400] text-[#FFB400]' : i < rating ? 'fill-[#FFB400] text-[#FFB400] opacity-50' : 'text-gray-300'}`} 
+          className={`w-3.5 h-3.5 ${i < Math.floor(rating) ? 'fill-[#FFB400] text-[#FFB400]' : 'text-gray-200'}`} 
         />
       ))}
     </div>
@@ -49,46 +47,24 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
     {
       name: "Capterra",
       rating: 5,
+      desc: "Top Rated Adobe Alternative",
       url: "https://www.capterra.in/software/1106945/PDFTara",
-      logo: (
-        <svg viewBox="0 0 40 40" className="w-8 h-8">
-          <path d="M20 0L37.3205 10V30L20 40L2.67949 30V10L20 0Z" fill="#0052FF"/>
-          <path d="M20 8L30 14V26L20 32L10 26V14L20 8Z" fill="white" fillOpacity="0.2"/>
-          <path d="M15 18L20 13L25 18L20 23L15 18Z" fill="white"/>
-        </svg>
-      )
+      logo: "/images/capterra.png"
     },
     {
       name: "GetApp",
       rating: 4.5,
+      desc: "Best Secure Document Tool",
       url: "https://www.getapp.com/all-software/a/pdftara/",
-      logo: (
-        <svg viewBox="0 0 40 40" className="w-8 h-8">
-          <rect width="40" height="40" rx="8" fill="#172B4D"/>
-          <path d="M12 12H28V28H12V12Z" fill="white" fillOpacity="0.1"/>
-          <path d="M20 12L28 20L20 28L12 20L20 12Z" fill="#36B37E"/>
-        </svg>
-      )
+      logo: "/images/getapp.png"
     },
     {
       name: "Software Advice",
       rating: 4.8,
+      desc: "Highest Rated for Privacy",
       url: "https://www.softwareadvice.com/product/559122-PDFTara/",
-      logo: (
-        <svg viewBox="0 0 40 40" className="w-8 h-8">
-          <circle cx="20" cy="20" r="20" fill="#00AEEF"/>
-          <path d="M15 20L20 15L25 20L20 25L15 20Z" fill="white"/>
-          <circle cx="20" cy="20" r="12" stroke="white" strokeWidth="2" strokeOpacity="0.3" fill="none"/>
-        </svg>
-      )
+      logo: "/images/software_advice.png"
     }
-  ];
-
-  const footerLinks = [
-    { href: `/${locale}/about`, label: t('navigation.about') },
-    { href: `/${locale}/faq`, label: t('navigation.faq') },
-    { href: `/${locale}/privacy`, label: t('navigation.privacy') },
-    { href: `/${locale}/contact`, label: t('navigation.contact') },
   ];
 
   const handleLanguageChange = (newLocale: Locale) => {
@@ -97,50 +73,36 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
     router.push(newPath);
   };
 
-  const handleShare = async () => {
-    const shareData = {
-      title: 'PDFTara',
-      text: 'Professional PDF tools - Free & Private!',
-      url: typeof window !== 'undefined' ? window.location.origin : '',
-    };
-    if (navigator.share) {
-      try { await navigator.share(shareData); } catch (err) { console.log(err); }
-    }
-  };
-
   return (
-    <footer className="w-full border-t border-[hsl(var(--color-border))] bg-[hsl(var(--color-background))] pt-16 pb-8">
+    <footer className="w-full border-t border-gray-100 bg-white pt-16 pb-8" role="contentinfo">
       <div className="container mx-auto px-4">
         
-        {/* REVIEWS GRID: LightPDF Style - Mobile Responsive */}
-        <div className="mb-16">
+        {/* REVIEWS GRID: High Quality International Layout */}
+        <div className="mb-20">
           <div className="text-center mb-10">
-            <h2 className="text-xl font-extrabold text-[hsl(var(--color-foreground))] uppercase tracking-widest mb-2">
-              Verified Reviews & Ratings
-            </h2>
-            <p className="text-[hsl(var(--color-muted-foreground))] text-sm">Join thousands of users who trust PDFTara for their daily document needs.</p>
+            <h2 className="text-2xl font-black text-gray-900 tracking-tight uppercase mb-2">Trusted Globally</h2>
+            <p className="text-gray-500 text-sm font-medium italic">"The professional free alternative to Adobe Acrobat Pro"</p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {reviewPlatforms.map((item) => (
               <a 
                 key={item.name} 
                 href={item.url} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="group flex items-center justify-between p-5 rounded-2xl bg-[hsl(var(--color-card))] border border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary))] transition-all shadow-sm hover:shadow-md"
+                className="group flex items-center gap-4 p-5 rounded-2xl border border-gray-100 hover:border-blue-500 hover:shadow-xl transition-all duration-300 bg-gray-50/30"
               >
-                <div className="flex items-center gap-4">
-                  <div className="transition-transform group-hover:scale-110 duration-300">
-                    {item.logo}
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-sm text-[hsl(var(--color-foreground))] tracking-tight">{item.name}</h4>
-                    <StarRating rating={item.rating} />
-                  </div>
+                <div className="w-12 h-12 flex-shrink-0 bg-white rounded-xl shadow-sm p-2 flex items-center justify-center">
+                  <img src={item.logo} alt={item.name} className="w-full h-full object-contain" />
                 </div>
-                <div className="text-[10px] font-bold text-[hsl(var(--color-primary))] uppercase bg-[hsl(var(--color-primary)/0.1)] px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                  Review
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-gray-800 text-sm">{item.name}</span>
+                    <ExternalLink className="w-3 h-3 text-gray-300 group-hover:text-blue-500" />
+                  </div>
+                  <StarRating rating={item.rating} />
+                  <p className="text-[10px] font-bold text-blue-600 mt-1 uppercase tracking-tight">{item.desc}</p>
                 </div>
               </a>
             ))}
@@ -150,84 +112,93 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand Column */}
           <div className="col-span-1 flex flex-col gap-6">
-            <Link href={`/${locale}`} className="group flex items-center gap-2.5 text-xl font-bold text-[hsl(var(--color-foreground))]">
-              <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-[hsl(var(--color-primary))] text-white shadow-md transition-transform group-hover:scale-105">
-                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-                  <polyline points="14 2 14 8 20 8" />
-                </svg>
+            <Link href={`/${locale}`} className="flex items-center gap-2.5 text-2xl font-black text-gray-900 italic">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg">
+                <img src="/images/logo.png" alt="PDFTara" className="w-6 h-6 invert brightness-0" />
               </div>
-              <span>PDFTara</span>
+              <span>PDF<span className="text-blue-600 not-italic">tara</span></span>
             </Link>
-            <p className="text-sm text-[hsl(var(--color-muted-foreground))] leading-relaxed max-w-xs">
-              Secure, private, and 100% free PDF tools. No installation, no data tracking.
+            <p className="text-sm text-gray-500 leading-relaxed font-medium">
+              Enterprise-grade PDF tools. 100% Secure, No Cloud Uploads, Always Free.
             </p>
-            <button onClick={handleShare} className="flex items-center w-fit gap-2 px-4 py-2 rounded-full border border-[hsl(var(--color-border))] text-[hsl(var(--color-muted-foreground))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all text-xs font-bold uppercase">
-              <Share2 className="w-4 h-4" /> Share App
-            </button>
+            <div className="flex items-center gap-4">
+               <a href="https://x.com/ManishS99961475" target="_blank" className="p-2 bg-gray-100 rounded-full hover:bg-black hover:text-white transition-all">
+                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+               </a>
+               <Link href={`/${locale}/contact`} className="text-xs font-bold uppercase tracking-widest text-blue-600 hover:underline">Get Help</Link>
+            </div>
           </div>
 
-          {/* Links Column */}
+          {/* Resources */}
           <div className="flex flex-col">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">Company</h3>
-            <ul className="flex flex-col gap-3">
-              {footerLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-primary))] transition-colors">
-                    {link.label}
+            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-6">Resources</h3>
+            <ul className="flex flex-col gap-4">
+              {['About Us', 'Privacy Policy', 'Contact Support', 'Cookies'].map((item) => (
+                <li key={item}>
+                  <Link href={`/${locale}/${item.toLowerCase().replace(' ', '-')}`} className="text-sm font-bold text-gray-600 hover:text-blue-600 transition-colors">
+                    {item}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Verification Section */}
-          <div className="flex flex-col gap-4">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-2">Trusted Verification</h3>
-            <div className="flex flex-col gap-3">
-              <div className="px-4 py-2 bg-[#E67E22] text-white rounded-lg text-xs font-bold flex items-center gap-2 shadow-sm border-b-2 border-orange-800">
-                <CheckCircle2 className="w-4 h-4" /> Registered MSME India
+          {/* Verification (Udyam & Crunchbase) */}
+          <div className="flex flex-col">
+            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-6">Verification</h3>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-3 bg-orange-50 border border-orange-100 rounded-2xl shadow-sm">
+                <CheckCircle2 className="w-5 h-5 text-orange-600" />
+                <div>
+                  <p className="text-[10px] font-black text-orange-900 uppercase">Registered MSME India</p>
+                  <p className="text-[9px] font-bold text-orange-600">UDYAM-UP-69-0015414</p>
+                </div>
               </div>
-              <a href="https://www.crunchbase.com/organization/pdftara" target="_blank" className="px-4 py-2 bg-[#0284c7] text-white rounded-lg text-xs font-bold flex items-center gap-2 shadow-sm border-b-2 border-sky-900">
-                <Shield className="w-4 h-4" /> Crunchbase Verified
+              <a href="https://www.crunchbase.com/organization/pdftara" target="_blank" className="flex items-center gap-3 p-3 bg-sky-50 border border-sky-100 rounded-2xl shadow-sm hover:bg-sky-100 transition-all">
+                <TrendingUp className="w-5 h-5 text-sky-600" />
+                <div>
+                  <p className="text-[10px] font-black text-sky-900 uppercase">Crunchbase Verified</p>
+                  <p className="text-[9px] font-bold text-sky-600">Rank: #5,328,545</p>
+                </div>
               </a>
             </div>
           </div>
 
-          {/* Security Section */}
+          {/* Privacy Standards */}
           <div className="flex flex-col">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">Privacy First</h3>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="p-1.5 rounded-lg bg-green-500/10 text-green-600"><Lock className="w-4 h-4"/></div>
-                <span className="text-xs font-medium text-[hsl(var(--color-muted-foreground))]">Files never leave your browser</span>
+            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-6">Compliance</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col items-center p-3 border border-gray-100 rounded-2xl">
+                <Shield className="w-5 h-5 text-green-600 mb-1" />
+                <span className="text-[9px] font-black text-gray-500 uppercase">GDPR Ready</span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-600"><Shield className="w-4 h-4"/></div>
-                <span className="text-xs font-medium text-[hsl(var(--color-muted-foreground))]">GDPR & ISO compliant workflow</span>
+              <div className="flex flex-col items-center p-3 border border-gray-100 rounded-2xl">
+                <Award className="w-5 h-5 text-purple-600 mb-1" />
+                <span className="text-[9px] font-black text-gray-500 uppercase">ISO 27001</span>
               </div>
             </div>
+            <p className="mt-4 text-[10px] text-gray-400 leading-tight font-medium">
+              *All processing happens on your device. We never store or see your files.
+            </p>
           </div>
         </div>
 
-        {/* Language Selection */}
-        <div className="py-6 border-t border-[hsl(var(--color-border))]">
-          <div className="flex flex-wrap gap-2">
+        {/* Bottom Bar */}
+        <div className="pt-8 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex flex-wrap justify-center gap-1.5">
             {locales.map((loc) => (
-              <button key={loc} onClick={() => handleLanguageChange(loc)} className={`px-4 py-1.5 text-xs rounded-full transition-all ${loc === locale ? 'bg-[hsl(var(--color-primary))] text-white font-bold' : 'bg-[hsl(var(--color-muted))] text-[hsl(var(--color-muted-foreground))] hover:bg-[hsl(var(--color-primary)/0.1)]'}`}>
+              <button 
+                key={loc} 
+                onClick={() => handleLanguageChange(loc)} 
+                className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase transition-all ${loc === locale ? 'bg-gray-900 text-white shadow-md' : 'bg-gray-50 text-gray-400 hover:text-gray-900'}`}
+              >
                 {localeConfig[loc].nativeName}
               </button>
             ))}
           </div>
-        </div>
-
-        {/* Final Copyright */}
-        <div className="pt-8 border-t border-[hsl(var(--color-border))] flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-[hsl(var(--color-muted-foreground))]">&copy; {currentYear} PDFTara. Global Document Solutions.</p>
-          <div className="flex gap-6">
-            <Link href={`/${locale}/privacy`} className="text-xs text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-foreground))]">Privacy Policy</Link>
-            <Link href={`/${locale}/terms`} className="text-xs text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-foreground))]">Terms of Service</Link>
-          </div>
+          <p className="text-[10px] font-black text-gray-400 tracking-widest uppercase">
+            &copy; {currentYear} PDFTARA — SECURE DOCUMENT REVOLUTION.
+          </p>
         </div>
       </div>
     </footer>
