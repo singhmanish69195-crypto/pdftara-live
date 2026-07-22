@@ -16,8 +16,7 @@ import {
   Award, 
   CheckCircle2,
   TrendingUp,
-  Youtube,
-  ExternalLink
+  Youtube 
 } from 'lucide-react';
 import { type Locale, locales, localeConfig, getLocalizedPath } from '@/lib/i18n/config';
 import { saveLanguagePreference } from './LanguageSelector';
@@ -26,14 +25,19 @@ export interface FooterProps {
   locale: Locale;
 }
 
-// Star Rating Helper Component
-const FiveStars = () => (
-  <div className="flex gap-0.5 mt-1">
-    {[...Array(5)].map((_, i) => (
-      <Star key={i} className="w-3.5 h-3.5 fill-[#FFB400] text-[#FFB400]" />
-    ))}
-  </div>
-);
+// Custom Star Component for high-quality feel
+const StarRating = ({ rating }: { rating: number }) => {
+  return (
+    <div className="flex gap-0.5">
+      {[...Array(5)].map((_, i) => (
+        <Star 
+          key={i} 
+          className={`w-3.5 h-3.5 ${i < Math.floor(rating) ? 'fill-[#FFB400] text-[#FFB400]' : i < rating ? 'fill-[#FFB400] text-[#FFB400] opacity-50' : 'text-gray-300'}`} 
+        />
+      ))}
+    </div>
+  );
+};
 
 export const Footer: React.FC<FooterProps> = ({ locale }) => {
   const t = useTranslations('common');
@@ -44,26 +48,38 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
   const reviewPlatforms = [
     {
       name: "Capterra",
+      rating: 5,
       url: "https://www.capterra.in/software/1106945/PDFTara",
       logo: (
-        <svg viewBox="0 0 24 24" className="w-6 h-6 fill-[#0052FF]">
-          <path d="M12 2L2 19h20L12 2zm0 4.5l6.5 11h-13L12 6.5z" />
-          <path d="M10 12h4v2h-4z" opacity=".3"/>
+        <svg viewBox="0 0 40 40" className="w-8 h-8">
+          <path d="M20 0L37.3205 10V30L20 40L2.67949 30V10L20 0Z" fill="#0052FF"/>
+          <path d="M20 8L30 14V26L20 32L10 26V14L20 8Z" fill="white" fillOpacity="0.2"/>
+          <path d="M15 18L20 13L25 18L20 23L15 18Z" fill="white"/>
         </svg>
       )
     },
     {
       name: "GetApp",
+      rating: 4.5,
       url: "https://www.getapp.com/all-software/a/pdftara/",
       logo: (
-        <div className="w-6 h-6 bg-[#172B4D] rounded-md flex items-center justify-center text-white font-bold text-[10px]">GA</div>
+        <svg viewBox="0 0 40 40" className="w-8 h-8">
+          <rect width="40" height="40" rx="8" fill="#172B4D"/>
+          <path d="M12 12H28V28H12V12Z" fill="white" fillOpacity="0.1"/>
+          <path d="M20 12L28 20L20 28L12 20L20 12Z" fill="#36B37E"/>
+        </svg>
       )
     },
     {
       name: "Software Advice",
+      rating: 4.8,
       url: "https://www.softwareadvice.com/product/559122-PDFTara/",
       logo: (
-        <div className="w-6 h-6 bg-[#00AEEF] rounded-full flex items-center justify-center text-white font-bold text-[10px]">SA</div>
+        <svg viewBox="0 0 40 40" className="w-8 h-8">
+          <circle cx="20" cy="20" r="20" fill="#00AEEF"/>
+          <path d="M15 20L20 15L25 20L20 25L15 20Z" fill="white"/>
+          <circle cx="20" cy="20" r="12" stroke="white" strokeWidth="2" strokeOpacity="0.3" fill="none"/>
+        </svg>
       )
     }
   ];
@@ -75,33 +91,6 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
     { href: `/${locale}/contact`, label: t('navigation.contact') },
   ];
 
-  const communityLinks = [
-    { 
-      href: "https://t.me/pdftara", 
-      label: "Official Telegram", 
-      color: "bg-[#229ED9] hover:bg-[#1c86ba]",
-      icon: <Send className="w-4 h-4" />
-    },
-    { 
-      href: "https://www.youtube.com/@PDFtara/shorts", 
-      label: "YouTube Shorts", 
-      color: "bg-[#FF0000] hover:bg-[#cc0000]",
-      icon: <Youtube className="w-4 h-4" />
-    },
-    { 
-      href: "https://www.producthunt.com/products/pdftara-secure-free", 
-      label: "Product Hunt", 
-      color: "bg-[#DA552F] hover:bg-[#bd4828]",
-      icon: <Award className="w-4 h-4" />
-    },
-    { 
-      href: "https://www.trustpilot.com/review/pdftara.com", 
-      label: "Trustpilot", 
-      color: "bg-[#00B67A] hover:bg-[#009e6a]",
-      icon: <Star className="w-4 h-4" />
-    },
-  ];
-
   const handleLanguageChange = (newLocale: Locale) => {
     saveLanguagePreference(newLocale);
     const newPath = getLocalizedPath(pathname, newLocale);
@@ -111,49 +100,50 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
   const handleShare = async () => {
     const shareData = {
       title: 'PDFTara',
-      text: 'Check out these professional PDF tools - Free & Private!',
+      text: 'Professional PDF tools - Free & Private!',
       url: typeof window !== 'undefined' ? window.location.origin : '',
     };
     if (navigator.share) {
-      try { await navigator.share(shareData); } catch (err) { console.log('Error sharing', err); }
-    } else {
-      navigator.clipboard.writeText(window.location.origin);
-      alert('Link copied to clipboard!');
+      try { await navigator.share(shareData); } catch (err) { console.log(err); }
     }
   };
 
   return (
-    <footer className="w-full border-t border-[hsl(var(--color-border))] bg-[hsl(var(--color-background))] pt-16 pb-8" role="contentinfo">
+    <footer className="w-full border-t border-[hsl(var(--color-border))] bg-[hsl(var(--color-background))] pt-16 pb-8">
       <div className="container mx-auto px-4">
         
-        {/* NEW: Global Review Section - International Look */}
-        <div className="mb-16 py-8 px-6 rounded-3xl bg-gradient-to-r from-[hsl(var(--color-muted)/0.3)] to-[hsl(var(--color-background))] border border-[hsl(var(--color-border))] shadow-sm">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-            <div className="text-center lg:text-left">
-              <h2 className="text-2xl font-black text-[hsl(var(--color-foreground))] tracking-tight mb-2 uppercase">Trusted by Thousands Worldwide</h2>
-              <p className="text-sm text-[hsl(var(--color-muted-foreground))]">Share your experience and help us grow on global platforms.</p>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full lg:w-auto">
-              {reviewPlatforms.map((platform) => (
-                <a 
-                  key={platform.name}
-                  href={platform.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="group flex flex-col items-center p-4 rounded-2xl bg-[hsl(var(--color-card))] border border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary))] transition-all hover:shadow-md"
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    {platform.logo}
-                    <span className="font-bold text-sm text-[hsl(var(--color-foreground))]">{platform.name}</span>
+        {/* REVIEWS GRID: LightPDF Style - Mobile Responsive */}
+        <div className="mb-16">
+          <div className="text-center mb-10">
+            <h2 className="text-xl font-extrabold text-[hsl(var(--color-foreground))] uppercase tracking-widest mb-2">
+              Verified Reviews & Ratings
+            </h2>
+            <p className="text-[hsl(var(--color-muted-foreground))] text-sm">Join thousands of users who trust PDFTara for their daily document needs.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {reviewPlatforms.map((item) => (
+              <a 
+                key={item.name} 
+                href={item.url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="group flex items-center justify-between p-5 rounded-2xl bg-[hsl(var(--color-card))] border border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary))] transition-all shadow-sm hover:shadow-md"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="transition-transform group-hover:scale-110 duration-300">
+                    {item.logo}
                   </div>
-                  <FiveStars />
-                  <span className="mt-3 text-[10px] font-extrabold uppercase tracking-widest text-[hsl(var(--color-primary))] group-hover:underline flex items-center gap-1">
-                    Review us <ExternalLink className="w-2.5 h-2.5" />
-                  </span>
-                </a>
-              ))}
-            </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-[hsl(var(--color-foreground))] tracking-tight">{item.name}</h4>
+                    <StarRating rating={item.rating} />
+                  </div>
+                </div>
+                <div className="text-[10px] font-bold text-[hsl(var(--color-primary))] uppercase bg-[hsl(var(--color-primary)/0.1)] px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                  Review
+                </div>
+              </a>
+            ))}
           </div>
         </div>
 
@@ -167,138 +157,76 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
                   <polyline points="14 2 14 8 20 8" />
                 </svg>
               </div>
-              <span>{t('brand')}</span>
+              <span>PDFTara</span>
             </Link>
             <p className="text-sm text-[hsl(var(--color-muted-foreground))] leading-relaxed max-w-xs">
-              {t('tagline') || 'Professional, secure, and free PDF tools for everyone. No installation required.'}
+              Secure, private, and 100% free PDF tools. No installation, no data tracking.
             </p>
-            <div className="mt-2">
-              <button onClick={handleShare} className="flex items-center gap-2 px-4 py-2 rounded-full border border-[hsl(var(--color-border))] text-[hsl(var(--color-muted-foreground))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all text-xs font-bold uppercase tracking-wider">
-                <Share2 className="w-4 h-4" />
-                <span>Share App</span>
-              </button>
-            </div>
+            <button onClick={handleShare} className="flex items-center w-fit gap-2 px-4 py-2 rounded-full border border-[hsl(var(--color-border))] text-[hsl(var(--color-muted-foreground))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all text-xs font-bold uppercase">
+              <Share2 className="w-4 h-4" /> Share App
+            </button>
           </div>
 
-          {/* Resources & Community Section */}
+          {/* Links Column */}
           <div className="flex flex-col">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">Resources</h3>
-            <ul className="flex flex-col gap-3 mb-10">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">Company</h3>
+            <ul className="flex flex-col gap-3">
               {footerLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-primary))] transition-colors flex items-center gap-2 group">
-                    <span className="w-1 h-1 rounded-full bg-[hsl(var(--color-muted-foreground))] group-hover:bg-[hsl(var(--color-primary))] transition-colors" />
+                  <Link href={link.href} className="text-sm text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-primary))] transition-colors">
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-4">Follow Us</h3>
-            <div className="grid grid-cols-2 gap-2">
-              {communityLinks.map((item, index) => (
-                <a key={index} href={item.href} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-white transition-all text-[11px] font-bold shadow-sm ${item.color}`}>
-                  {item.icon}
-                  <span>{item.label}</span>
-                </a>
-              ))}
-            </div>
           </div>
 
-          {/* Legal Company Section */}
-          <div className="flex flex-col items-center md:items-start text-center md:text-left">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6 w-full">
-              Verification
-            </h3>
-            <div className="flex flex-col gap-4 w-full max-w-[240px]">
-              {/* MSME Badge */}
-              <div className="flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#E67E22] shadow-md border-b-4 border-[#A04000]">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span className="text-xs font-black uppercase tracking-tighter">Registered MSME</span>
-                </div>
-                <span className="text-[11px] font-bold opacity-90">UDYAM-UP-69-0015414</span>
+          {/* Verification Section */}
+          <div className="flex flex-col gap-4">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-2">Trusted Verification</h3>
+            <div className="flex flex-col gap-3">
+              <div className="px-4 py-2 bg-[#E67E22] text-white rounded-lg text-xs font-bold flex items-center gap-2 shadow-sm border-b-2 border-orange-800">
+                <CheckCircle2 className="w-4 h-4" /> Registered MSME India
               </div>
-
-              {/* Crunchbase Badge */}
-              <a href="https://www.crunchbase.com/organization/pdftara" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#0284c7] hover:bg-[#0369a1] transition-all shadow-md border-b-4 border-[#075985]">
-                <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-white fill-white/20" />
-                  <span className="text-xs font-black uppercase tracking-tighter">Verified Software Co.</span>
-                </div>
-                <div className="flex items-center gap-1.5 opacity-90">
-                  <TrendingUp className="w-3 h-3" />
-                  <span className="text-[10px] font-bold">CB Rank: #5328545</span>
-                </div>
+              <a href="https://www.crunchbase.com/organization/pdftara" target="_blank" className="px-4 py-2 bg-[#0284c7] text-white rounded-lg text-xs font-bold flex items-center gap-2 shadow-sm border-b-2 border-sky-900">
+                <Shield className="w-4 h-4" /> Crunchbase Verified
               </a>
-
-              <div className="mt-4 w-full text-left">
-                <h4 className="text-xs font-bold text-[hsl(var(--color-muted-foreground))] uppercase mb-3">Compliance</h4>
-                <div className="flex items-center gap-3 p-3 bg-[hsl(var(--color-card))] border border-[hsl(var(--color-border))] rounded-xl shadow-sm">
-                  <div className="h-8 w-8 rounded-full bg-[hsl(var(--color-success)/0.1)] flex items-center justify-center flex-shrink-0">
-                    <Shield className="h-4 w-4 text-[hsl(var(--color-success))]" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] font-bold text-[hsl(var(--color-foreground))] leading-none">GDPR Compliant</div>
-                    <div className="text-[10px] text-[hsl(var(--color-muted-foreground))] mt-1">100% Private Data</div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
-          {/* Security Features */}
+          {/* Security Section */}
           <div className="flex flex-col">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">Security</h3>
-            <ul className="flex flex-col gap-4">
-              <li className="flex items-start gap-3">
-                <div className="mt-0.5 p-1 rounded bg-[hsl(var(--color-success)/0.1)] text-[hsl(var(--color-success))]">
-                  <Lock className="h-3 w-3" />
-                </div>
-                <div>
-                  <span className="block text-sm font-medium text-[hsl(var(--color-foreground))]">Client-side processing</span>
-                  <span className="text-xs text-[hsl(var(--color-muted-foreground))]">Files never leave your device</span>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <div className="mt-0.5 p-1 rounded bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))]">
-                  <FileCheck className="h-3 w-3" />
-                </div>
-                <div>
-                  <span className="block text-sm font-medium text-[hsl(var(--color-foreground))]">No file uploads</span>
-                  <span className="text-xs text-[hsl(var(--color-muted-foreground))]">100% private & secure</span>
-                </div>
-              </li>
-            </ul>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6">Privacy First</h3>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="p-1.5 rounded-lg bg-green-500/10 text-green-600"><Lock className="w-4 h-4"/></div>
+                <span className="text-xs font-medium text-[hsl(var(--color-muted-foreground))]">Files never leave your browser</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-600"><Shield className="w-4 h-4"/></div>
+                <span className="text-xs font-medium text-[hsl(var(--color-muted-foreground))]">GDPR & ISO compliant workflow</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Language Switcher */}
+        {/* Language Selection */}
         <div className="py-6 border-t border-[hsl(var(--color-border))]">
-          <div className="flex items-center gap-3 mb-4">
-            <Globe className="h-4 w-4 text-[hsl(var(--color-muted-foreground))]" />
-            <span className="text-sm font-medium text-[hsl(var(--color-foreground))]">{t('buttons.selectLanguage')}</span>
-          </div>
           <div className="flex flex-wrap gap-2">
-            {locales.map((loc) => {
-              const config = localeConfig[loc];
-              const isActive = loc === locale;
-              return (
-                <button key={loc} onClick={() => handleLanguageChange(loc)} className={`px-3 py-1.5 text-sm rounded-full transition-all ${isActive ? 'bg-[hsl(var(--color-primary))] text-white font-medium' : 'bg-[hsl(var(--color-muted))] text-[hsl(var(--color-muted-foreground))] hover:bg-[hsl(var(--color-primary)/0.1)] hover:text-[hsl(var(--color-primary))]'}`} aria-current={isActive ? 'true' : undefined}>
-                  {config.nativeName}
-                </button>
-              );
-            })}
+            {locales.map((loc) => (
+              <button key={loc} onClick={() => handleLanguageChange(loc)} className={`px-4 py-1.5 text-xs rounded-full transition-all ${loc === locale ? 'bg-[hsl(var(--color-primary))] text-white font-bold' : 'bg-[hsl(var(--color-muted))] text-[hsl(var(--color-muted-foreground))] hover:bg-[hsl(var(--color-primary)/0.1)]'}`}>
+                {localeConfig[loc].nativeName}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Copyright & Legal Links */}
+        {/* Final Copyright */}
         <div className="pt-8 border-t border-[hsl(var(--color-border))] flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-[hsl(var(--color-muted-foreground))]">&copy; {currentYear} PDFTara. All rights reserved.</p>
-          <div className="flex items-center gap-6 flex-wrap justify-center">
-            <Link href={`/${locale}/terms`} className="text-xs text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-foreground))]">Terms</Link>
-            <Link href={`/${locale}/privacy`} className="text-xs text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-foreground))]">Privacy</Link>
-            <Link href={`/${locale}/cookies`} className="text-xs text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-foreground))]">Cookies</Link>
-            <Link href={`/${locale}/disclaimer`} className="text-xs text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-foreground))]">Disclaimer</Link>
+          <p className="text-xs text-[hsl(var(--color-muted-foreground))]">&copy; {currentYear} PDFTara. Global Document Solutions.</p>
+          <div className="flex gap-6">
+            <Link href={`/${locale}/privacy`} className="text-xs text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-foreground))]">Privacy Policy</Link>
+            <Link href={`/${locale}/terms`} className="text-xs text-[hsl(var(--color-muted-foreground))] hover:text-[hsl(var(--color-foreground))]">Terms of Service</Link>
           </div>
         </div>
       </div>
