@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { 
@@ -12,7 +13,6 @@ import {
   Share2, 
   Send, 
   Star, 
-  Twitter, 
   Award, 
   CheckCircle2,
   TrendingUp,
@@ -41,30 +41,25 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
   const router = useRouter();
   const pathname = usePathname();
 
+  // Updated with your specific image paths for SEO and visual consistency
   const reviewPlatforms = [
     {
       name: "Capterra",
       url: "https://www.capterra.in/software/1106945/PDFTara",
-      logo: (
-        <svg viewBox="0 0 24 24" className="w-6 h-6 fill-[#0052FF]">
-          <path d="M12 2L2 19h20L12 2zm0 4.5l6.5 11h-13L12 6.5z" />
-          <path d="M10 12h4v2h-4z" opacity=".3"/>
-        </svg>
-      )
+      logo: "/images/captara1.png",
+      alt: "PDFTara Capterra Reviews - Trusted PDF Tools"
     },
     {
       name: "GetApp",
       url: "https://www.getapp.com/all-software/a/pdftara/",
-      logo: (
-        <div className="w-6 h-6 bg-[#172B4D] rounded-md flex items-center justify-center text-white font-bold text-[10px]">GA</div>
-      )
+      logo: "/images/getapp.png",
+      alt: "PDFTara GetApp Ratings - Professional PDF Software"
     },
     {
       name: "Software Advice",
       url: "https://www.softwareadvice.com/product/559122-PDFTara/",
-      logo: (
-        <div className="w-6 h-6 bg-[#00AEEF] rounded-full flex items-center justify-center text-white font-bold text-[10px]">SA</div>
-      )
+      logo: "/images/software_advice.png",
+      alt: "PDFTara Software Advice - Top Rated PDF Utility"
     }
   ];
 
@@ -141,10 +136,18 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
                   href={platform.url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="group flex flex-col items-center p-4 rounded-2xl bg-[hsl(var(--color-card))] border border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary))] transition-all hover:shadow-md"
+                  title={`Review PDFTara on ${platform.name}`}
+                  className="group flex flex-col items-center p-5 rounded-2xl bg-[hsl(var(--color-card))] border border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary))] transition-all hover:shadow-md"
                 >
                   <div className="flex items-center gap-3 mb-2">
-                    {platform.logo}
+                    <div className="relative w-8 h-8 flex items-center justify-center overflow-hidden">
+                      <img 
+                        src={platform.logo} 
+                        alt={platform.alt}
+                        className="object-contain w-full h-full"
+                        loading="lazy"
+                      />
+                    </div>
                     <span className="font-bold text-sm text-[hsl(var(--color-foreground))]">{platform.name}</span>
                   </div>
                   <FiveStars />
@@ -157,10 +160,10 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 mb-12">
           {/* Brand Column */}
           <div className="col-span-1 flex flex-col gap-6">
-            <Link href={`/${locale}`} className="group flex items-center gap-2.5 text-xl font-bold text-[hsl(var(--color-foreground))]">
+            <Link href={`/${locale}`} className="group flex items-center gap-2.5 text-xl font-bold text-[hsl(var(--color-foreground))]" title="PDFTara Home">
               <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-[hsl(var(--color-primary))] text-white shadow-md transition-transform group-hover:scale-105">
                 <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
@@ -196,7 +199,7 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
             <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-4">Follow Us</h3>
             <div className="grid grid-cols-2 gap-2">
               {communityLinks.map((item, index) => (
-                <a key={index} href={item.href} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-white transition-all text-[11px] font-bold shadow-sm ${item.color}`}>
+                <a key={index} href={item.href} target="_blank" rel="noopener noreferrer" title={item.label} className={`inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-white transition-all text-[11px] font-bold shadow-sm ${item.color}`}>
                   {item.icon}
                   <span>{item.label}</span>
                 </a>
@@ -220,7 +223,7 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
               </div>
 
               {/* Crunchbase Badge */}
-              <a href="https://www.crunchbase.com/organization/pdftara" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#0284c7] hover:bg-[#0369a1] transition-all shadow-md border-b-4 border-[#075985]">
+              <a href="https://www.crunchbase.com/organization/pdftara" target="_blank" rel="noopener noreferrer" title="View PDFTara on Crunchbase" className="flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#0284c7] hover:bg-[#0369a1] transition-all shadow-md border-b-4 border-[#075985]">
                 <div className="flex items-center gap-2">
                   <Shield className="w-4 h-4 text-white fill-white/20" />
                   <span className="text-xs font-black uppercase tracking-tighter">Verified Software Co.</span>
