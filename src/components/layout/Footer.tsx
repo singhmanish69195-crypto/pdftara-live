@@ -16,7 +16,8 @@ import {
   Award, 
   CheckCircle2,
   TrendingUp,
-  Youtube 
+  Youtube,
+  ExternalLink
 } from 'lucide-react';
 import { type Locale, locales, localeConfig, getLocalizedPath } from '@/lib/i18n/config';
 import { saveLanguagePreference } from './LanguageSelector';
@@ -25,11 +26,47 @@ export interface FooterProps {
   locale: Locale;
 }
 
+// Star Rating Helper Component
+const FiveStars = () => (
+  <div className="flex gap-0.5 mt-1">
+    {[...Array(5)].map((_, i) => (
+      <Star key={i} className="w-3.5 h-3.5 fill-[#FFB400] text-[#FFB400]" />
+    ))}
+  </div>
+);
+
 export const Footer: React.FC<FooterProps> = ({ locale }) => {
   const t = useTranslations('common');
   const currentYear = new Date().getFullYear();
   const router = useRouter();
   const pathname = usePathname();
+
+  const reviewPlatforms = [
+    {
+      name: "Capterra",
+      url: "https://www.capterra.in/software/1106945/PDFTara",
+      logo: (
+        <svg viewBox="0 0 24 24" className="w-6 h-6 fill-[#0052FF]">
+          <path d="M12 2L2 19h20L12 2zm0 4.5l6.5 11h-13L12 6.5z" />
+          <path d="M10 12h4v2h-4z" opacity=".3"/>
+        </svg>
+      )
+    },
+    {
+      name: "GetApp",
+      url: "https://www.getapp.com/all-software/a/pdftara/",
+      logo: (
+        <div className="w-6 h-6 bg-[#172B4D] rounded-md flex items-center justify-center text-white font-bold text-[10px]">GA</div>
+      )
+    },
+    {
+      name: "Software Advice",
+      url: "https://www.softwareadvice.com/product/559122-PDFTara/",
+      logo: (
+        <div className="w-6 h-6 bg-[#00AEEF] rounded-full flex items-center justify-center text-white font-bold text-[10px]">SA</div>
+      )
+    }
+  ];
 
   const footerLinks = [
     { href: `/${locale}/about`, label: t('navigation.about') },
@@ -52,16 +89,6 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
       icon: <Youtube className="w-4 h-4" />
     },
     { 
-      href: "https://in.pinterest.com/PDFtara/", 
-      label: "Pinterest", 
-      color: "bg-[#E60023] hover:bg-[#ad001a]",
-      icon: (
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.966 1.406-5.966s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146 1.124.347 2.317.535 3.554.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"/>
-        </svg>
-      )
-    },
-    { 
       href: "https://www.producthunt.com/products/pdftara-secure-free", 
       label: "Product Hunt", 
       color: "bg-[#DA552F] hover:bg-[#bd4828]",
@@ -69,15 +96,9 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
     },
     { 
       href: "https://www.trustpilot.com/review/pdftara.com", 
-      label: "Trustpilot Reviews", 
+      label: "Trustpilot", 
       color: "bg-[#00B67A] hover:bg-[#009e6a]",
       icon: <Star className="w-4 h-4" />
-    },
-    { 
-      href: "https://x.com/ManishS99961475", 
-      label: "Follow on X", 
-      color: "bg-[#000000] hover:bg-[#333333]",
-      icon: <Twitter className="w-4 h-4" />
     },
   ];
 
@@ -104,6 +125,38 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
   return (
     <footer className="w-full border-t border-[hsl(var(--color-border))] bg-[hsl(var(--color-background))] pt-16 pb-8" role="contentinfo">
       <div className="container mx-auto px-4">
+        
+        {/* NEW: Global Review Section - International Look */}
+        <div className="mb-16 py-8 px-6 rounded-3xl bg-gradient-to-r from-[hsl(var(--color-muted)/0.3)] to-[hsl(var(--color-background))] border border-[hsl(var(--color-border))] shadow-sm">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="text-center lg:text-left">
+              <h2 className="text-2xl font-black text-[hsl(var(--color-foreground))] tracking-tight mb-2 uppercase">Trusted by Thousands Worldwide</h2>
+              <p className="text-sm text-[hsl(var(--color-muted-foreground))]">Share your experience and help us grow on global platforms.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full lg:w-auto">
+              {reviewPlatforms.map((platform) => (
+                <a 
+                  key={platform.name}
+                  href={platform.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="group flex flex-col items-center p-4 rounded-2xl bg-[hsl(var(--color-card))] border border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary))] transition-all hover:shadow-md"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    {platform.logo}
+                    <span className="font-bold text-sm text-[hsl(var(--color-foreground))]">{platform.name}</span>
+                  </div>
+                  <FiveStars />
+                  <span className="mt-3 text-[10px] font-extrabold uppercase tracking-widest text-[hsl(var(--color-primary))] group-hover:underline flex items-center gap-1">
+                    Review us <ExternalLink className="w-2.5 h-2.5" />
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand Column */}
           <div className="col-span-1 flex flex-col gap-6">
@@ -140,10 +193,10 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
                 </li>
               ))}
             </ul>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-4">Community</h3>
-            <div className="flex flex-col gap-3">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-4">Follow Us</h3>
+            <div className="grid grid-cols-2 gap-2">
               {communityLinks.map((item, index) => (
-                <a key={index} href={item.href} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-white transition-all text-sm font-bold shadow-md hover:shadow-lg ${item.color}`}>
+                <a key={index} href={item.href} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-white transition-all text-[11px] font-bold shadow-sm ${item.color}`}>
                   {item.icon}
                   <span>{item.label}</span>
                 </a>
@@ -151,30 +204,30 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
             </div>
           </div>
 
-          {/* Legal Company Section - Centered Alignment Fix */}
+          {/* Legal Company Section */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left">
             <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--color-foreground))] mb-6 w-full">
-              Legal Company
+              Verification
             </h3>
             <div className="flex flex-col gap-4 w-full max-w-[240px]">
               {/* MSME Badge */}
-              <div className="flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#E67E22] hover:bg-[#D35400] transition-all shadow-md border-b-4 border-[#A04000]" title="Verified MSME Udyam Registration">
+              <div className="flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#E67E22] shadow-md border-b-4 border-[#A04000]">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4" />
                   <span className="text-xs font-black uppercase tracking-tighter">Registered MSME</span>
                 </div>
-                <span className="text-[11px] font-bold opacity-90 tracking-tight">UDYAM-UP-69-0015414</span>
+                <span className="text-[11px] font-bold opacity-90">UDYAM-UP-69-0015414</span>
               </div>
 
-              {/* Unique Crunchbase Badge with Verified Software Co. */}
-              <a href="https://www.crunchbase.com/organization/pdftara" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#0284c7] hover:bg-[#0369a1] transition-all shadow-md border-b-4 border-[#075985]" title="View PDFTara on Crunchbase">
+              {/* Crunchbase Badge */}
+              <a href="https://www.crunchbase.com/organization/pdftara" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-1 px-5 py-3 rounded-xl text-white bg-[#0284c7] hover:bg-[#0369a1] transition-all shadow-md border-b-4 border-[#075985]">
                 <div className="flex items-center gap-2">
                   <Shield className="w-4 h-4 text-white fill-white/20" />
-                  <span className="text-xs font-black uppercase tracking-tighter text-shadow-sm">Verified Software Co.</span>
+                  <span className="text-xs font-black uppercase tracking-tighter">Verified Software Co.</span>
                 </div>
                 <div className="flex items-center gap-1.5 opacity-90">
                   <TrendingUp className="w-3 h-3" />
-                  <span className="text-[10px] font-bold tracking-tight">CB Rank: #5328545</span>
+                  <span className="text-[10px] font-bold">CB Rank: #5328545</span>
                 </div>
               </a>
 
