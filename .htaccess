@@ -1,18 +1,21 @@
-# Apache .htaccess configuration for PDFTara static export
-
-# Enable rewrite engine
+# Apache configuration for PDFTara - Optimized for Next.js Static Export
 RewriteEngine On
+RewriteBase /
 
-# Handle trailing slash routing (matches Next.js trailingSlash: true config)
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteCond %{REQUEST_URI} !/$
-RewriteRule ^(.*)$ /$1/ [R=301,L]
+# ==========================================
+# 🚀 KING FIX: FORCE TRAILING SLASH (The SEO Thief Fix)
+# ==========================================
+# 1. Agar URL mein slash nahi hai aur wo koi file (image/js) nahi hai, toh slash lagao
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !(.*)/$
+RewriteRule ^(.*)$ https://www.pdftara.com/$1/ [L,R=301]
 
-# Serve HTML files without extension
+# 2. Slash wale URL ko internal index.html par map karo (Next.js static export logic)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}.html -f
-RewriteRule ^([^\.]+)$ $1.html [NC,L]
+RewriteCond %{REQUEST_URI} ^/(.+)/$
+RewriteCond %{DOCUMENT_ROOT}/%1/index.html -f
+RewriteRule ^([^/]+)/$ /%1/index.html [L]
 
 # ==========================================
 # MIME Type Configuration
@@ -24,7 +27,6 @@ AddType image/avif .avif
 AddType font/woff .woff
 AddType font/woff2 .woff2
 AddType font/ttf .ttf
-AddType application/vnd.ms-fontobject .eot
 
 # ==========================================
 # Compression (mod_deflate)
@@ -32,7 +34,7 @@ AddType application/vnd.ms-fontobject .eot
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css
     AddOutputFilterByType DEFLATE text/javascript application/javascript application/x-javascript
-    AddOutputFilterByType DEFLATE application/xml application/xhtml+xml application/rss+xml
+    AddOutputFilterByType DEFLATE application/xml application/xhtml+xml
     AddOutputFilterByType DEFLATE application/json application/wasm
     AddOutputFilterByType DEFLATE image/svg+xml
     AddOutputFilterByType DEFLATE font/woff font/woff2 font/ttf
@@ -44,78 +46,42 @@ AddType application/vnd.ms-fontobject .eot
 <IfModule mod_expires.c>
     ExpiresActive On
     ExpiresDefault "access plus 1 month"
-
-    # HTML - no cache
     ExpiresByType text/html "access plus 0 seconds"
-
-    # JS/CSS - long cache
     ExpiresByType text/css "access plus 1 year"
-    ExpiresByType text/javascript "access plus 1 year"
     ExpiresByType application/javascript "access plus 1 year"
-
-    # Images - long cache
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/gif "access plus 1 year"
-    ExpiresByType image/svg+xml "access plus 1 year"
     ExpiresByType image/webp "access plus 1 year"
-    ExpiresByType image/avif "access plus 1 year"
-    ExpiresByType image/x-icon "access plus 1 year"
-
-    # Fonts - long cache
-    ExpiresByType font/woff "access plus 1 year"
-    ExpiresByType font/woff2 "access plus 1 year"
-    ExpiresByType font/ttf "access plus 1 year"
-    ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
-
-    # WASM - long cache
     ExpiresByType application/wasm "access plus 1 year"
-
-    # JSON/XML - short cache
-    ExpiresByType application/json "access plus 1 hour"
-    ExpiresByType application/xml "access plus 1 hour"
 </IfModule>
 
 # ==========================================
-# Cache-Control & Security Headers (mod_headers)
+# Security & WASM Headers (CRUCIAL for LibreOffice/WASM)
 # ==========================================
 <IfModule mod_headers.c>
-    # --- Security Headers (all responses) ---
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-Frame-Options "SAMEORIGIN"
-    Header always set X-XSS-Protection "1; mode=block"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
-    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
-    # Required for SharedArrayBuffer (LibreOffice WASM)
+    
+    # ⚠️ WASM Multithreading Fix (SharedArrayBuffer needs these)
     Header always set Cross-Origin-Opener-Policy "same-origin"
     Header always set Cross-Origin-Embedder-Policy "require-corp"
     Header always set Cross-Origin-Resource-Policy "cross-origin"
 
-    # --- Cache-Control ---
-    <FilesMatch "\.(js|css|mjs|woff|woff2|ttf|eot|png|jpg|jpeg|gif|ico|svg|webp|avif|wasm)$">
+    # Static Assets Caching
+    <FilesMatch "\.(js|css|mjs|woff|woff2|ttf|png|jpg|jpeg|svg|webp|avif|wasm)$">
         Header set Cache-Control "public, max-age=31536000, immutable"
     </FilesMatch>
 
+    # HTML must revalidate
     <FilesMatch "\.html$">
         Header set Cache-Control "public, max-age=0, must-revalidate"
     </FilesMatch>
-
-    <FilesMatch "sw\.js$">
-        Header set Cache-Control "public, max-age=0, must-revalidate"
-    </FilesMatch>
-
-    <FilesMatch "manifest\.json$">
-        Header set Cache-Control "public, max-age=3600"
-    </FilesMatch>
 </IfModule>
 
-# Error Documents
+# Error Handling
 ErrorDocument 404 /404.html
 
-# Prevent Directory Listing
+# Security Extras
 Options -Indexes
-
-# Disable ETags
 <IfModule mod_headers.c>
     Header unset ETag
 </IfModule>
