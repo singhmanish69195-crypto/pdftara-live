@@ -44,7 +44,7 @@ export async function generateMetadata({
     de: { title: "PDFTara - Kostenlose PDF-Tools", desc: "PDFs sicher im Browser zusammenführen und komprimieren." },
     zh: { title: "PDFTara - 免费私密 PDF 工具", desc: "在浏览器中安全地合并、拆分 और壓縮 PDF।" },
     pt: { title: "PDFTara - Ferramentas PDF Gratuitas", desc: "Mescle e comprimi PDFs com segurança no seu navegador." },
-    ar: { title: "PDFTara - أدوات PDF مجانية", desc: "دمज وضغط ملفات PDF بأمان في متصفحك." },
+    ar: { title: "PDFTara - أدوات PDF مجانية", desc: "دمج وضغط ملفات PDF بأمان في متصفحك." },
     it: { title: "PDFTara - Strumenti PDF gratuiti", desc: "Unisci e comprimi PDF in modo sicuro nel tuo browser." },
     ro: { title: "PDFTara - Instrumente PDF gratuite", desc: "Combinați și comprimați PDF-urile în siguranță." },
     vi: { title: "PDFTara - Công cụ PDF miễn phí", desc: "Ghép và nén PDF an toàn ngay trên trình duyệt." },
@@ -56,12 +56,16 @@ export async function generateMetadata({
   return {
     ...metadata,
     metadataBase: new URL('https://www.pdftara.com/'),
-    // ✅ RAM-BAN FIX: Template ko sirf '%s' rakha hai taaki double branding na ho
     title: { default: currentSeo.title, template: `%s` }, 
     description: currentSeo.desc,
     alternates: {
+      // ✅ FIX: Layout mein sirf locale base canonical rakho. 
+      // Individual tool pages apne 'page.tsx' mein apna full canonical URL override karenge.
       canonical: `https://www.pdftara.com/${validLocale}/`,
-      languages: locales.reduce((acc, l) => { acc[l] = `https://www.pdftara.com/${l}/`; return acc; }, {} as Record<string, string>),
+      languages: locales.reduce((acc, l) => { 
+        acc[l] = `https://www.pdftara.com/${l}/`; 
+        return acc; 
+      }, {} as Record<string, string>),
     },
     verification: {
       google: 'ca-pub-4129411618696895',
@@ -70,7 +74,14 @@ export async function generateMetadata({
         'naver-site-verification': 'a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a',
       },
     },
-    robots: { index: true, follow: true },
+    robots: { 
+      index: true, 
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+      }
+    },
     openGraph: {
       ...metadata.openGraph,
       title: currentSeo.title,
@@ -122,16 +133,17 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} dir={direction} className={fontVariables} suppressHydrationWarning>
       <head>
-        {/* WASM Fix */}
+        {/* WASM Fix - All multithreading support */}
         <script src="/coi-serviceworker.js"></script>
         
-        {/* Google AdSense */}
+        {/* Google AdSense - Global */}
         <script 
           async 
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4129411618696895"
           crossOrigin="anonymous"
         ></script>
 
+        {/* SEO Verifications */}
         <meta name="naver-site-verification" content="a7f730f5caea31ec4ce5bcb4ebc46ea1a51d1f5a" />
         <meta name="google-adsense-account" content="ca-pub-4129411618696895" />
         <meta name="msvalidate.01" content="BING_VERIFICATION_CODE" />
@@ -150,7 +162,10 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SkipLink targetId="main-content">Skip to main content</SkipLink>
           <div className="relative flex min-h-screen flex-col">
-            <main id="main-content" className="flex-1">{children}</main>
+            {/* Main content wrapper */}
+            <main id="main-content" className="flex-1">
+              {children}
+            </main>
           </div>
         </NextIntlClientProvider>
       </body>
