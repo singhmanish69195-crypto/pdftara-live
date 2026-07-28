@@ -3,45 +3,45 @@ import type { Metadata } from 'next';
 import '@/app/globals.css';
 import { GoogleScripts } from '@/components/GoogleScripts';
 
-// 🚀 NOTE: Canonical aur Alternates har page ke 'page.tsx' mein hone chahiye 
-// taaki wo dynamic rahen. Layout mein sirf common cheezein rakho.
-
+// 🚀 PDFTARA MASTER METADATA - ALL URLS END WITH '/'
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.pdftara.com/'),
 
   title: {
     default: 'PDFTara - Free Private PDF Tools',
-    // ✅ FIXED: Template se '| PDFTara' hata diya hai taaki double branding na ho.
     template: '%s' 
   },
 
-  description: 'Secure browser-based tools to merge, split and compress PDFs.',
+  description: 'Secure browser-based tools to merge, split and compress PDFs. All processing is done locally for maximum privacy.',
 
   keywords: [
-    'PDF tools', 'PDFTara', 'merge pdf', 'split pdf', 'compress pdf', 'secure pdf tools', 'no upload pdf editor'
+    'PDF tools', 'PDFTara', 'merge pdf', 'split pdf', 'compress pdf', 'secure pdf tools', 'no upload pdf editor', 'private pdf'
   ],
 
   authors: [{ name: 'PDFTara Team', url: 'https://www.pdftara.com/' }],
   creator: 'PDFTara.com',
   publisher: 'PDFTara.com',
 
-  // ✅ KING FIX: Trailing slashes to prevent GSC redirect errors
+  // ✅ KING FIX: Har language page ke end mein '/' lagaya hai
   alternates: {
+    canonical: 'https://www.pdftara.com/', // Main Canonical
     languages: {
-      'en': '/en/',
-      'es': '/es/',
-      'fr': '/fr/',
-      'de': '/de/',
-      'it': '/it/',
-      'pt': '/pt/',
-      'ru': '/ru/',
-      'hi': '/hi/',
-      'ja': '/ja/',
-      'ko': '/ko/',
-      'zh': '/zh/',
-      'ar': '/ar/',
-      'vi': '/vi/',
-      'id': '/id/',
+      'en': 'https://www.pdftara.com/en/',
+      'es': 'https://www.pdftara.com/es/',
+      'fr': 'https://www.pdftara.com/fr/',
+      'de': 'https://www.pdftara.com/de/',
+      'it': 'https://www.pdftara.com/it/',
+      'pt': 'https://www.pdftara.com/pt/',
+      'ru': 'https://www.pdftara.com/ru/',
+      'hi': 'https://www.pdftara.com/hi/',
+      'ja': 'https://www.pdftara.com/ja/',
+      'ko': 'https://www.pdftara.com/ko/',
+      'zh': 'https://www.pdftara.com/zh/',
+      'ar': 'https://www.pdftara.com/ar/',
+      'vi': 'https://www.pdftara.com/vi/',
+      'id': 'https://www.pdftara.com/id/',
+      'ro': 'https://www.pdftara.com/ro/',
+      'zh-TW': 'https://www.pdftara.com/zh-TW/',
     },
   },
 
@@ -61,8 +61,9 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: 'PDFTara',
     title: 'PDFTara - Free & Private PDF Tools',
-    description: 'Merge and edit PDFs securely in your browser. No uploads.',
+    description: 'Merge and edit PDFs securely in your browser. No uploads, maximum security.',
     images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
+    url: 'https://www.pdftara.com/',
   },
 
   icons: {
