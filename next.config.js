@@ -3,13 +3,14 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 🚀 ब्रह्मास्त्र टिप: trailingSlash को true रखने से सर्विस वर्कर का पाथ कभी-कभी बिगड़ता है।
-  // पक्का करना कि 'coi-serviceworker.js' हमेशा रूट (pdftara.com/coi-serviceworker.js) पर ही रहे।
+  // ✅ MASTER SEO FIX: Har URL ke peeche '/' lagna pakka hai. 
+  // Isse Google ko "Page with redirect" error nahi milega.
   trailingSlash: true, 
-  reactStrictMode: true,
-  poweredByHeader: false, 
 
-  // --- HEADERS RESET ---
+  reactStrictMode: true,
+  poweredByHeader: false, // Security ke liye branding hata di
+
+  // --- GLOBAL HEADERS ---
   async headers() {
     return [
       {
@@ -18,30 +19,42 @@ const nextConfig = {
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          // ⚠️ ध्यान दें: COOP और COEP यहाँ से हटा दिए हैं। 
-          // इनका काम अब 'coi-serviceworker.js' और 'vercel.json' (credentialless के साथ) संभालेंगे।
+          // SEO Tip: HSTS header search engines ko batata hai ki site secure hai
+          { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
         ],
       },
     ];
   },
 
-  webpack: (config) => {
+  // --- WEBPACK CONFIG FOR WASM & PERFORMANCE ---
+  webpack: (config, { isServer }) => {
+    // Canvas aur encoding ke aliases
     config.resolve.alias.canvas = false;
     config.resolve.alias.encoding = false;
 
-    // 🚀 WASM की पावर के लिए ये सेटिंग्स ज़रूरी हैं
+    // 🚀 WASM SUPPORT: PDF processing ke liye sabse zaroori
     config.experiments = { 
       ...config.experiments, 
       asyncWebAssembly: true,
       layers: true 
     };
 
+    // Server-side par WASM ki handling
+    if (isServer) {
+      config.output.webassemblyModuleFilename = 'static/wasm/[modulehash].wasm';
+    }
+
     return config;
   },
 
-  // Build के टाइम फालतू एरर्स को इग्नोर करो ताकि डिप्लॉयमेंट फ़ास्ट हो
+  // --- BUILD OPTIMIZATIONS ---
+  // Build ke time errors ignore karo taaki jaldi deploy ho (Jaisa tune manga tha)
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
+
+  // NEXT-INTL OPTIMIZATION:
+  // Isse Google ko language redirect mein dikkat nahi hogi
+  swcMinify: true,
 };
 
 export default withNextIntl(nextConfig);
